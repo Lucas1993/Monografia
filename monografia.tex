@@ -7,7 +7,7 @@
 %  - Pós-graduação: [qualificacao], mestrado|doutorado, ppca|ppginf
 
 % \documentclass[engenharia]{UnB-CIC}%
-\documentclass[qualificacao,mestrado,ppca]{UnB-CIC}%
+\documentclass[bacharelado]{UnB-CIC}%
 
 \usepackage{pdfpages}% incluir PDFs, usado no apêndice
 
@@ -15,20 +15,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Informações do Trabalho
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\orientador{\prof \dr Guilherme Novaes Ramos}{CIC/UnB}%
+\orientador{\prof \dr Flávio L. C. de Moura}{CIC/UnB}%
 %\coorientador{\prof \dr José Ralha}{CIC/UnB}
 \coordenador[a]{\prof[a] \dr[a] Ada Lovelace}{Bibliothèque universelle de Genève}%
-\diamesano{24}{dezembro}{2014}%
+\diamesano{01}{Abril}{2016}%
 
-\membrobanca{\prof \dr Donald Knuth}{Stanford University}%
-\membrobanca{\dr Leslie Lamport}{Microsoft Research}%
+\membrobanca{\prof \dr Flávio L. C. de Moura}{Universidade de Brasília}%
+\membrobanca{\prof \dr Maurício Ayala-Ríncon}{Universidade de Brasília}%
 
-\autor{Guilherme N.}{Ramos}%
+\autor{Lucas de Moura}{Amaral}%
 
-\titulo{UnB-CIC: Uma classe em LaTeX para textos do Departamento de Ciência da Computação}%
+\titulo{Formalização da confluência de um cálculo com substituições explícitas em Coq}%
 
-\palavraschave{LaTeX, metodologia científica, trabalho de conclusão de curso}%
-\keywords{LaTeX, scientific method, thesis}%
+\palavraschave{lambda, formalização, trabalho de conclusão de curso}%
+\keywords{lambda, formalization, thesis}%
 
 \newcommand{\unbcic}{\texttt{UnB-CIC}}%
 
@@ -40,6 +40,9 @@
     \capitulo{2_UnB-CIC}{A Classe \unbcic}%
     \capitulo{3_TCC}{Trabalho de Conclusão de Curso}%
     \capitulo{4_Apresentacao}{Apresentações}%
+
+    \bibliographystyle{plain}
+    \bibliography{bibliografia}
 
     \apendice{Apendice_Fichamento}{Fichamento de Artigo Científico}%
     \anexo{Anexo1}{Documentação Original \unbcic\ (parcial)}%
