@@ -1,0 +1,12 @@
+*.aux
+*.bbl
+*.blg
+*.brf
+*.acn
+*.glo
+*.glsdefs
+*.ist
+*.log
+*.out
+*.pdf
+*.toc
