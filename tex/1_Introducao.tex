@@ -99,11 +99,12 @@ variáveis. A meta-substituição deve então ser adaptada para levar em conta e
 
 \[ (\lambda.\ 1) \{0/t\} \rightarrow ( \lambda. (1 \{1/t\}) ) \]
 
-Note que, na substituição, o índice a ser substituído foi incrementado ao entrar
-na abstração, de modo a corresponder à variável correta a ser substituída. Note
-que variáveis livres continuam sendo representadas da mesma maneira. Esta
+Note que o índice a ser substituído foi incrementado quando a substituição entra
+na abstração, de modo a corresponder à variável correta a ser substituída. As
+variáveis livres continuam sendo representadas da mesma maneira. Esta
 representação foi proposta por Arthur Charguéraud, junto com provas de
-equivalência e um framework para sua utilização em Coq, em \cite{chargueraud}.
+seu bom funcionamento e um framework para sua utilização em Coq, em
+\cite{chargueraud}.
 
 Para mais informações a respeito do cálculo lambda, veja \cite{barendregt}.
 
@@ -130,20 +131,19 @@ descartado. Infelizmente, o uso da meta-operação nos impede de realizar este
 tipo de manipulação, pois a substituição não faz parte da sintaxe do sistema.
 
 Na implementação de linguagens de programação, a substituição muitas vezes é
-"atrasado", de modo a evitar computações desnecessárias. Para aproximar o modelo
-teórico de seu paralelo prático, podemos tentar fracionar a operação de
+"atrasada", de modo a evitar computações desnecessárias. Para aproximar o modelo
+teórico de seu correspondente prático, podemos tentar fracionar a operação de
 substituição em partes atômicas, de maneira a permitir uma manipulação simbólica
 mais precisa. Com este objetivo em mente, foi proposto em \cite{delia} o
-sistema $\lambda$ex, que utiliza um formalismo conhecido como substituições
-explícitas. Este sistema será repetido aqui, e um maior entendimento pode ser
-obtido na fonte original. São introduzidas várias mudanças, a começar pela
-gramática: 
+sistema $\lambda$ex. Este sistema será repetido aqui, e um maior entendimento
+pode ser obtido na fonte original. São introduzidas várias mudanças, a começar
+pela gramática: 
 
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
 
 A nova construção é chamada \textit{substituição explícita}, e é o que permite as
 manipulações sintáticas com substituições no cálculo. Como consequência desta
-mudança, novas regras de redução são adicionadas:
+mudança, novas regras de redução são definidas:
 
 \begin{empheq}[box=\fbox]{align*}
     x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
@@ -164,7 +164,7 @@ de substituições independentes, e que constiturem o mesmo
 $\lambda$-termo no sistema original. Assim, é necessário tornar o novo sistema
 equacional, adicionando uma relação de equivalência:
 
-\[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ if\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
+\[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
 
 A relação de equivalência $=_e$ é formada com a junção de $=_C$ e
 $\alpha$-equivalência. As relações $\rightarrow_{ex}$ e $\rightarrow_{\lambda
@@ -187,5 +187,5 @@ implica a normalização da explícita.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{O assistente de provas Coq} 
-blablabla
+%\section{O assistente de provas Coq} 
+%blablabla
