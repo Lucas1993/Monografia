@@ -28,9 +28,11 @@ todas as noções, inclusive números e operações, devem ser definidas com bas
 abstrações e aplicações. A gramática do cálculo lambda pode ser descrita
 sucintamente como:
 
-\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau \]
+\[ \tau := x\ |\ \lambda y.\tau\ |\ \tau \tau \]
 
-Onde $\tau$ representa um termo, e \textbf{x} representa uma variável. O processo
+Onde $\tau$ representa um termo, e \textbf{x} representa uma variável livre. A
+variável \textbf{y} no segundo caso é chamada de \textit{variável ligada},
+pois suas ocorrências em $\tau$ estão associadas à abstração. O processo
 computacional é simulado no sistema através da regra de $\beta$-redução,
 definida como:
 
@@ -47,7 +49,10 @@ estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
     normal quando não existe \textbf{t'} tal que $ t \rightarrow_\beta t' $. 
     É possível demonstrar que nem todo termo que pode ser expressado no sistema
     possui uma forma normal. Como exemplo, observe que $ (\lambda x.x\ x)\ (\lambda
-    x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $.
+    x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $. Um termo é
+    dito normalizável quando existe uma estratégia de redução que leva a uma
+    forma normal. O termo é \emph{fortemente normalizável} se toda estratégia
+    leva à forma normal.
 
     \item[Confluência:] Um sistema de reescrita, tomando como exemplo o cálculo
     lambda, é dito confluente se, para todo termo \textbf{t}, se $ t
@@ -78,7 +83,7 @@ $\alpha$-equivalente, podendo então realizar a substituição sem modificar a
 estrutura do termo.
 
 Como dito anteriormente, o cálculo lambda é usado como modelo teórico para
-linguagens funcionais. A noção de $alpha$-equivalência, apesar de útil, pode ser
+linguagens funcionais. A noção de $\alpha$-equivalência, apesar de útil, pode ser
 muito custosa em uma implementação prática. Por este motivo, foram propostas
 algumas representações diferentes de termos, de modo a evitar a necessidade do
 renomeamento de variáveis. Entre elas, está a \textit{locally nameless
@@ -107,7 +112,76 @@ Para mais informações a respeito do cálculo lambda, veja \cite{barendregt}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{O sistema $\lambda$ex}
-blablabla
+
+Sabemos que a ordem em que as reduções são feitas não altera a forma normal do
+termo, mas isto não significa que não existem vantagens em se adotar certas
+estratégias na normalização. Como exemplo, observe os seguintes casos:
+
+\[ ((\lambda.\ x) t) \{1/y\} \rightarrow ((\lambda.\ x\{1/y\})\ t\{1/y\}) 
+    \rightarrow ((\lambda.\ x) t') \rightarrow (x\{0/t\}) \rightarrow x
+\]
+
+\[ ((\lambda.\ x) t) \{1/y\} \rightarrow (x\{0/t\}) \{1/y\} 
+    \rightarrow x \{1/y\} \rightarrow x \]
+
+Veja que, na segunda abordagem, evitamos uma operação potencialmente custosa de
+realizar uma substituição em um termo \emph{t} que seria imediatamente
+descartado. Infelizmente, o uso da meta-operação nos impede de realizar este
+tipo de manipulação, pois a substituição não faz parte da sintaxe do sistema.
+
+Na implementação de linguagens de programação, a substituição muitas vezes é
+"atrasado", de modo a evitar computações desnecessárias. Para aproximar o modelo
+teórico de seu paralelo prático, podemos tentar fracionar a operação de
+substituição em partes atômicas, de maneira a permitir uma manipulação simbólica
+mais precisa. Com este objetivo em mente, foi proposto em \cite{delia} o
+sistema $\lambda$ex, que utiliza um formalismo conhecido como substituições
+explícitas. Este sistema será repetido aqui, e um maior entendimento pode ser
+obtido na fonte original. São introduzidas várias mudanças, a começar pela
+gramática: 
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+
+A nova construção é chamada \textit{substituição explícita}, e é o que permite as
+manipulações sintáticas com substituições no cálculo. Como consequência desta
+mudança, novas regras de redução são adicionadas:
+
+\begin{empheq}[box=\fbox]{align*}
+    x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
+    t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & if\ \emph{x} \notin fv(t)\\
+    (t\ u)[x/v]\ \ \        &\rightarrow_{App}\ t[x/v]\ u[x/v] \\
+    (\lambda y.\ u)[x/v]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[x/v])\\
+    t[x/u][y/v]\ \ \        &\rightarrow_{Comp}\ t[y/v][x/u[y/v]] & if\ y\ \in
+    fv(u) \\ 
+    (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u]
+\end{empheq}
+
+As 5 primeiras regras formam a relação $\rightarrow_x$, e o acréscimo da última
+forma a relação $\rightarrow_{Bx}$. 
+
+Observe que, devido ao acréscimo das substituições explícitas, é possível
+definir termos que possuem uma sintaxe distinta, diferindo apenas na permutação
+de substituições independentes, e que constiturem o mesmo
+$\lambda$-termo no sistema original. Assim, é necessário tornar o novo sistema
+equacional, adicionando uma relação de equivalência:
+
+\[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ if\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
+
+A relação de equivalência $=_e$ é formada com a junção de $=_C$ e
+$\alpha$-equivalência. As relações $\rightarrow_{ex}$ e $\rightarrow_{\lambda
+    ex}$ são definidas como:
+
+\[t\ \rightarrow_{ex}\ t'\ \iff\ \exists\ s,s'\ t.q.\ t\ =_{e}\ s\
+    \rightarrow_x\ s'\ =_e\ t' \]
+\[t\ \rightarrow_{\lambda ex}\ t'\ \iff\ \exists\ s,s'\ t.q.\ t\ =_{e}\ s\
+    \rightarrow_{Bx}\ s'\ =_e\ t' \]
+
+Estas relações serão amplamente utilizadas ao decorrer deste trabalho. 
+O foco principal é a formalização da propriedade \textbf{IE} do sistema, que
+pode ser entendida intuitivamente da seguinte maneira: Dados \textbf{t},
+\textbf{u} tais que \emph{u} e \emph{t\{x/u\}} são fortemente normalizáveis
+no sistema, então o correspondente utilizando substituições explícitas,
+\emph{t[x/u]} também será. Ou seja, a normalização da substituição implícita
+implica a normalização da explícita.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
