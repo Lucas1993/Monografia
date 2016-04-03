@@ -1,188 +1,117 @@
-Teste aqui. \cite{greenwade93}
-
-%\url{http://www.escritacientifica.com/}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Trabalho de Conclusão de Curso}%
-Todos os cursos do \acrfull{CIC} da \acrfull{UnB} exigem a produção de um
-texto científico como requisito para formação. %(veja \refAnexo{NormasGerais} para mais detalhes)
-As etapas desta monografia/dissertação/tese devem seguir o \emph{método científico}.
+\section{O cálculo lambda}
+No início do século XX, tornou-se necessária, na matemática, uma definição 
+precisa para a noção intuitiva do processo computacional. Diversos modelos foram
+propostos para resolver este problema. Entre eles está o cálculo lambda,
+proposto por Alonzo Church \cite{lambda_first}, em 1936. Inicialmente, o cálculo
+fazia parte de um sistema maior, proposto para servir como uma base
+formal para o estudo das fundações da matemática. Porém, devido a
+inconsistências neste sistema, Alonzo Church foi obrigado a abrir mão de seu
+objetivo inicial, separou a parte utilizável do sistema e formou o que hoje
+conhecemos como cálculo lambda.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Metodologia Científica}%
-Ciência (do Latim \emph{scientia}, traduzido como ``conhecimento'') é uma forma
-sistemática de produzir conhecimento (via método científico), ou o nome dado a
-estrutura organizada do conhecimento obtido.
+O grande diferencial deste cálculo está em sua expressividade, com poder
+computacional equivalente ao da Máquina de Turing, e sua simplicidade,
+demonstrada por sua gramática concisa e poucas regras. A ideia central deste
+consiste em simular a criação e aplicação de funções. Diferentemente da noção
+usual no trabalho matemático, as funções neste sistema são chamadas "anônimas",
+pois são definidas tendo em vista somente seus argumentos e o resultado. Como
+exemplo, uma função simples como: "$double(x) = 2*x$" \ é definida anonimamente como
+"$\lambda x.\ 2*x$". É utilizada também uma notação especial para a aplicação de
+funções, denotada como "$ (\lambda x.\ 2*x)$  $3$".
 
-O método científico é um conjunto de regras básicas de como proceder para produzir
-conhecimento, criando algo novo ou corrigindo/incrementando conhecimentos
-pré-existentes. Consiste em juntar evidências empíricas verificáveis baseadas na
-observação sistemática e controlada, geralmente resultantes de experiências ou
-pesquisa de campo, e analisá-las logicamente.
+É importante notar que os exemplos acima não são representados exatamente desta
+maneira. Como dito anteriormente, o sistema possui uma gramática simples, e
+todas as noções, inclusive números e operações, devem ser definidas com base em
+abstrações e aplicações. A gramática do cálculo lambda pode ser descrita
+sucintamente como:
 
-Esta ideia foi formalizada por Newton em sua obra \emph{Philosophiae Naturalis
-Principia Mathematica}~\cite{newton1833philosophiae} da seguinte forma:
-\begin{enumerate}
-	\item Não se deve admitir causas das coisas naturais além daquelas
-	que sejam verdadeiras e sejam suficientes para explicar seus fenômenos.
-	\item Efeitos naturais do mesmo gênero devem ser atribuídos as mesmas causas.
-	\item Características de corpos são consideradas universais.
-	\item Proposições deduzidas da observação de fenômenos são
-	consideradas corretas até que outro fenômeno mostre o contrário.
-\end{enumerate}%
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau \]
 
-Uma abordagem para esta metodologia é seguir os seguintes passos:
+Onde $\tau$ representa um termo, e \textbf{x} representa uma variável. O processo
+computacional é simulado no sistema através da regra de $\beta$-redução,
+definida como:
+
+\[ (\lambda x.t)\ u \rightarrow_{\beta} t\{x/u\} \]
+
+Note que t\{x/u\} é uma \textit{meta-operação}, definida pela substituição das
+ocorrências da variável \textbf{x}, no termo \textbf{t}, pelo termo \textbf{u}.
+A partir destas definições, várias propriedades sobre o sistema podem ser
+estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
+ normal} e de \textit{confluência}:
+
 \begin{description}
-	\item[Caracterização do Problema:] Qual a pergunta a ser respondida? Quais
-informações/recursos necessários na investigação?
-	\item[Formulação da Hípotese:] Quais explicações possíveis para o que foi observado?
-	\item[Previsão:] Dadas explicações [corretas] para as observações, quais os
-	resultados previstos?
-	\item[Experimentos:] \ \\\vspace{-2em}
-		\begin{enumerate}
-			\item Execute testes [reproduzíveis] da hipótese, coletando dados.
-			\item Analise os dados.
-			\item Interprete os dados e tire conclusões:
-				\begin{itemize}
-				\item que comprovam a hipótese;
-				\item que invalidam a hipótese \emph{ou levam a uma nova hipótese}.
-				\end{itemize}
-		\end{enumerate}
-	\item[Documentação:] Registre e divulgue os resultados.
-	\item[Revisão de Resultados:] Validação dos resultados por outras pessoas
-	[capacitadas].
-\end{description}%
+    \item[Forma normal:] Um termo \textbf{t} é dito estar em forma
+    normal quando não existe \textbf{t'} tal que $ t \rightarrow_\beta t' $. 
+    É possível demonstrar que nem todo termo que pode ser expressado no sistema
+    possui uma forma normal. Como exemplo, observe que $ (\lambda x.x\ x)\ (\lambda
+    x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $.
 
-Geralmente se começa com a revisão sistemática, uma metodologia de pesquisa
-específica para juntar e avaliar material relevante a determinado tópico~\cite{Biolchini_2005_Systematicreviewin}.
+    \item[Confluência:] Um sistema de reescrita, tomando como exemplo o cálculo
+    lambda, é dito confluente se, para todo termo \textbf{t}, se $ t
+    \rightarrow_\beta t' $ e $ t \rightarrow_\beta t'' $, então deve existir
+    um termo \textbf{u} tal que \textbf{t'} e \textbf{t''} reduzem para ele,
+    em zero ou mais passos da $\beta$-redução.  Os termos \textbf{t'} e
+    \textbf{t''} são ditos \textit{$\beta$-equivalentes}.  A propriedade de
+    confluência pode ser entendida, essencialmente, como uma garantia que a
+    ordem que as reduções são feitas dentro de um termo não afetam o
+    resultado final do processo.
 
-\subsection{Veja Também}
-\begin{itemize}
-	\item Google Acadêmico
-		\\\url{http://scholar.google.com.br/}%
-	\item ACM Digital Library
-		\\\url{http://dl.acm.org/}%
-	\item Portal \acrshort{CAPES}
-		\\\url{http://www.periodicos.capes.gov.br/}%
-	\item IEEE Xplore
-		\\\url{http://ieeexplore.ieee.org/Xplore/home.jsp}%
-	\item ScienceDirect
-		\\\url{http://www.sciencedirect.com/}%
-	\item Springer Link
-		\\\url{http://link.springer.com/}%
-\end{itemize}
+\end{description}
 
-Para buscar referências, \emph{The DBLP Computer Science Bibliography}\footnote{\url{http://dblp.uni-trier.de/}}
-é um ótimo recurso. Veja o \refApendice{Apendice_Fichamento} para instruções
-sobre como organizar as informações de artigos científicos.
+Outro ponto importante a ser mencionado é a noção de $\alpha$-equivalência de
+termos. Um termo $(\lambda x. t)$ é dito $\alpha$-equivalente a $(\lambda y. u)$
+se $ t\{x/y\} = u $. Esta noção captura a ideia de que a escolha do nome das
+variáveis ligadas não importa em geral, sendo o real objeto de interesse a
+estrutura do termo. Esta definição é útil para evitar certos problemas, como por
+exemplo o de \textit{captura de variáveis livres}. No exemplo:
 
+\[ (\lambda x.\ t)\{y/u\},\ x\ \neq\ y \]
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{\LaTeX}%
+Se a variável \textbf{x} ocorrer livre no termo \textbf{u}, ela será capturada
+pela abstração, tornando-se uma variável ligada e mudando a semântica do termo.
+Para evitar este problema, podemos renomear a variável ligada \textbf{x}, antes
+da substituição, por uma variável nova, de maneira a obter um termo
+$\alpha$-equivalente, podendo então realizar a substituição sem modificar a
+estrutura do termo.
 
-\TeX\ é ``\emph{a typesetting system intended for the creation of beautiful books
- - and especially for books that contain a lot of mathematics}''~\cite{Knuth_1986_texbook},
- um sistema de tipografia muito utilizado na produção de textos técnicos devido
- a qualidade final, principalmente das fórmulas e símbolos matemáticos gerados.
+Como dito anteriormente, o cálculo lambda é usado como modelo teórico para
+linguagens funcionais. A noção de $alpha$-equivalência, apesar de útil, pode ser
+muito custosa em uma implementação prática. Por este motivo, foram propostas
+algumas representações diferentes de termos, de modo a evitar a necessidade do
+renomeamento de variáveis. Entre elas, está a \textit{locally nameless
+    representation}, usada para representar os $\lambda$-termos neste trabalho.
+A gramática do sistema é modificada parcialmente:
 
-\LaTeX\ é um conjunto de macros para facilitar o uso de \TeX~\cite{lamport_latex:_1994,},
-cujos pacotes (a maioria centralizada na rede \acrshort{CTAN}~\cite{greenwade93}), oferecem
-inúmeras possibilidades. Este sistema tipográfico visa explorar as potencialidades
-da impressão digital, sem que o resultado seja alterado em função de diferenças
-entre plataformas/sistemas.
+\[ \tau := x\ |\ \lambda . \tau\ |\ \tau \tau \]
 
-Em uma publicação, um \emph{autor} entrega o texto a uma editor que define a
-formatação do documento (tamanho da fonte, largura de colunas, espaçamento, etc.)
-e passa as instruções (e o manuscrito) ao tipógrafo, que as executa. Neste processo,
-\LaTeX\ assume os papéis de editor e tipógrafo, mas por ser ``apenas'' um programa
-de computador, o autor deve prover algumas informações adicionais ~\cite{Oetiker_1995_notsoshort},
-geralmente por meio de marcações (comandos).
+Observe que a abstração não carrega mais uma variável ligada. Ao invés disso,
+são usados índices (que podem ser números naturais) para representar estas
+variáveis. A meta-substituição deve então ser adaptada para levar em conta estes
+índices, como no exemplo:
 
-Esta abordagem de linguagem de marcação (em que se indica como o texto deve ser
-formatado) é diferente da abordagem OQVVEOQVO (``o que você vê é o que você
-obtém\footnote{Do inglês WYSIWYG - ``What You See Is What You Get''.}'') de programas
-para edição de texto tradicionais (como MS Word, LibreOffice Write, etc.).
-Apesar destes programas serem extremamente úteis para gerar textos simples, que
-são a grande maioria dos documentos, eles geralmente não têm a capacidade de lidar
-corretamente com documentos complexos (como dissertações ou teses), conforme ilustrado
-na \refFig{latexvsword}.%
+\[ (\lambda.\ 1) \{0/t\} \rightarrow ( \lambda. (1 \{1/t\}) ) \]
 
-\figuraBib{miktex}{\LaTeX\ vs MS Word}{pinteric_latex_2004}{latexvsword}{width=.45\textwidth}%
+Note que, na substituição, o índice a ser substituído foi incrementado ao entrar
+na abstração, de modo a corresponder à variável correta a ser substituída. Note
+que variáveis livres continuam sendo representadas da mesma maneira. Esta
+representação foi proposta por Arthur Charguéraud, junto com provas de
+equivalência e um framework para sua utilização em Coq, em \cite{chargueraud}.
 
-Existem diversas discussões quanto ao uso de editores de texto\footnote{Por exemplo:
-\emph{Word Processors: Stupid and Inefficient} \url{http://ricardo.ecn.wfu.edu/~cottrell/wp.html}},
-não há um consenso quanto a melhor forma de se gerar um documento de qualidade,
-e a maioria das mídias científicas disponibiliza modelos para ambas.
-
-Mas pode-se dizer que \LaTeX\ é mais indicado para:
-\begin{itemize}
-	\item notação matemática;
-	\item referências cruzadas;
-	\item separação clara entre conteúdo e formatação.
-\end{itemize}
-
-Enquanto os editores tradicionais são indicados para:
-\begin{itemize}
-	\item edição colaborativa (são mais populares);
-	\item produção imediata (leve curva de aprendizado).
-\end{itemize}
-
-\subsection{Veja Também}
-\begin{itemize}
-	\item Introdução ao \LaTeX
-		\\\url{http://latexbr.blogspot.com.br/2010/04/introducao-ao-latex.html}
-	\item \LaTeX\ - A document preparation system
-		\\\url{http://www.latex-project.org/}
-	\item The \acrlong{CTAN}
-		\\\url{http://ctan.org}
-	\item \TeX Users Group
-		\\\url{http://tug.org}
-	\item \TeX\ - \LaTeX\ Stack Exchange
-		\\\url{http://tex.stackexchange.com}
-	\item \LaTeX\ Wikibook
-		\\\url{http://en.wikibooks.org/wiki/LaTeX}
-	\item write\LaTeX
-		\\\url{http://www.writelatex.com}
-\end{itemize}
-
-
+Para mais informações a respeito do cálculo lambda, veja \cite{barendregt}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Plágio}%
-O JusBrasil\footnote{\url{http://www.jusbrasil.com.br}} define plágio como
-``reprodução, total ou parcial, da propriedade intelectual de alguém, inculcando-se
-o criador da idéia ou da forma. Constitui crime contra a propriedade imaterial
-violar direito de autor de obra literária, científica ou artística.''
 
+\section{O sistema $\lambda$ex}
+blablabla
 
-A \acrfull{CEP} da Presidência da República decidiu  ``pela
-aplicação de sanção ética aos servidores públicos que incorrerem na prática de
-plágio"\footnote{\url{http://www.comissaodeetica.unb.br/index.php?view=article&id=8:plagio-academico}},
-e a \acrfull{CAPES} recomenda que se adote políticas de conscientização e informação
-sobre a propriedade intelectual, baseando-se na Proposição 2010.19.07379-01,
-referente ao plágio nas instituições de ensino\footnote{\url{https://www.capes.gov.br/images/stories/download/diversos/OrientacoesCapes_CombateAoPlagio.pdf}}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\subsection{Veja Também}
-\begin{itemize}
-	\item IEEE Plagiarism FAQ
-		\\\url{http://www.ieee.org/publications_standards/publications/rights/plagiarism_FAQ.html}
-	\item Relatório da Comissão de Integridade de Pesquisa do CNPq
-		\\\url{http://www.cnpq.br/web/guest/documentos-do-cic}
-\end{itemize}
-
-
-
-%\section{Normas CIC}
-% \href{http://monografias.cic.unb.br/dspace/normasGerais.pdf}{Política de Publicação de Monografias e Dissertações no Repositório Digital do CIC}%
-% \href{http://monografias.cic.unb.br/dspace/}{Repositório do Departamento de Ciência da Computação da UnB}
-
-% \href{http://bdm.bce.unb.br/}{Biblioteca Digital de Monografias de Graduação e Especialização}
+\section{O assistente de provas Coq} 
+blablabla
