@@ -147,14 +147,16 @@ mudança, novas regras de redução são definidas:
 
 \begin{empheq}[box=\fbox]{align*}
     x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
-    t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & if\ \emph{x} \notin fv(t)\\
+    t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & se\ \emph{x} \notin fv(t)\\
     (t\ u)[x/v]\ \ \        &\rightarrow_{App}\ t[x/v]\ u[x/v] \\
     (\lambda y.\ u)[x/v]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[x/v])\\
-    t[x/u][y/v]\ \ \        &\rightarrow_{Comp}\ t[y/v][x/u[y/v]] & if\ y\ \in
+    t[x/u][y/v]\ \ \        &\rightarrow_{Comp}\ t[y/v][x/u[y/v]] & se\ y\ \in
     fv(u) \\ 
     (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u]
 \end{empheq}
+\begin{center}Regras de redução \end{center}
 
+Onde \emph{fv(t)} são as variáveis livres de \emph{t}.
 As 5 primeiras regras formam a relação $\rightarrow_x$, e o acréscimo da última
 forma a relação $\rightarrow_{Bx}$. 
 
