@@ -1,6 +1,7 @@
 *.aux
 *.bbl
 *.blg
+*.lot
 *.brf
 *.acn
 *.glo
