@@ -2,6 +2,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{O cálculo lambda}
+
+\subsection{Visão geral}
+
 No início do século XX, tornou-se necessária, na matemática, uma definição 
 precisa para a noção intuitiva do processo computacional. Diversos modelos foram
 propostos para resolver este problema. Entre eles está o cálculo lambda,
@@ -32,7 +35,8 @@ sucintamente como:
 
 Onde $\tau$ representa um termo, e \textbf{x} representa uma variável livre. A
 variável \textbf{y} no segundo caso é chamada de \textit{variável ligada},
-pois suas ocorrências em $\tau$ estão associadas à abstração. O processo
+pois suas ocorrências em $\tau$ estão associadas à abstração. 
+O conjunto de variáveis livres de \emph{t} é denotado por \emph{fv(t)}. O processo
 computacional é simulado no sistema através da regra de $\beta$-redução,
 definida como:
 
@@ -40,6 +44,26 @@ definida como:
 
 Note que t\{x/u\} é uma \textit{meta-operação}, definida pela substituição das
 ocorrências da variável \textbf{x}, no termo \textbf{t}, pelo termo \textbf{u}.
+Abaixo, alguns exemplos de $\lambda$-termos.
+
+\begin{itemize}
+    \item A função identidade pode ser representada pelo termo $ (\lambda x. x) $.
+        É fácil ver a correspondência na seguinte redução: $ (\lambda x.x) u
+    \rightarrow_\beta x \{x/u\} \rightarrow u $. 
+    \item A função constante pode ser representada pelo termo $ (\lambda x. M) $,
+        onde M é um termo qualquer, tal que $x \notin fv(M)$.
+        É fácil ver a correspondência na seguinte redução: $ (\lambda x.M) u
+    \rightarrow_\beta M \{x/u\} \rightarrow M $. 
+    \item Por último, podemos representar uma função que recebe dois termos e
+        retorna o primeiro, como $ (\lambda x. \lambda y. x)$. Sua aplicação é
+        reduzida da seguinte maneira: $ ((\lambda x. \lambda y. x)\ M)\ N)
+    \rightarrow_\beta ((\lambda y. x) \{x/M\} N) \rightarrow (\lambda y. M) N
+    \rightarrow_\beta M \{y/N\} \rightarrow N$, com \textbf{x,y} não ocorrendo 
+    livres em M ou N.
+\end{itemize}
+
+
+
 A partir destas definições, várias propriedades sobre o sistema podem ser
 estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
  normal} e de \textit{confluência}:
@@ -52,7 +76,9 @@ estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
     x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $. Um termo é
     dito normalizável quando existe uma estratégia de redução que leva a uma
     forma normal. O termo é \emph{fortemente normalizável} se toda estratégia
-    leva à forma normal.
+    leva à forma normal. A noção de normalização é especialmente importante,
+    pois indica se um termo pode ou não terminar quando for avaliado, o que é de
+    grande interesse no estudo computacional.
 
     \item[Confluência:] Um sistema de reescrita, tomando como exemplo o cálculo
     lambda, é dito confluente se, para todo termo \textbf{t}, se $ t
@@ -63,7 +89,6 @@ estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
     confluência pode ser entendida, essencialmente, como uma garantia que a
     ordem que as reduções são feitas dentro de um termo não afetam o
     resultado final do processo.
-
 \end{description}
 
 Outro ponto importante a ser mencionado é a noção de $\alpha$-equivalência de
@@ -73,57 +98,220 @@ variáveis ligadas não importa em geral, sendo o real objeto de interesse a
 estrutura do termo. Esta definição é útil para evitar certos problemas, como por
 exemplo o de \textit{captura de variáveis livres}. No exemplo:
 
-\[ (\lambda x.\ t)\{y/u\},\ x\ \neq\ y \]
+\[ ((\lambda x.\ x\ y)\ u)\{y/x\},\ x\ \neq\ y,\ y  \notin fv(u) \]
 
-Se a variável \textbf{x} ocorrer livre no termo \textbf{u}, ela será capturada
-pela abstração, tornando-se uma variável ligada e mudando a semântica do termo.
+Observe que, reduzindo a aplicação antes de aplicar a substituição, temos:
+
+
+\[ ((\lambda x.\ x\ y)\ u)\{y/x\} \rightarrow_\beta ((x\ y)\{x/u\}\{y/x\})
+\rightarrow (u\ y)\{y/x\} \rightarrow (u\ x) \]
+
+Mas, fazendo a substituição imediatamente, temos:
+
+\[ ((\lambda x.\ x\ y)\ u)\{y/x\} \rightarrow ((\lambda x.\ x\ x) u)
+\rightarrow_\beta (x\ x)\{x/u\} \rightarrow (u\ u) \]
+
+Veja que isto muda completamente o funcionamento do termo. A variável \textbf{x}
+na substituição não é a mesma da que está ligada na abstração! Isto pode causar
+vários problemas inesperados, como, por exemplo, a perda da normalização do
+termo. Se o termo \textbf{u} for da forma $(\lambda z. z z)$, ao realizar a
+substituição imediatamente, obtemos o termo $(\lambda z. z z)\ (\lambda z. z z)$,
+que, como dito anteriormente, não termina.
 Para evitar este problema, podemos renomear a variável ligada \textbf{x}, antes
 da substituição, por uma variável nova, de maneira a obter um termo
-$\alpha$-equivalente, podendo então realizar a substituição sem modificar a
+$\alpha$-equivalente e podendo então realizar a substituição sem modificar a
 estrutura do termo.
+
+\subsection{Representação de $\lambda$-termos}
 
 Como dito anteriormente, o cálculo lambda é usado como modelo teórico para
 linguagens funcionais. A noção de $\alpha$-equivalência, apesar de útil, pode ser
 muito custosa em uma implementação prática. Por este motivo, foram propostas
 algumas representações diferentes de termos, de modo a evitar a necessidade do
-renomeamento de variáveis. Entre elas, está a \textit{locally nameless
-    representation}, usada para representar os $\lambda$-termos neste trabalho.
+renomeamento de variáveis. 
+
+Uma das primeiras, e mais importantes, tentativas de resolver o problema da
+$\alpha$-conversão é a notação utilizando indices de De Bruijin. Nela, são
+utilizados números naturais para representar as variáveis. Cada número
+representa a quantidade de abstrações no escopo da ocorrência. Números que
+ultrapassam esta quantidade representam variáveis livres. A gramática pode ser
+definida como:
+
+\[ \tau := n\ |\ \lambda . \tau\ |\ \tau \tau \]
+
+Onde \textit{n} representa um número natural, a partir do 1. Exemplos de termos
+nesta notação incluem a identidade $(\lambda. 1)$, a função constante $(\lambda.
+u)$, com \textbf{u} não contendo 1 como índice livre, e um termo com índice
+livre, como $((\lambda.2) u)$. Apesar de sua praticidade de implementação, esta
+notação se afasta muito da utilização do cálculo no papel, além de não separar
+sintaticamente variáveis livres e ligadas.
+
+Uma solução para estes problemas é usar a \textit{locally nameless
+representation}, usada para representar os $\lambda$-termos neste trabalho.
 A gramática do sistema é modificada parcialmente:
 
 \[ \tau := x\ |\ \lambda . \tau\ |\ \tau \tau \]
 
-Observe que a abstração não carrega mais uma variável ligada. Ao invés disso,
-são usados índices (que podem ser números naturais) para representar estas
-variáveis. A meta-substituição deve então ser adaptada para levar em conta estes
-índices, como no exemplo:
+Observe que a abstração também não carrega uma variável ligada. Ao invés disso,
+são usados índices (que podem ser números naturais, como em de Bruijin) para
+representar estas variáveis. A meta-substituição deve então ser adaptada para
+levar em conta estes índices, como no exemplo:
 
 \[ (\lambda.\ 1) \{0/t\} \rightarrow ( \lambda. (1 \{1/t\}) ) \]
 
 Note que o índice a ser substituído foi incrementado quando a substituição entra
-na abstração, de modo a corresponder à variável correta a ser substituída. As
-variáveis livres continuam sendo representadas da mesma maneira. Esta
-representação foi proposta por Arthur Charguéraud, junto com provas de
-seu bom funcionamento e um framework para sua utilização em Coq, em
-\cite{chargueraud}.
+na abstração, de modo a corresponder à variável correta a ser substituída. 
+A operação de substituição pode ser melhor definida como:
+
+\begin{empheq}[box=\fbox]{align*}
+    \{k \rightarrow x\} i\ \ \ \  & \equiv\ \ x,\ se\ (i = k);\ i,\ c.c\\
+    \{k \rightarrow x\} y\ \ \ \  & \equiv\ y\\
+    \{k \rightarrow x\} (t\ u)\ \ \ \  & \equiv\ (\{k \rightarrow x\}t\ \{k
+    \rightarrow x\}u)\\
+    \{k \rightarrow x\} (\lambda . t) \ \ \ \  & \equiv\ 
+    (\lambda . \{k+1 \rightarrow x\}t)
+\end{empheq}
+
+
+
+As variáveis livres continuam sendo representadas da mesma maneira. Esta
+representação foi detalhada por Arthur Charguéraud em \cite{chargueraud}, junto
+com provas de seu bom funcionamento e um framework para sua utilização em Coq.
+Entraremos agora em alguns detalhes do uso desta notação, descritos em
+\cite{chargueraud}, já que ela tem um interesse especial neste trabalho.
+
+Na notação usual, quando queremos estudar o corpo de uma abstração $(\lambda x.
+t)$, podemos trabalhar diretamente com o termo \textit{t}. Porém, nesta nova
+representação, a abstração tem a forma $(\lambda . t)$, e é necessário que seja
+fornecida uma variável \textit{x} para se trabalhar com o corpo. Esta operação é
+chamada \emph{abrir o termo} \textit{t} com \textit{x}, e será representada por
+$t^{x}$. Mais precisamente, a abertura do termo $(\lambda . t)$ cria uma cópia
+de \emph{t} onde todas as ocorrências do índice ligado à abstração mais externa
+são trocados pela variável \emph{x}. Como exemplo, abrir a abstração $(\lambda.
+(0\ y))$ com \emph{x} nos dá o termo $(x\ y)$. A operação de abrir o termo deve
+ajustar o índice a ser mudado à medida que entra no termo. Assim, podemos usar a
+já definida operação de substituição, diretamente com a variável \emph{x}, para
+realizar a abertura. Temos, então, $t^{x} \equiv t\{0/x\}$.
+
+Similarmente, podemos querer abstrair todas as ocorrências de \emph{x} no termo
+\emph{t}, construindo então o termo $(\lambda x. t)$. Com a nova notação, é
+necessário definir uma operação que substitui todas as ocorrências de \emph{x}
+pelo índice 0, antes de adicionar a abstração. Esse processo é chamado
+\emph{fechar o termo}, representado por $ ^{\textbackslash x}t$. Assim, para
+construir a abstração de maneira equivalente, fazemos $(\lambda .
+^{\textbackslash x}t)$. Podemos definir a operação de fechamento como $
+^{\textbackslash x}t \equiv \{0 \leftarrow t\}$, onde esta nova substituição é
+definida como:
+
+\begin{empheq}[box=\fbox]{align*}
+    \{k \leftarrow x\} i\ \ \ \  & \equiv\ i\\
+    \{k \leftarrow x\} y\ \ \ \  & \equiv\ \ 0,\ se\ (x = y);\ y,\ c.c\\
+    \{k \leftarrow x\} (t\ u)\ \ \ \  & \equiv\ (\{k \leftarrow x\}t\ \{k
+    \leftarrow x\}u)\\
+    \{k \leftarrow x\} (\lambda . t) \ \ \ \  & \equiv\ 
+    (\lambda . \{k+1 \leftarrow x\}t)
+\end{empheq}
+
+Como dito anteriormente, esta representação possui termos que contém
+\emph{índices livres}. Tais termos não possuem correspondentes no sistema
+original, pois os índices não estão ligados a nenhuma abstração e não
+representam variáveis livres. Assim, precisamos tomar cuidado para evitar
+trabalhar com termos com tais índices, já que estes não são nosso objeto de
+interesse. Para isto, chamaremos um termo sem índices livres de \emph{localmente
+fechado}.
+
+Existem duas maneiras de conferir se um termo é localmente fechado. A primeira
+consiste em andar pela estrutura do termo, abrindo cada abstração com uma nova
+variável. Desta maneira, se o termo for de fato fechado, nunca encontraremos um
+índice. A segunda abordagem consiste em analizar diretamente os índices do termo,
+checando, para cada um deles, se o seu valor é menor ou igual ao número de
+abstrações que o rodeiam.
+
+A primeira opção dá lugar a uma definição natural de um predicado, denotado por
+\emph{lc\ t} indicando que o termo é localmente fechado. Com apenas três regras
+de inferência, podemos facilmente fazer uma análise mais formal da propriedade
+de ser localmente fechado, sendo bastante útil em provas.
+
+\begin{mathpar} 
+    \inferrule*[Right=lc\_fvar]{  }
+    {lc(x)}
+    \and
+    \inferrule*[Right=lc\_app]{lc\ t1 \\ lc\ t2}
+    {lc(t1\ t2)}
+    \and
+    \inferrule*[Right=lc\_abs]{\forall x \notin L,\ lc\ (t^{x})}
+    {lc(\lambda. t)}
+\end{mathpar}
+
+A premissa $\forall x \notin L$ no caso da abstração captura a ideia de \emph{x}
+ser uma variável nova, pois podemos tomar o conjunto L, sempre finito, como
+sendo o conjunto de variáveis já usadas e, assim, sempre ter uma escolha nova de
+\emph{x}.
+
+A segunda abordagem tem um caráter mais naturalmente computacional, dando lugar
+a uma função recursiva para conferir se um termo é localmente fechado. Tal
+função vai navegando pelo termo, entrando em seus subtermos, guardando um
+contador. Quando entrar em uma abstração, a função incrementa tal contador. Ao
+encontrar um índice, basta conferir se ele é menor que o contador. Assim, a
+função pode ser definida como a seguir.
+
+\begin{empheq}[box=\fbox]{align*}
+    lc\_at\ k\ (i)\ \ \ &\equiv\ i<k \\ 
+    lc\_at\ k\ (x)\ \ \ &\equiv\ True \\ 
+    lc\_at\ k\ (t1\ t2)\ \ \ &\equiv\ (lc\_at\ k\ t1)\ \&\ (lc\_at\ k\ t2) \\ 
+    lc\_at\ k\ (\lambda. t1)\ \ \ &\equiv\ (lc\_at\ k + 1\ t1)
+\end{empheq}
+
+Dizemos que o termo \emph{t} é localmente fechado se a função \emph{(lc\_at 0
+t)} retorna \textbf{True}.  Não é difícil provar a equivalência de ambas as
+definições, ou seja, que vale $lc\ t\ \iff\ (lc\_at\ 0\ t)\ =\ True$.
+
+Ambas as implicações possuem uma demonstração simples. Para o caso em que $lc\ t
+\rightarrow (lc\_at\ 0\ t)\ =\ True$, podemos fazer uma indução no predicado
+\emph{lc}. O único subcaso que não sai imediatamente é o da abstração, que pode
+ser facilmente resolvido se observarmos que um termo $t^{x}$ é fechado a um
+nível k se, e somente se, \emph{t} é fechado a nível k + 1.
+
+A volta, ou seja $lc\ t \leftarrow (lc\_at\ 0\ t)\ =\ True$, se faz por uma
+indução na estrutura do termo \emph{t}. Novamente, o caso da abstração merece um
+cuidado especial, mas ainda sai de maneira simples, escolhendo o conjunto L como
+sendo exatamente o conjunto de variáveis livres de \emph{t}.
+
+Vale a pena ressaltar duas outras equivalências, referentes às noções de
+abertura e fechamento de termos. Temos:
+
+\begin{empheq}[box=\fbox]{align*}
+    ^{\setminus x}(t^{x})\ &=\ t,\ se\ x\ \notin\ fv(t) \\
+    (^{\setminus x}t)^{x}\ &=\ t,\ se\ vale\ (lc\ t)
+\end{empheq}
+
+
+Estas definições serão extremamente importantes ao decorrer do trabalho e podem
+ser citadas com frequência.
 
 Para mais informações a respeito do cálculo lambda, veja \cite{barendregt}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\
 
-\section{O sistema $\lambda$ex}
+
+
+\section{Substituições explícitas}
+
+\subsection{Motivação e histórico}
 
 Sabemos que a ordem em que as reduções são feitas não altera a forma normal do
 termo, mas isto não significa que não existem vantagens em se adotar certas
 estratégias na normalização. Como exemplo, observe os seguintes casos:
 
-\[ ((\lambda.\ x) t) \{1/y\} \rightarrow ((\lambda.\ x\{1/y\})\ t\{1/y\}) 
+\[ ((\lambda.\ x) t) \{0/y\} \rightarrow ((\lambda.\ x\{1/y\})\ t\{0/y\}) 
     \rightarrow ((\lambda.\ x) t') \rightarrow (x\{0/t\}) \rightarrow x
 \]
 
-\[ ((\lambda.\ x) t) \{1/y\} \rightarrow (x\{0/t\}) \{1/y\} 
-    \rightarrow x \{1/y\} \rightarrow x \]
+\[ ((\lambda.\ x) t) \{0/y\} \rightarrow (x\{0/t\}) \{0/y\} 
+    \rightarrow x \{0/y\} \rightarrow x \]
 
 Veja que, na segunda abordagem, evitamos uma operação potencialmente custosa de
 realizar uma substituição em um termo \emph{t} que seria imediatamente
@@ -134,17 +322,75 @@ Na implementação de linguagens de programação, a substituição muitas vezes
 "atrasada", de modo a evitar computações desnecessárias. Para aproximar o modelo
 teórico de seu correspondente prático, podemos tentar fracionar a operação de
 substituição em partes atômicas, de maneira a permitir uma manipulação simbólica
-mais precisa. Com este objetivo em mente, foi proposto em \cite{delia} o
+mais precisa. 
+
+Por este motivo, várias tentativas de se formalizar a noção de substituição,
+dando então espaço para o formalismo conhecido como \textit{substituição
+explícita}. A princípio, podemos tentar extender a gramática de termos da
+seguinte maneira:
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+
+Podemos então espelhar o funcionamento da meta-substituição através de regras de
+redução no novo cálculo, gerando o sistema conhecido como $\lambda$x.
+
+\begin{table}[h]
+\begin{empheq}[box=\fbox]{align*}
+    (\lambda x.\ t)\ u\ \ \ &\rightarrow\ t[x/u] \\
+    x[x/u]\ \ \             &\rightarrow\ u \\
+    y[x/u]\ \ \             &\rightarrow\ y,\ se\ x\ \neq\ y \\
+    (t\ u)[x/v]\ \ \        &\rightarrow\ t[x/v]\ u[x/v] \\
+    (\lambda y.\ u)[x/v]\ \ &\rightarrow\ (\lambda y.\ u[x/v])
+\end{empheq}
+    \caption{Regras do sistema $\lambda$x}
+\end{table}
+
+O sistema $\lambda$x corresponde ao comportamento mínimo que se espera de um
+cálculo com substituições explícitas. Porém, existem outras propriedades
+interessantes que podem ser adicionadas ao sistema e, em consequência disto,
+vários outros modelos foram propostos, como o $\lambda_\sigma$, $\lambda_{ws}$,
+$\lambda$lxr, entre outros. 
+
+Um problema que pode acontecer em sistemas com substituição explícita é a perda
+da preservação da normalização forte (\textbf{PSN}), que pode ser definida como:
+
+\begin{description}
+    \item[PSN:] Se $\lambda$z é um cálculo baseado no cálculo $\lambda$, deve
+        valer a seguinte afirmação. Se \emph{t} é um $\lambda$-termo fortemente
+        normalizável, então seu correspondente em $\lambda$z também o é neste
+        novo sistema.
+\end{description}
+
+Este tipo de problema é especialmente comum em cálculos de substituições
+explícitas que possuem a propriedade de composição de substituições.
+Essencialmente, dado um termo $t[x/u][y/v]$, podemos compor as duas
+substituições, de maneira a reduzir a segunda substituição antes da primeira.
+Como resultado, teríamos o termo $t[y/v][x/u[y/v]]$. 
+
+Várias estratégias são usadas para se tentar garantir a propriedade \emph{PSN}
+do sistema, como utilização de marcas em termos, restrição de composições ou
+reduções dentro de substituições explícitas, definições de classes de
+equivalências, entre outros. Para uma visão geral do histórico de cálculos de
+substituições explícitas, veja \cite{es_overview}.
+
+A seguir, veremos um sistema que propõe uma maneira de se compor tais
+substituições sem perder a propriedade \emph{PSN}.
+
+
+
+\subsection{O sistema $\lambda$ex}
+
+
+Com este objetivo em mente, foi proposto em \cite{delia} o
 sistema $\lambda$ex. Este sistema será repetido aqui, e um maior entendimento
 pode ser obtido na fonte original. São introduzidas várias mudanças, a começar
 pela gramática: 
 
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+\
 
-A nova construção é chamada \textit{substituição explícita}, e é o que permite as
-manipulações sintáticas com substituições no cálculo. Como consequência desta
-mudança, novas regras de redução são definidas:
-
+\begin{table}[h]
+    
 \begin{empheq}[box=\fbox]{align*}
     x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
     t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & se\ \emph{x} \notin fv(t)\\
@@ -154,16 +400,28 @@ mudança, novas regras de redução são definidas:
     fv(u) \\ 
     (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u]
 \end{empheq}
-\begin{center}Regras de redução \end{center}
+    \caption{Regras de redução}
+    \label{table:red_lambex}
 
-Onde \emph{fv(t)} são as variáveis livres de \emph{t}.
-As 5 primeiras regras formam a relação $\rightarrow_x$, e o acréscimo da última
-forma a relação $\rightarrow_{Bx}$. 
+\end{table}
+
+A nova construção é chamada \textit{substituição explícita}, e é o que permite as
+manipulações sintáticas com substituições no cálculo. Como consequência desta
+mudança, novas regras de redução são definidas, como mostrado na tabela
+\ref{table:red_lambex}.  As 5 primeiras regras formam a relação $\rightarrow_x$,
+e o acréscimo da última forma a relação $\rightarrow_{Bx}$. 
 
 Observe que, devido ao acréscimo das substituições explícitas, é possível
 definir termos que possuem uma sintaxe distinta, diferindo apenas na permutação
 de substituições independentes, e que constiturem o mesmo
-$\lambda$-termo no sistema original. Assim, é necessário tornar o novo sistema
+$\lambda$-termo no sistema original. Um exemplo simples pode ser visto a seguir.
+
+\[ (0\ 1) \{0/x\}\{1/y\} = (0\{0/x\}\ 1\{1/y\}) = (x\ y) =  (0\ 1) \{1/y\}\{0/x\} \]
+\[ (0\ 1) [0/x][1/y] \neq  (0\ 1) [1/y][0/x] \]
+
+Onde a noção de igualdade usada é a sintática.
+
+Assim, é necessário tornar o novo sistema
 equacional, adicionando uma relação de equivalência:
 
 \[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 

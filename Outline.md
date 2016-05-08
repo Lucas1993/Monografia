@@ -8,7 +8,7 @@ Introdução
 
 - Introduzir o cálculo lambda. Falar da sua história, seu poder computacional e seu uso como modelo teórico.
 - Mencionar as propriedades de normalização e confluência do sistema puro.
-- Introduzir os primeiros problemas de representação, falar de alpha equivalência, índices de "de Brujin" e locally nameless.
+- Introduzir os primeiros problemas de representação, falar de alpha equivalência, índices de "de Bruijin" e locally nameless.
 
 ### Sistema \ex
 
