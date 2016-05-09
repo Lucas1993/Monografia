@@ -447,5 +447,176 @@ implica a normalização da explícita.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\section{O assistente de provas Coq} 
-%blablabla
+\section{O assistente de provas Coq} 
+\subsection{Motivação}
+
+Assistentes de provas são sistemas computacionais que permitem aos usuários
+realizar provas e definições em um computador. Neles, o usuário pode construir
+toda sua teoria matemática em uma linguagem em que o sistema seja capaz de
+verificar automaticamente. Ou seja, a principal motivação por trás de um
+assistente de prova é verificar formalmente as provas de uma teoria. Apesar de
+já existir um processo humano de verificação, muitas vezes ocorrem erros neste
+processo, e provas que foram aceitas numa primeira avaliação são descobertas
+problemáticas algum tempo depois. Como exemplo, podemos citar o teorema das
+quatro cores \cite{four_colour}, que desafiou matemáticos por anos e foram
+apresentadas falsas provas diversas vezes. Eventualmente, o teorema foi provado
+em um assistente de prova e hoje sua corretude é aceita.
+
+Mas, então, o que exatamente significa uma prova? Uma prova normalmente é
+definida como o processo de se estabelecer a validade de alguma afirmação. Na
+matemática, as provas costumam exigir uma clareza e rigor mais extremo, de modo
+a se tornar indiscutível quando analizada com cuidado. Porém, matemáticos são
+humanos e, infelizmente, cometem erros. Com isto em mente, foi definida uma
+noção ainda mais forte de prova, chamada \emph{prova formal}.
+
+Uma prova formal é uma sequência finita de sentenças tal que cada uma delas ou é
+um axioma, uma suposição ou é derivada diretamente das sentenças anteriores
+através das chamadas regras de inferência. A vantagem do rigor das provas
+formais é que conferí-la se torna um processo muito mais simples, sendo
+necessário apenas confirmar de onde vem cada uma das sentenças.
+
+Por este motivo, provas formais são comumente construídas e verificadas pelos
+assistentes de prova. Ao utilizar a linguagem do assistente, ele aos poucos
+constrói a sequência de sentenças e simultaneamente checa sua validade. Porém,
+isto gera outra dúvida: Por que confiar nos assistentes de prova?
+
+
+\begin{description}
+    \item[Lógica do assistente:] Os assistentes de prova em geral possuem uma
+        teoria forte no qual são baseados. Em geral, existe um sistema
+        matemático independente de implementação que pode ser estudado e
+        verificado anteriormente.
+    \item[Checagem do assitente:] O assistente em si é, também, um programa. Assim,
+        podemos analizar seus algoritmos, demonstrar que só é possível provar
+        teoremas derivados no sistema lógico interno e testar seu funcionamento
+        como um programa normal.
+    \item[Critério de De Bruijin:] Muitos assistentes de prova criam um
+        \emph{objeto de prova}, uma prova formal independente do sistema que
+        pode ser checada tanto por outro programa, quanto por um matemático
+        interessado.  
+\end{description}
+
+Recentemente, existe um grande número de matemáticos interessados em assistentes
+de prova, buscando construir uma teoria consistente para o uso destes e
+produzindo o software necessário para facilitar seu uso. Em especial, um dos
+assistentes com maior uso é o chamado Coq, a ser apresentado a seguir.
+
+Para uma visão geral sobre o histórico e uso de assistentes de prova, veja
+\cite{proof_assist}. 
+
+\subsection{A ferramenta Coq}
+
+Neste trabalho, usaremos o Coq, um assistente de provas que está em
+desenvolvimento desde 1983, em vários institutos de pesquisa franceses. O Coq
+provê um rico ambiente para o desenvolvimento de um raciocínio formal checado
+automaticamente. O núcleo do sistema é um checador de provas simples que garante
+que apenas passos válidos de dedução são efetuados. Além deste núcleo, o
+ambiente provê diversas táticas para facilitar a construções de provas, junto
+com uma vasta biblioteca de definições e teoremas comuns.
+
+A ferramenta vem acompanhada de uma linguagem de programação funcional, com
+tipos dependentes. É através desta linguagem que podemos criar as definições e
+provar os lemas de nossa teoria. Ela é baseada no Cálculo de Construções
+Indutivas, uma extensão do cálculo lambda que serve como modelo teórico para o
+sistema. O processo de se verificar a corretude de uma prova em Coq se reduz ao
+problema de \emph{checagem de tipos}. A seguir, será feita uma introdução à
+sintaxe e o funcionamento da ferramenta, baseada em tutoriais disponibilizados
+na página oficial do sistema, em \cite{coq} e \cite{coq2}.
+
+
+Os objetos de Coq podem ser divididos em duas categorias, \emph{Prop} e
+\emph{Type}. A categoria \emph{Prop} é a das proposições bem formadas. Um
+exemplo de proposição na linguagem seria:
+
+\begin{lstlisting}[basicstyle=\small]
+    forall A B : Prop, A -> (A \/ B).
+\end{lstlisting}
+
+Predicados podem ser definidos indutivamente, como a seguir.
+
+\begin{lstlisting}[basicstyle=\small]
+    Inductive even : N -> Prop :=
+    | even_0 : even 0
+    | even_S n : odd n -> even (n + 1)
+    with odd : N -> Prop :=
+    | odd_S n : even n -> odd (n + 1).
+\end{lstlisting}
+
+Predicados também podem ser feitos como definições diretas, como:
+
+\begin{lstlisting}[basicstyle=\small]
+    Definition sqr(x : N) := exists z, z*z = x.
+\end{lstlisting}
+
+Assim, podemos utilizar estes predicados como propriedades de algum objeto,
+provando algo como \emph{even(2)} ou \emph{sqr(4)}.
+
+\emph{Type} é a categoria de estruturas matemáticas e estruturas de dados.
+Alguns exemplos de tipos são:
+
+\begin{lstlisting}[basicstyle=\small]
+    Z * Z -> Z
+\end{lstlisting}
+
+Tipos também podem ser definidos indutivamente:
+
+\begin{lstlisting}[basicstyle=\small]
+    Inductive nat : Set :=
+    | 0 : nat
+    | S : nat -> nat.
+\end{lstlisting}
+
+Neste caso, elementos do tipo \emph{nat} são: 0, S ( 0 ), S ( S ( 0 ) ), etc.
+
+O desenvolvimento de provas em Coq é feito através de uma linguagem de provas,
+que permite um processo guiado pelo usuário. Ao utilizar uma tática, o usuário
+está construindo os objetos de prova. Por exemplo, a tática
+\texttt{intro n}, onde \emph{n} é do tipo \texttt{nat}, constrói o termo (com um
+buraco):
+
+\begin{lstlisting}[basicstyle=\small]
+    fun (n:nat) => _
+\end{lstlisting}
+
+Onde \_ representa um termo que irá ser construído futuramente, utilizando
+outras táticas. Um exemplo de proposição simples que podemos querer provar é
+\texttt{forall A : Prop, A -> A}. Provamos isto da seguinte maneira:
+
+\begin{lstlisting}[basicstyle=\small]
+    Theorem prova_simples : (forall A : Prop, A -> A).
+    Proof.
+        intros A.
+        intros prova_de_A.
+        exact prova_de_A.
+    Qed.
+\end{lstlisting}
+
+Onde \emph{prova\_simples} é o nome do teorema, e \emph{Proof/Qed} delimita a
+prova. A ferramenta disponibliza uma maneira de visualizar os estados da prova
+durante o processo. Assim, quando terminamos o comando \texttt{intros
+prova\_de\_A}, temos o seguinte estado:
+
+\begin{lstlisting}[basicstyle=\small]
+   A : Prop
+   proof_of_A : A
+   ============================
+   A
+\end{lstlisting}
+
+Todos os elementos acima da barra horizontal são nossas \emph{hipóteses}, e
+chamamos este conjunto de \emph{contexto}. Abaixo da barra está nosso objetivo
+atual. Esta prova foi concluída com a tática \texttt{exact prova\_de\_A}, para
+dizer que a prova é exatamente o elemento \texttt{prova\_de\_A}. 
+
+Usando o comando \texttt{Print prova\_simples}, podemos ver o termo de prova
+gerado pelas táticas.
+
+\begin{lstlisting}[basicstyle=\small]
+prova_simples = 
+    fun (A : Prop) (prova_de_A : A) => prova_de_A
+         : forall A : Prop, A -> A
+
+\end{lstlisting}
+
+Para um melhor entendimento do funcionamento da ferramenta, da linguagem e
+teoria envolvidos, ver \cite{pierce}.
