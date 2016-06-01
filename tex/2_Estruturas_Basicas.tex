@@ -1,0 +1,127 @@
+\section{Termos}
+\subsection{A Gramática de pré-termos}
+\label{sec:termos}
+
+Nesta seção, será feita um paralelo entre as estruturas básicas do sistema
+$\lambda ex$ e sua formalização em Coq.
+
+Como visto em \ref{sub:int_lex}, o sistema possui uma gramática que pode ser vista como
+uma extensão do cálculo lambda original, consistindo de variáveis, abstrações,
+aplicações e \emph{substituições explícitas}. Ela pode ser descrita sucintamente
+como abaixo.
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+
+Já encontramos então nossa primeira divergência na formalização. Neste projeto,
+será usada a representação chamada \textit{Locally Nameless Representation}
+(LNR), onde as variáveis ligadas são representadas por índices. Por conta disso,
+existem termos nesta nova gramática que não possuem correspondentes no sistema
+original, por conta de índices que não estão ligados a nenhuma abstração.
+
+Assim, torna-se necessária uma gramática de \emph{pré-termos}, que consiste de
+todos os termos possíveis de serem escritos em LNR. Esta gramática é formalizada
+usando um tipo indutivo, como abaixo.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive pterm : Set :=
+  | pterm_bvar : nat -> pterm
+  | pterm_fvar : var -> pterm
+  | pterm_app  : pterm -> pterm -> pterm
+  | pterm_abs  : pterm -> pterm
+  | pterm_sub  : pterm -> pterm -> pterm 
+  | pterm_lsub : pterm -> pterm -> pterm.
+\end{lstlisting}
+
+Veja que variáveis livres e ligadas possuem construtores distintos. Para as
+livres, o construtor correto é \texttt{pterm\_bvar}, que recebe um natural
+representando um índice. As variáveis livres são construídas com
+\texttt{pterm\_fvar}, recebendo um elemento to tipo \texttt{var}, definido no
+framework de Charguéraud.
+As aplicações, abstrações e substituições são representadas através do
+construtores \texttt{pterm\_app}, \texttt{pterm\_abs} e \texttt{pterm\_sub},
+respectivamente. Todos recebem um ou dois pré-termos, que correspondem aos
+termos internos das estruturas.
+
+O último construtor, \texttt{pterm\_lsub}, será usado para representar
+\emph{substituições marcadas}, um formalismo necessário para as provas de
+correspondência com a meta-substituição.
+
+\subsection{Termos bem formados}
+
+Devido à correspondência assimétrica entre os termos do sistema $\lambda ex$ e
+em LNR, torna-se necessário definir os predicados de boa formação de termos.
+
+Como pré-requisito para a definição destes predicados, precisamos implementar as
+noções de abertura e fechamento de termos, como visto em \ref{sub:int_lnr}. 
+Relembrando, a operação de abertura foi definida como $t^{x} \equiv t\{0/x\}$.
+
+Para implementar tal operação, precisaremos de duas funções, \texttt{open\_rec}
+e \texttt{open}.
+
+\begin{lstlisting}[basicstyle=\small]
+    
+Fixpoint open_rec (k : nat) (u : pterm) (t : pterm) {struct t} : pterm :=
+  match t with
+  | pterm_bvar i    => if k === i then u else (pterm_bvar i)
+  | pterm_fvar x    => pterm_fvar x
+  | pterm_app t1 t2 => pterm_app (open_rec k u t1) (open_rec k u t2)
+  | pterm_abs t1    => pterm_abs (open_rec (S k) u t1)
+  | pterm_sub t1 t2 => pterm_sub (open_rec (S k) u t1) (open_rec k u t2)
+  | pterm_lsub t1 t2 => pterm_lsub (open_rec (S k) u t1) (open_rec k u t2)
+  end.
+
+Definition open t u := open_rec 0 u t.
+\end{lstlisting}
+
+A primeira, adentra o termo \texttt{t} recursivamente, procurando pelo índice
+\texttt{k} e substituindo pelo termo \texttt{u}. Ao encontrar uma abstração ou
+substituição, o índice \texttt{k} é incrementado.  A segunda, que é a chamada da
+operação de fato, apenas chama \texttt{open\_rec} com $k = 0$.
+
+Similarmente, a operação de fechamento foi definida como $ ^{\textbackslash x}t
+\equiv \{0 \leftarrow t\}$. Sua implementação é feita de maneira análoga, como
+visto a seguir.
+\pagebreak
+
+\begin{lstlisting}[basicstyle=\small]
+Fixpoint close_rec  (k : nat) (x : var) (t : pterm) {struct t} : pterm :=
+  match t with
+  | pterm_bvar i    => pterm_bvar i
+  | pterm_fvar x'    => if x' == x then (pterm_bvar k) else pterm_fvar x'
+  | pterm_app t1 t2 => pterm_app (close_rec k x t1) (close_rec k x t2)
+  | pterm_abs t1    => pterm_abs (close_rec (S k) x t1)
+  | pterm_sub t1 t2 => pterm_sub (close_rec (S k) x t1) (close_rec k x t2)
+  | pterm_lsub t1 t2 => pterm_lsub (close_rec (S k) x t1) (close_rec k x t2)
+  end.
+
+Definition close t x := close_rec 0 x t.
+    
+\end{lstlisting}
+
+Podemos agora definir os predicados \texttt{term} e \texttt{body}, representando
+termos e corpos de abstrações bem formados.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive term : pterm -> Prop :=
+  | term_var : forall x,
+      term (pterm_fvar x)
+  | term_app : forall t1 t2,
+      term t1 -> 
+      term t2 -> 
+      term (pterm_app t1 t2)
+  | term_abs : forall L t1,
+      (forall x, x \notin L -> term (t1 ^ x)) ->
+      term (pterm_abs t1)
+  | term_sub : forall L t1 t2,
+     (forall x, x \notin L -> term (t1 ^ x)) ->
+      term t2 -> 
+      term (pterm_sub t1 t2).
+\end{lstlisting}
+
+O predicado \texttt{term} recebe um pré-termo, e indica que este elemento é bem
+formado, ou seja, não possui índices livres. Para cada tipo de pré-termo, temos
+um construtor diferente do predicado.
+
+No caso de variáveis livres, o construtor \texttt{term\_var} recebe uma variável
+\texttt{x} e constrói o predicado \texttt{term (pterm\_fvar x) }.
+

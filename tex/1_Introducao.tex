@@ -123,6 +123,7 @@ $\alpha$-equivalente e podendo então realizar a substituição sem modificar a
 estrutura do termo.
 
 \subsection{Representação de $\lambda$-termos}
+\label{sub:int_lnr}
 
 Como dito anteriormente, o cálculo lambda é usado como modelo teórico para
 linguagens funcionais. A noção de $\alpha$-equivalência, apesar de útil, pode ser
@@ -379,6 +380,7 @@ substituições sem perder a propriedade \emph{PSN}.
 
 
 \subsection{O sistema $\lambda$ex}
+\label{sub:int_lex}
 
 
 Com este objetivo em mente, foi proposto em \cite{delia} o
@@ -504,7 +506,7 @@ assistentes com maior uso é o chamado Coq, a ser apresentado a seguir.
 Para uma visão geral sobre o histórico e uso de assistentes de prova, veja
 \cite{proof_assist}. 
 
-\subsection{A ferramenta Coq}
+\subsection{A ferramenta}
 
 Neste trabalho, usaremos o Coq, um assistente de provas que está em
 desenvolvimento desde 1983, em vários institutos de pesquisa franceses. O Coq
@@ -555,7 +557,7 @@ provando algo como \emph{even(2)} ou \emph{sqr(4)}.
 Alguns exemplos de tipos são:
 
 \begin{lstlisting}[basicstyle=\small]
-    Z * Z -> Z
+    Z x Z -> Z
 \end{lstlisting}
 
 Tipos também podem ser definidos indutivamente:
@@ -598,7 +600,7 @@ prova\_de\_A}, temos o seguinte estado:
 
 \begin{lstlisting}[basicstyle=\small]
    A : Prop
-   proof_of_A : A
+   prova_de_A : A
    ============================
    A
 \end{lstlisting}
