@@ -132,7 +132,7 @@ algumas representações diferentes de termos, de modo a evitar a necessidade do
 renomeamento de variáveis. 
 
 Uma das primeiras, e mais importantes, tentativas de resolver o problema da
-$\alpha$-conversão é a notação utilizando indices de De Bruijin. Nela, são
+$\alpha$-conversão é a notação utilizando indices de De Bruijn. Nela, são
 utilizados números naturais para representar as variáveis. Cada número
 representa a quantidade de abstrações no escopo da ocorrência. Números que
 ultrapassam esta quantidade representam variáveis livres. A gramática pode ser
@@ -154,7 +154,7 @@ A gramática do sistema é modificada parcialmente:
 \[ \tau := x\ |\ \lambda . \tau\ |\ \tau \tau \]
 
 Observe que a abstração também não carrega uma variável ligada. Ao invés disso,
-são usados índices (que podem ser números naturais, como em de Bruijin) para
+são usados índices (que podem ser números naturais, como em de Bruijn) para
 representar estas variáveis. A meta-substituição deve então ser adaptada para
 levar em conta estes índices, como no exemplo:
 
@@ -256,12 +256,16 @@ contador. Quando entrar em uma abstração, a função incrementa tal contador. 
 encontrar um índice, basta conferir se ele é menor que o contador. Assim, a
 função pode ser definida como a seguir.
 
+\begin{table}[h]
 \begin{empheq}[box=\fbox]{align*}
     lc\_at\ k\ (i)\ \ \ &\equiv\ i<k \\ 
     lc\_at\ k\ (x)\ \ \ &\equiv\ True \\ 
     lc\_at\ k\ (t1\ t2)\ \ \ &\equiv\ (lc\_at\ k\ t1)\ \&\ (lc\_at\ k\ t2) \\ 
     lc\_at\ k\ (\lambda. t1)\ \ \ &\equiv\ (lc\_at\ k + 1\ t1)
 \end{empheq}
+    \caption{Definição da função lc\_at}
+    \label{table:lc_at}
+\end{table}
 
 Dizemos que o termo \emph{t} é localmente fechado se a função \emph{(lc\_at 0
 t)} retorna \textbf{True}.  Não é difícil provar a equivalência de ambas as
@@ -492,7 +496,7 @@ isto gera outra dúvida: Por que confiar nos assistentes de prova?
         podemos analizar seus algoritmos, demonstrar que só é possível provar
         teoremas derivados no sistema lógico interno e testar seu funcionamento
         como um programa normal.
-    \item[Critério de De Bruijin:] Muitos assistentes de prova criam um
+    \item[Critério de De Bruijn:] Muitos assistentes de prova criam um
         \emph{objeto de prova}, uma prova formal independente do sistema que
         pode ser checada tanto por outro programa, quanto por um matemático
         interessado.  
