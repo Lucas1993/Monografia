@@ -1,0 +1,2030 @@
+\documentclass[12pt]{report}
+\usepackage[]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{coqdoc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file has been automatically generated with the command
+%% coqdoc --latex Lambda_Int_Ext.v -o /home/amaral/code/TCC/monografia/coqdoc/Int_ext.tex 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\coqlibrary{Lambda Int Ext}{Library }{Lambda\_Int\_Ext}
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Set Implicit Arguments}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdocvar{Metatheory} \coqdocvar{LambdaES\_Defs} \coqdocvar{LambdaESLab\_Defs} \coqdocvar{LambdaES\_Infra} \coqdocvar{LambdaES\_FV}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdocvar{Rewriting}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdocvar{Equation\_C} \coqdocvar{Lambda} \coqdocvar{Lambda\_Ex}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocvar{ext\_lab\_contextual\_closure} (\coqdocvar{Red} : \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) : \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_redex} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{s}, \coqdocvar{Red} \coqdocvar{t} \coqdocvar{s} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} \coqdocvar{t} \coqdocvar{s}\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_app\_left} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{16.00em}
+\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_app\_right} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} \coqdocvar{u} \coqdocvar{u'} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{16.50em}
+\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u'})\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_abs\_in} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{L}, (\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvar{x} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{t}\^{}\coqdocvar{x}) (\coqdocvar{t'}\^{}\coqdocvar{x})) \coqdoceol
+\coqdocindent{15.00em}
+\ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{pterm\_abs} \coqdocvar{t'})\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_subst\_left} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{18.00em}
+(\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvar{x} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{t}\^{}\coqdocvar{x}) (\coqdocvar{t'}\^{}\coqdocvar{x})) \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{18.00em}
+\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red}  (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t'}[\coqdocvar{u}])\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_subst\_right} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{lab\_body} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} \coqdocvar{u} \coqdocvar{u'} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{17.50em}
+\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red}  (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t}[\coqdocvar{u'}]) \coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{lab\_subst'\_ext} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{18.00em}
+(\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvar{x} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red} (\coqdocvar{t}\^{}\coqdocvar{x}) (\coqdocvar{t'}\^{}\coqdocvar{x})) \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{18.00em}
+\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{Red}  (\coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{t'}[[\coqdocvar{u}]])\coqdoceol
+\coqdocnoindent
+.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocvar{lab\_x\_i}: \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{xi\_from\_bx\_in\_les}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t1} \coqdocvar{t2} \coqdocvar{t2'}, \coqdoceol
+\coqdocindent{11.50em}
+\coqdocvar{lab\_term} (\coqdocvar{t1} [[ \coqdocvar{t2} ]]) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{11.50em}
+(\coqdocvar{sys\_Bx} \coqdocvar{t2} \coqdocvar{t2'}) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{11.50em}
+\coqdocvar{lab\_x\_i} (\coqdocvar{t1} [[ \coqdocvar{t2} ]]) (\coqdocvar{t1} [[ \coqdocvar{t2'} ]])\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{xi\_from\_x} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdoceol
+\coqdocindent{8.00em}
+\coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{8.00em}
+\coqdocvar{lab\_sys\_x} \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{8.00em}
+\coqdocvar{lab\_x\_i} \coqdocvar{t} \coqdocvar{t'}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_EE\_ctx\_red} (\coqdocvar{R}: \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocvar{pterm}) (\coqdocvar{u} : \coqdocvar{pterm}) := \coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{t'} \coqdocvar{u'}, (\coqdocvar{t} =\coqdocvar{EE} \coqdocvar{t'})/\symbol{92}(\coqdocvar{lab\_contextual\_closure} \coqdocvar{R} \coqdocvar{t'} \coqdocvar{u'})/\symbol{92}(\coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{u}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{ext\_lab\_EE\_ctx\_red} (\coqdocvar{R}: \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocvar{pterm}) (\coqdocvar{u} : \coqdocvar{pterm}) := \coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{t'} \coqdocvar{u'}, (\coqdocvar{t} =\coqdocvar{EE} \coqdocvar{t'})/\symbol{92}(\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{R} \coqdocvar{t'} \coqdocvar{u'})/\symbol{92}(\coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{u}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_x\_i\_eq} := \coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{lab\_x\_i}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_x\_e\_eq} := \coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{sys\_Bx}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} "t -->[lx\_i] u" := (\coqdocvar{lab\_x\_i\_eq} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} "t -->[lx\_e] u" := (\coqdocvar{lab\_x\_e\_eq} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{red\_lab\_regular} (\coqdocvar{R} : \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\land} \coqdocvar{lab\_term} \coqdocvar{t'}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_sys\_x\_i\_e}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{x} \coqdocvar{x'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{x} =\coqdocvar{EE} \coqdocvar{t}) \ensuremath{\rightarrow} (\coqdocvar{t'} =\coqdocvar{EE} \coqdocvar{x'}) \ensuremath{\rightarrow} \coqdocvar{lab\_sys\_lx} \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} (\coqdocvar{x} -->[\coqdocvar{lx\_i}] \coqdocvar{x'} \ensuremath{\lor} \coqdocvar{x} -->[\coqdocvar{lx\_e}] \coqdocvar{x'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{\ensuremath{\exists}} \coqdocvar{t} \coqdocvar{u}. \coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}. \coqdoctac{constructor} 1. \coqdoctac{constructor} 1. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{\ensuremath{\exists}} \coqdocvar{t} \coqdocvar{u}. \coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}. \coqdoctac{constructor} 1. \coqdoctac{constructor} 2. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{\ensuremath{\exists}} \coqdocvar{t} \coqdocvar{u}. \coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}. \coqdoctac{constructor} 1. \coqdoctac{auto}. \coqdoctac{constructor} 2. \coqdoctac{auto}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{eqcc\_lab\_term}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{t} =\coqdocvar{ee} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{lab\_term} \coqdocvar{t'}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{induction} \coqdocvar{H0}. \coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{term'{}'\_to\_lab\_term}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_to\_term'{}'} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{split}. \coqdoctac{split}. \coqdocvar{admit}. \coqdocvar{admit}. \coqdocvar{admit}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{term'{}'\_to\_lab\_term}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_to\_term'{}'} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{split}. \coqdoctac{apply} \coqdocvar{lc\_at\_weaken\_ind} \coqdockw{with} 0. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdocvar{admit}. \coqdocvar{admit}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{term'{}'\_to\_lab\_term}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_to\_term'{}'} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{term\_to\_term'} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{unfold} \coqdocvar{term'} \coqdoctac{in} *; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{admit}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{term'{}'\_to\_lab\_term}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_to\_term'{}'} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{term\_to\_term'} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{unfold} \coqdocvar{term'} \coqdoctac{in} *; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}. \coqdoctac{apply} \coqdocvar{lc\_at\_weaken\_ind} \coqdockw{with} 0. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{admit}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{ctx\_eqcc\_sym}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{eqcc} \coqdocvar{t} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{eqcc} \coqdocvar{u} \coqdocvar{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{induction} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{eqc\_sym} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{constructor}; \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_eqc\_sym} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{constructor}; \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 3; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 4 \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 5 \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 6; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 7 \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 8; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{eqc\_sym} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_eqc\_sym} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_ctx\_eqcc\_sym}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvar{t} =\coqdocvar{EE} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{u} =\coqdocvar{EE} \coqdocvar{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{constructor}. \coqdoctac{induction} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2; \coqdoctac{constructor} 1. \coqdoctac{apply} \coqdocvar{ctx\_eqcc\_sym}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_open\_close\_var} : \coqdockw{\ensuremath{\forall}} (\coqdocvar{x} : \coqdocvar{var}) (\coqdocvar{t} : \coqdocvar{pterm}), \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{t} = \coqdocvar{close} \coqdocvar{t} \coqdocvar{x} \^{} \coqdocvar{x}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{W}. \coqdoctac{unfold} \coqdocvar{close}, \coqdocvar{open}. \coqdoctac{generalize} 0.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{induction} \coqdocvar{W}; \coqdoctac{intros} \coqdocvar{k}; \coqdocvar{simpls}; \coqdoctac{f\_equal}\ensuremath{\times}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{case\_var}\ensuremath{\times}. \coqdoctac{simpl}. \coqdocvar{case\_nat}\ensuremath{\times}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdockw{let} \coqdocvar{L} := \coqdocvar{gather\_vars} \coqdoctac{in} \coqdockw{match} \coqdockw{goal} \coqdockw{with} \ensuremath{\vdash} \coqdocvar{\_} = ?\coqdocvar{t} \ensuremath{\Rightarrow} \coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} (\coqdocvar{var\_fresh} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t})) \coqdockw{as} [\coqdocvar{y} \coqdocvar{Fr}] \coqdockw{end}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}\ensuremath{\times} (@\coqdocvar{open\_var\_inj} \coqdocvar{y}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{let} \coqdocvar{L} := \coqdocvar{gather\_vars} \coqdoctac{in} \coqdockw{match} \coqdockw{goal} \coqdockw{with} \ensuremath{\vdash} \coqdocvar{\_} = ?\coqdocvar{t} \ensuremath{\Rightarrow} \coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} (\coqdocvar{var\_fresh} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t})) \coqdockw{as} [\coqdocvar{y} \coqdocvar{Fr}] \coqdockw{end}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}\ensuremath{\times} (@\coqdocvar{open\_var\_inj} \coqdocvar{y}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{let} \coqdocvar{L} := \coqdocvar{gather\_vars} \coqdoctac{in} \coqdockw{match} \coqdockw{goal} \coqdockw{with} \ensuremath{\vdash} \coqdocvar{\_} = ?\coqdocvar{t} \ensuremath{\Rightarrow} \coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} (\coqdocvar{var\_fresh} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t})) \coqdockw{as} [\coqdocvar{y} \coqdocvar{Fr}] \coqdockw{end}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}\ensuremath{\times} (@\coqdocvar{open\_var\_inj} \coqdocvar{y}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{let} \coqdocvar{L} := \coqdocvar{gather\_vars} \coqdoctac{in} \coqdockw{match} \coqdockw{goal} \coqdockw{with} \ensuremath{\vdash} \coqdocvar{\_} = ?\coqdocvar{t} \ensuremath{\Rightarrow} \coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} (\coqdocvar{var\_fresh} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t})) \coqdockw{as} [\coqdocvar{y} \coqdocvar{Fr}] \coqdockw{end}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}\ensuremath{\times} (@\coqdocvar{open\_var\_inj} \coqdocvar{y}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{unfolds} \coqdocvar{open}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{open\_close\_var\_gen} \coqdockw{with} (\coqdocvar{x} := \coqdocvar{x}) (\coqdocvar{k} := \coqdocvar{k}); \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{term\_EE\_open}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{x}, \coqdocvar{lab\_term} \coqdocvar{t'} \ensuremath{\rightarrow} (\coqdocvar{t} \^{} \coqdocvar{x}) =\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{u}, \coqdocvar{t'} = \coqdocvar{u} \^{} \coqdocvar{x}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{close} \coqdocvar{t'} \coqdocvar{x}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{lab\_open\_close\_var}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{term\_EE\_open\_fv}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{x}, \coqdocvar{lab\_term} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{x} \symbol{92}\coqdocvar{notin} \coqdocvar{fv}(\coqdocvar{t}) \ensuremath{\rightarrow} (\coqdocvar{t} \^{} \coqdocvar{x}) =\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{u}, \coqdocvar{t'} = \coqdocvar{u} \^{} \coqdocvar{x} \ensuremath{\land} \coqdocvar{x} \symbol{92}\coqdocvar{notin} \coqdocvar{fv}(\coqdocvar{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{term\_EE\_open} \coqdoctac{in} \coqdocvar{H1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{\ensuremath{\exists}} (\coqdocvar{close} \coqdocvar{t'} \coqdocvar{x}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{lab\_open\_close\_var}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{close\_fresh}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{close\_var\_spec} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{x}, \coqdocvar{term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{u}, \coqdocvar{t} = \coqdocvar{u} \^{} \coqdocvar{x} \ensuremath{\land} \coqdocvar{body} \coqdocvar{u} \ensuremath{\land} \coqdocvar{x} \symbol{92}\coqdocvar{notin} (\coqdocvar{fv} \coqdocvar{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{close} \coqdocvar{t} \coqdocvar{x}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{open\_close\_var}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{close\_var\_body}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{close\_fresh}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{close\_var\_lab\_body} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t},  \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{lab\_body} (\coqdocvar{close} \coqdocvar{t} \coqdocvar{x}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{W}. \coqdoctac{\ensuremath{\exists}} \{\{\coqdocvar{x}\}\}. \coqdoctac{intros} \coqdocvar{y} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqdocvar{open}, \coqdocvar{close}. \coqdoctac{generalize} 0. \coqdocvar{gen} \coqdocvar{y}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{induction} \coqdocvar{W}; \coqdoctac{intros} \coqdocvar{y} \coqdocvar{Fr} \coqdocvar{k}; \coqdocvar{simpls}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{case\_var}; \coqdoctac{simpl}. \coqdocvar{case\_nat}\ensuremath{\times}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{auto}\ensuremath{\times}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{constructor} 1.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{constructor} 1.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}\ensuremath{\times} \coqdocvar{lab\_term\_app}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHW1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHW2}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{apply\_fresh}\ensuremath{\times} \coqdocvar{lab\_term\_abs}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{apply\_fresh}\ensuremath{\times} \coqdocvar{lab\_term\_sub}. \coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{apply\_fresh}\ensuremath{\times} \coqdocvar{lab\_term\_sub'}. \coqdocvar{unfolds} \coqdocvar{open}. \coqdoctac{rewrite}\ensuremath{\times} \coqdocvar{close\_var\_rec\_open}. \coqdocvar{VSD.fsetdec}.\coqdoceol
+\coqdocnoindent
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_close\_var\_spec} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{x}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{u}, \coqdocvar{t} = \coqdocvar{u} \^{} \coqdocvar{x} \ensuremath{\land} \coqdocvar{lab\_body} \coqdocvar{u} \ensuremath{\land} \coqdocvar{x} \symbol{92}\coqdocvar{notin} (\coqdocvar{fv} \coqdocvar{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{close} \coqdocvar{t} \coqdocvar{x}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{lab\_open\_close\_var}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{close\_var\_lab\_body}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{close\_fresh}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} (\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} *.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{induction} \coqdocvar{H0}. \coqdoctac{apply} \coqdocvar{H}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{IHext\_lab\_contextual\_closure}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{IHext\_lab\_contextual\_closure}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor} 3 \coqdockw{with} \coqdocvar{L}; \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H1} \coqdocvar{x} \coqdocvar{H2}) \coqdockw{as} \coqdocvar{H'}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H1} \coqdocvar{x} \coqdocvar{H2}) \coqdockw{as} \coqdocvar{H'}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor} 4 \coqdockw{with} \coqdocvar{L}; \coqdoctac{intros}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H2} \coqdocvar{x} \coqdocvar{H3}) \coqdockw{as} \coqdocvar{H'}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H2} \coqdocvar{x} \coqdocvar{H3}) \coqdockw{as} \coqdocvar{H'}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{IHext\_lab\_contextual\_closure}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor} 4 \coqdockw{with} (\coqdocvar{fv}(\coqdocvar{t})); \coqdoctac{intros}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdocvar{lab\_term\_eq\_term'{}'}. \coqdoctac{rewrite} \coqdocvar{lab\_body\_eq\_body'{}'} \coqdoctac{in} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{body'{}'} \coqdoctac{in} *. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{apply} \coqdocvar{lc\_at\_open\_var\_rec'}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdocvar{lab\_term\_eq\_term'{}'}. \coqdoctac{rewrite} \coqdocvar{lab\_body\_eq\_body'{}'} \coqdoctac{in} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{body'{}'} \coqdoctac{in} *. \coqdoctac{unfold} \coqdocvar{term'{}'} \coqdoctac{in} *. \coqdoctac{apply} \coqdocvar{lc\_at\_open\_var\_rec'}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{constructor} 5 \coqdockw{with} \coqdocvar{L}; \coqdoctac{intros}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H2} \coqdocvar{x} \coqdocvar{H3}) \coqdockw{as} \coqdocvar{H'}. \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H2} \coqdocvar{x} \coqdocvar{H3}) \coqdockw{as} \coqdocvar{H'}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}. \coqdocvar{admit}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_star}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} (\coqdocvar{star\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_trans}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} (\coqdocvar{trans\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} *; \coqdoctac{intros}. \coqdoctac{induction} \coqdocvar{H0}. \coqdoctac{apply} \coqdocvar{H}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{IHtrans\_closure1}. \coqdoctac{destruct} \coqdocvar{IHtrans\_closure2}. \coqdoctac{split}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_lab\_eqc}: \coqdocvar{red\_lab\_regular} \coqdocvar{lab\_eqc}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular}. \coqdocvar{intros\_all}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}. \coqdoctac{clear} \coqdocvar{H}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_sub'} \coqdockw{with} (\coqdocvar{fv} \coqdocvar{u} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t0} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{u}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{unfold} \coqdocvar{open}. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{lab\_term\_sub} \coqdockw{with} (\coqdocvar{fv} \coqdocvar{u} \symbol{92}\coqdocvar{u} \coqdocvar{fv} \coqdocvar{t0} \symbol{92}\coqdocvar{u} \{\{\coqdocvar{x}\}\}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{apply} \coqdocvar{term'{}'\_to\_lab\_term}. \coqdoctac{unfold} \coqdocvar{term'{}'}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_eqcc}: \coqdocvar{red\_lab\_regular} \coqdocvar{eqcc}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_ctx\_eqcc}: \coqdocvar{red\_lab\_regular} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{eqcc}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_EE}: \coqdocvar{red\_lab\_regular} (\coqdocvar{star\_ctx\_eqcc}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_lab\_xi}: \coqdocvar{red\_lab\_regular} \coqdocvar{lab\_x\_i}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_lab\_sys\_lx}: \coqdocvar{red\_lab\_regular} \coqdocvar{lab\_sys\_lx}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx}: \coqdocvar{red\_lab\_regular} (\coqdocvar{lab\_contextual\_closure} \coqdocvar{lab\_sys\_lx}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_lab\_regular\_sys\_Bx}: \coqdocvar{red\_lab\_regular} \coqdocvar{sys\_Bx}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_ctx}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_rename} (\coqdocvar{lab\_contextual\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_simpl\_lab\_ctx}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_rename} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_ext\_lab\_ctx}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_rename} (\coqdocvar{ext\_lab\_contextual\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_trans}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_rename} (\coqdocvar{trans\_closure} \coqdocvar{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_eqc}: \coqdocvar{red\_rename} \coqdocvar{lab\_eqc}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_eqcc}: \coqdocvar{red\_rename} \coqdocvar{eqcc}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{unfold} \coqdocvar{red\_rename}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{induction} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_eqc}. \coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{constructor} 1.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{apply} \coqdocvar{H2} \coqdockw{with} \coqdocvar{x}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_eqc} \coqdockw{with} \coqdocvar{x}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_EE}: \coqdocvar{red\_rename} \coqdocvar{star\_ctx\_eqcc}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{x}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{x}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H1}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{open\_var\_inj} \coqdoctac{in} \coqdocvar{Hequ'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdocvar{Hequ'}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{x}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{x}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H1}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{red\_rename\_simpl\_lab\_ctx} \coqdocvar{red\_rename\_eqcc}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{constructor} 1.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} (\coqdocvar{H2} \coqdocvar{x}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{lab\_term} \coqdocvar{u}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{red\_lab\_regular\_trans} (\coqdocvar{red\_lab\_regular\_ctx\_eqcc})).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H1} (\coqdocvar{t0} \^{} \coqdocvar{x}) \coqdocvar{u} \coqdocvar{H1\_}). \coqdoctac{destruct} \coqdocvar{H2}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (@\coqdocvar{lab\_close\_var\_spec} \coqdocvar{u} \coqdocvar{x} \coqdocvar{H1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H2} \coqdockw{as} [ \coqdocvar{u0} [ \coqdocvar{H3} [ \coqdocvar{H4} \coqdocvar{H5} ] ] ].\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} (\coqdocvar{u0} \^{} \coqdocvar{y}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure2}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_xi}: \coqdocvar{red\_rename} \coqdocvar{lab\_x\_i}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_xi\_eq}: \coqdocvar{red\_rename} \coqdocvar{lab\_x\_i\_eq}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_xe\_eq}: \coqdocvar{red\_rename} \coqdocvar{lab\_x\_e\_eq}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_sys\_Bx}: \coqdocvar{red\_rename} \coqdocvar{sys\_Bx}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_sys\_lx}: \coqdocvar{red\_rename} \coqdocvar{lab\_sys\_lx}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_ctx\_lab\_sys\_lx}: \coqdocvar{red\_rename} (\coqdocvar{lab\_contextual\_closure} \coqdocvar{lab\_sys\_lx}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{red\_rename\_lab\_lex}: \coqdocvar{red\_rename} \coqdocvar{lab\_lex}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_app\_left}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}. \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{pterm\_app} \coqdocvar{u0} \coqdocvar{u}); \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_app\_right}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}. \coqdoctac{constructor} 3; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{u0}); \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{trans\_lab\_closure\_abs}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{L}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{pterm\_abs} \coqdocvar{t'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H0} \coqdocvar{z} \coqdocvar{H1}). \coqdoctac{clear} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H4}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 4 \coqdockw{with} \coqdocvar{L}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{apply} \coqdocvar{H} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{lab\_term} \coqdocvar{u}). \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{lab\_close\_var\_spec} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4} \coqdockw{as} [\coqdocvar{u0} [\coqdocvar{eq1} [\coqdocvar{H5} \coqdocvar{H6}] ] ]. \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{pterm\_abs} \coqdocvar{u0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure2}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_abs}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{L}, (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{pterm\_abs} \coqdocvar{t'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H4}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{open\_var\_inj} \coqdoctac{in} \coqdocvar{Hequ}; \coqdoctac{subst}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{apply} \coqdocvar{trans\_lab\_closure\_abs} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_trans} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{trans\_lab\_closure\_outer\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L}, \coqdocvar{lab\_term} \coqdocvar{v} \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{v}]) (\coqdocvar{t'}[\coqdocvar{v}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L} \coqdocvar{lab\_term\_v}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H0} \coqdocvar{z} \coqdocvar{H1}). \coqdoctac{clear} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H5}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 5 \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{apply} \coqdocvar{H} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{lab\_term} \coqdocvar{u}). \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{lab\_close\_var\_spec} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5} \coqdockw{as} [\coqdocvar{u0} [\coqdocvar{eq1} [\coqdocvar{H5} \coqdocvar{H6}] ] ]. \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{u0}[\coqdocvar{v}]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure2}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_outer\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L}, \coqdocvar{lab\_term} \coqdocvar{v} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{v}]) (\coqdocvar{t'}[\coqdocvar{v}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L} \coqdocvar{lab\_term\_v}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H5}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{open\_var\_inj} \coqdoctac{in} \coqdocvar{Hequ}; \coqdoctac{subst}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{apply} \coqdocvar{trans\_lab\_closure\_outer\_sub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_trans} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_inner\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{lab\_body} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) \coqdocvar{u} \coqdocvar{u'} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t}[\coqdocvar{u'}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}. \coqdoctac{constructor} 6; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{t}[\coqdocvar{u}]); \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{trans\_lab\_closure\_outer\_lsub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L}, \coqdocvar{term} \coqdocvar{v} \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{trans\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t}[[\coqdocvar{v}]]) (\coqdocvar{t'}[[\coqdocvar{v}]]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L} \coqdocvar{term\_v}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H0} \coqdocvar{z} \coqdocvar{H1}). \coqdoctac{clear} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H5}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 7 \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{apply} \coqdocvar{H} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{lab\_term} \coqdocvar{u}). \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{lab\_close\_var\_spec} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5} \coqdockw{as} [\coqdocvar{u0} [\coqdocvar{eq1} [\coqdocvar{H5} \coqdocvar{H6}] ] ]. \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2 \coqdockw{with} (\coqdocvar{u0}[[\coqdocvar{v}]]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure1}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHtrans\_closure2}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_outer\_lsub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L}, \coqdocvar{term} \coqdocvar{v} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure} \coqdocvar{R}) (\coqdocvar{t}[[\coqdocvar{v}]]) (\coqdocvar{t'}[[\coqdocvar{v}]]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{v} \coqdocvar{L} \coqdocvar{term\_v}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{remember} (\coqdocvar{t} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u}. \coqdocvar{remember} (\coqdocvar{t'} \^{} \coqdocvar{z}) \coqdockw{as} \coqdocvar{u'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H5}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{open\_var\_inj} \coqdoctac{in} \coqdocvar{Hequ}; \coqdoctac{subst}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2. \coqdoctac{apply} \coqdocvar{trans\_lab\_closure\_outer\_lsub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_trans} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{apply} \coqdocvar{red\_rename\_simpl\_lab\_ctx}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_app\_left}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} ((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'}) \ensuremath{\rightarrow} ((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_app} \coqdocvar{x} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{x0} \coqdocvar{u}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_left}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_left}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_app\_right}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} ((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'}) \ensuremath{\rightarrow} ((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t'})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{x}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{x0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_right}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 3; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_right}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_abs}: \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{L}, (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{x0} \^{} \coqdocvar{y}) (\coqdocvar{x} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{pterm\_abs} \coqdocvar{x0}) (\coqdocvar{pterm\_abs} \coqdocvar{x}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{L} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H3};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H3}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H5};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H5};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H3} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_abs} \coqdocvar{x3}) (\coqdocvar{pterm\_abs} \coqdocvar{x1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_abs} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 4 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})). \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_ctx\_lab\_sys\_lx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H9}. \coqdoctac{apply} \coqdocvar{H9} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_abs} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_outer\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t'}[\coqdocvar{u}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{u} \coqdocvar{L} \coqdocvar{lab\_term\_u} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H4};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H6};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H6};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H6} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{x3}[\coqdocvar{u}]) (\coqdocvar{x1}[\coqdocvar{u}]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_sub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 5 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})); \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_ctx\_lab\_sys\_lx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H10}. \coqdoctac{apply} \coqdocvar{H10} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_sub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_inner\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{lab\_body} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{u}) (\coqdocvar{u'}) \ensuremath{\rightarrow} (\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t}[\coqdocvar{u'}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{t}[\coqdocvar{x}]) (\coqdocvar{t}[\coqdocvar{x0}]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 6; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_outer\_lsub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{term} \coqdocvar{u} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} \coqdocvar{lab\_lex} (\coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{t'}[[\coqdocvar{u}]]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{u} \coqdocvar{L} \coqdocvar{term\_u} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H4};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H6};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H6};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H6} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{x3}[[\coqdocvar{u}]]) (\coqdocvar{x1}[[\coqdocvar{u}]]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_lsub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 7 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})); \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_ctx\_lab\_sys\_lx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{H10}. \coqdoctac{apply} \coqdocvar{H10} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_lsub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ctx\_lab\_sys\_lx} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_app\_left}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} ((\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'}) \ensuremath{\rightarrow} ((\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_app} \coqdocvar{x} \coqdocvar{u}) (\coqdocvar{pterm\_app} \coqdocvar{x0} \coqdocvar{u}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_left}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_left}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_app\_right}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} ((\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'}) \ensuremath{\rightarrow} ((\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{t'})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{x}) (\coqdocvar{pterm\_app} \coqdocvar{u} \coqdocvar{x0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_right}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 3; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_app\_right}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_abs}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{L}, \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{x0} \^{} \coqdocvar{y}) (\coqdocvar{x} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{pterm\_abs} \coqdocvar{x0}) (\coqdocvar{pterm\_abs} \coqdocvar{x}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{L} \coqdocvar{rename\_R} \coqdocvar{reg\_R} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H3};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H3}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H5};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H5};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H3} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{pterm\_abs} \coqdocvar{x3}) (\coqdocvar{pterm\_abs} \coqdocvar{x1}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_lab\_closure\_abs} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 4 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})). \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{rename\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{rename\_R}. \coqdoctac{apply} \coqdocvar{rename\_R} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_abs} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_outer\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t'}[\coqdocvar{u}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{u} \coqdocvar{L} \coqdocvar{lab\_term\_u} \coqdocvar{rename\_R} \coqdocvar{reg\_R} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H4};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H6};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H6};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H6} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{x3}[\coqdocvar{u}]) (\coqdocvar{x1}[\coqdocvar{u}]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_sub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 5 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})); \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{rename\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{rename\_R}. \coqdoctac{apply} \coqdocvar{rename\_R} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_sub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_inner\_sub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{lab\_body} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{u}) (\coqdocvar{u'}) \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{t}[\coqdocvar{u'}]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{t}[\coqdocvar{x}]) (\coqdocvar{t}[\coqdocvar{x0}]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{constructor} 6; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_outer\_lsub}: \coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{L}, \coqdocvar{term} \coqdocvar{u} \ensuremath{\rightarrow}  \coqdocvar{red\_rename} \coqdocvar{R} \ensuremath{\rightarrow} \coqdocvar{red\_lab\_regular} \coqdocvar{R} \ensuremath{\rightarrow} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvar{VarSet.elt}, \coqdocvar{y} \symbol{92}\coqdocvar{notin} \coqdocvar{L} \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t} \^{} \coqdocvar{y}) (\coqdocvar{t'} \^{} \coqdocvar{y})) \ensuremath{\rightarrow} (\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) (\coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{t'}[[\coqdocvar{u}]]).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{x} \coqdocvar{x0} \coqdocvar{u} \coqdocvar{L} \coqdocvar{term\_u}  \coqdocvar{rename\_R} \coqdocvar{reg\_R} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{H} \coqdocvar{z} \coqdocvar{H0}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H4};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H4}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{H6};  \coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H6};  \coqdoctac{apply} (\coqdocvar{term\_EE\_open\_fv} ) \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4} \coqdockw{as} [ \coqdocvar{x3} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x3}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H6} \coqdockw{as} [ \coqdocvar{x1} [ \coqdocvar{eq}  \coqdocvar{z\_fv\_x1}  ] ]; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{x3}[[\coqdocvar{u}]]) (\coqdocvar{x1}[[\coqdocvar{u}]]).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_lsub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{constructor} 7 \coqdockw{with} (\coqdocvar{L} \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x3}) \symbol{92}\coqdocvar{u} \coqdocvar{fv}(\coqdocvar{x1})); \coqdoctac{auto}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_rename\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{rename\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H4}. \coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_rename} \coqdoctac{in} \coqdocvar{rename\_R}. \coqdoctac{apply} \coqdocvar{rename\_R} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_lab\_closure\_outer\_lsub} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_EE} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_rename\_eqcc}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{red\_lab\_regular\_ext\_lab\_ctx} \coqdoctac{in} \coqdocvar{reg\_R}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocvar{red\_lab\_regular} \coqdoctac{in} \coqdocvar{reg\_R}. \coqdoctac{apply} \coqdocvar{reg\_R} \coqdoctac{in} \coqdocvar{H5}. \coqdoctac{destruct} \coqdocvar{H5}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_lab\_term} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{t} =\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{lab\_term} \coqdocvar{t'}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_lab\_regular\_EE} \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_sys\_lx\_term\_is\_sys\_Bx} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{lab\_sys\_lx} \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow} \coqdocvar{sys\_Bx} \coqdocvar{t} \coqdocvar{t'}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{subst}; \coqdoctac{inversion} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_presv\_ie}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{t} =\coqdocvar{EE} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} ((\coqdocvar{u} -->[\coqdocvar{lx\_i}] \coqdocvar{u'} \ensuremath{\lor} \coqdocvar{u} -->[\coqdocvar{lx\_e}] \coqdocvar{u'}) \ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t} -->[\coqdocvar{lx\_e}] \coqdocvar{t'})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{x} \coqdocvar{x0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u'}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{x} \coqdocvar{x0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_ctx\_eqcc\_sym} \coqdoctac{in} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u'}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{EE\_presv\_lab\_lex}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{t} =\coqdocvar{EE} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} ((\coqdocvar{u} -->[\coqdocvar{lex}] \coqdocvar{u'}) \ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lex}] \coqdocvar{t'})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{x} \coqdocvar{x0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}. \coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{apply} \coqdocvar{star\_closure\_composition} \coqdockw{with} \coqdocvar{u'}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_ex\_impl\_i\_e}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{t} -->[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t} -->[\coqdocvar{lx\_e}] \coqdocvar{t'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H1}; \coqdoctac{intros}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_sys\_x\_i\_e} \coqdockw{with} \coqdocvar{t} \coqdocvar{s}; \coqdoctac{auto}. \coqdoctac{apply} \coqdocvar{EE\_lab\_term} \coqdockw{with} \coqdocvar{t0}; \coqdoctac{auto}\ensuremath{\times}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}-->[\coqdocvar{lx\_i}]\coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}-->[\coqdocvar{lx\_e}]\coqdocvar{t'}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHlab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_app\_left}. \coqdocvar{admit}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_app\_left}. \coqdocvar{admit}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u'})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{u}-->[\coqdocvar{lx\_i}]\coqdocvar{u'} \ensuremath{\lor} \coqdocvar{u}-->[\coqdocvar{lx\_e}]\coqdocvar{u'}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHlab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_app\_right}. \coqdocvar{admit}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_app\_right}. \coqdocvar{admit}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{u'} := \coqdocvar{pterm\_abs} \coqdocvar{t'}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_i}]\coqdocvar{t'}\^{}\coqdocvar{z} \ensuremath{\lor} \coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_e}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H0} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_abs} \coqdockw{with} \coqdocvar{L}. \coqdoctac{exact} \coqdocvar{red\_rename\_lab\_xi}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{exact} \coqdocvar{red\_lab\_regular\_lab\_xi}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xi\_eq}. \coqdoctac{apply} \coqdocvar{H11} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_abs} \coqdockw{with} \coqdocvar{L}. \coqdoctac{exact} \coqdocvar{red\_rename\_sys\_Bx}. \coqdoctac{exact} \coqdocvar{red\_lab\_regular\_sys\_Bx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xe\_eq}. \coqdoctac{apply} \coqdocvar{H11} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t'}[\coqdocvar{u}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_i}]\coqdocvar{t'}\^{}\coqdocvar{z} \ensuremath{\lor} \coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_e}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_outer\_sub} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xi\_eq}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{admit}. \coqdoctac{exact} \coqdocvar{red\_rename\_lab\_xi}. \coqdoctac{exact} \coqdocvar{red\_lab\_regular\_lab\_xi}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xi\_eq}. \coqdoctac{apply} \coqdocvar{H13} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_outer\_sub} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{admit}. \coqdoctac{exact} \coqdocvar{red\_rename\_sys\_Bx}. \coqdoctac{exact} \coqdocvar{red\_lab\_regular\_sys\_Bx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xe\_eq}. \coqdoctac{apply} \coqdocvar{H13} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t}[\coqdocvar{u'}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{u'}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u} =\coqdocvar{EE} \coqdocvar{u}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_lab\_term} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{inversion} \coqdocvar{H3}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{IHlab\_contextual\_closure} \coqdocvar{u'} \coqdocvar{H4} \coqdocvar{u} \coqdocvar{H9} \coqdocvar{H5}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_ie} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{u'} := \coqdocvar{t'}[[\coqdocvar{u}]]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_i}]\coqdocvar{t'}\^{}\coqdocvar{z} \ensuremath{\lor} \coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lx\_e}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_outer\_lsub} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}. \end{coqdoccode}
+admit.  SN \begin{coqdoccode}
+ \coqdoctac{exact} \coqdocvar{red\_rename\_lab\_xi}. \coqdoctac{exact} \coqdocvar{red\_lab\_regular\_lab\_xi}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xi\_eq}. \coqdoctac{apply} \coqdocvar{H13} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{right}. \coqdoctac{apply} \coqdocvar{EE\_ext\_clos\_outer\_lsub} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}.  \coqdoctac{exact} \coqdocvar{red\_rename\_sys\_Bx}. \coqdoctac{exact} \coqdocvar{red\_lab\_regular\_sys\_Bx}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_xe\_eq}. \coqdoctac{apply} \coqdocvar{H13} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{\ensuremath{\exists}} (\coqdocvar{t} [[\coqdocvar{u}]]) (\coqdocvar{t} [[\coqdocvar{u'}]]). \coqdoctac{split}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_lab\_term} \coqdockw{with} \coqdocvar{t0} (\coqdocvar{t} [[\coqdocvar{u}]]) \coqdoctac{in} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H3}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_sys\_lx\_term\_is\_sys\_Bx} \coqdockw{with} \coqdocvar{u} \coqdocvar{u'} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 1. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 1. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{lab\_sys\_lx\_term\_is\_sys\_Bx} \coqdockw{with} \coqdocvar{u} \coqdocvar{u'} \coqdoctac{in} \coqdocvar{H0}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdocvar{lab\_ie\_impl\_ex}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t} -->[\coqdocvar{lx\_e}] \coqdocvar{t'}) \ensuremath{\rightarrow} \coqdocvar{t} -->[\coqdocvar{lex}] \coqdocvar{t'}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{destruct} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H0}; \coqdoctac{destruct} \coqdocvar{H1}; \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t}; \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{t'}; \coqdoctac{induction} \coqdocvar{H1}; \coqdoctac{intros}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{t} \coqdocvar{s}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H3}; \coqdoctac{subst}. \coqdoctac{constructor} 8; \coqdoctac{auto}. \coqdoctac{\ensuremath{\exists}} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H4}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdoctac{constructor} 2; \coqdoctac{subst}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdoctac{constructor} 3; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_app\_left}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHext\_lab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u'})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_app\_right}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHext\_lab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{u'} := \coqdocvar{pterm\_abs} \coqdocvar{t'}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H0} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_abs} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_lex}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t'}[\coqdocvar{u}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_outer\_sub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t}[\coqdocvar{u'}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{u'}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u} =\coqdocvar{EE} \coqdocvar{u}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_lab\_term} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{inversion} \coqdocvar{H3}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{IHext\_lab\_contextual\_closure} \coqdocvar{u'} \coqdocvar{H4} \coqdocvar{u} \coqdocvar{H9} \coqdocvar{H5}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{u'} := \coqdocvar{t'}[[\coqdocvar{u}]]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_outer\_lsub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} (\coqdocvar{t}) (\coqdocvar{s}). \coqdoctac{split}\ensuremath{\times}. \coqdoctac{split}\ensuremath{\times}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{constructor} 1. \coqdoctac{constructor} 2; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_app\_left}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHext\_lab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})) (\coqdocvar{u'} := (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u'})); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_app\_right}. \coqdocvar{admit}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{IHext\_lab\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{pterm\_abs} \coqdocvar{t}) (\coqdocvar{u'} := \coqdocvar{pterm\_abs} \coqdocvar{t'}); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H0} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H5}; \coqdoctac{destruct} \coqdocvar{H5}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_abs} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{pose} \coqdocvar{proof} \coqdocvar{red\_rename\_lab\_lex}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t'}[\coqdocvar{u}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_outer\_sub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[\coqdocvar{u}]) (\coqdocvar{u'} := \coqdocvar{t}[\coqdocvar{u'}]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{u'}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert} (\coqdocvar{u} =\coqdocvar{EE} \coqdocvar{u}). \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_lab\_term} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{inversion} \coqdocvar{H3}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{pose} \coqdocvar{proof} (\coqdocvar{IHext\_lab\_contextual\_closure} \coqdocvar{u'} \coqdocvar{H4} \coqdocvar{u} \coqdocvar{H9} \coqdocvar{H5}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_inner\_sub}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_presv\_lab\_lex} \coqdockw{with} (\coqdocvar{u} := \coqdocvar{t}[[\coqdocvar{u}]]) (\coqdocvar{u'} := \coqdocvar{t'}[[\coqdocvar{u}]]); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{z}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{assert}  (\coqdocvar{t}\^{}\coqdocvar{z}-->[\coqdocvar{lex}]\coqdocvar{t'}\^{}\coqdocvar{z}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{H1} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}. \coqdoctac{constructor} 1; \coqdoctac{auto}. \coqdocvar{admit}. \coqdoctac{constructor} 1; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{Fr}; \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{notin\_union} \coqdoctac{in} \coqdocvar{H6}; \coqdoctac{destruct} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdocvar{EE\_clos\_outer\_lsub} \coqdockw{with} \coqdocvar{L}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdocvar{red\_rename\_lab\_lex} \coqdockw{with} \coqdocvar{z}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Theorem} \coqdocvar{lab\_ex\_eq\_i\_e}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\leftrightarrow} (\coqdocvar{t} -->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t} -->[\coqdocvar{lx\_e}] \coqdocvar{t'})).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}; \coqdoctac{apply} \coqdocvar{lab\_ex\_impl\_i\_e}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}; \coqdoctac{apply} \coqdocvar{lab\_ie\_impl\_ex}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+\end{document}

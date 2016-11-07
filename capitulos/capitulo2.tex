@@ -1,0 +1,1005 @@
+\chapter{O sistema $\lambda ex$}
+
+\section{Visão geral}
+\label{sec:int_lex}
+
+%\subsection{Descrição do sistema}
+
+Como visto no capítulo anterior, várias extensões do cálculo lambda foram
+propostas com o objetivo de expressar de maneira concisa a noção de substituição
+explícita.
+
+O sistema proposto em \cite{delia}, chamado $\lambda$ex, é o primeiro sistema
+que captura de maneira simples tal noção, enquanto ainda possui a propridade
+\textbf{PSN}, ou seja, a preservação da normalização forte. Este sistema será
+repetido aqui, e um maior entendimento pode ser obtido na fonte original. São
+introduzidas várias mudanças, a começar pela gramática: 
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+\
+
+\begin{table}[h]
+    
+\begin{empheq}[box=\fbox]{align*}
+    x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
+    t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & se\ \emph{x} \notin fv(t)\\
+    (t\ u)[x/v]\ \ \        &\rightarrow_{App}\ t[x/v]\ u[x/v] \\
+    (\lambda y.\ u)[x/v]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[x/v])\\
+    t[x/u][y/v]\ \ \        &\rightarrow_{Comp}\ t[y/v][x/u[y/v]] & se\ y\ \in
+    fv(u) \\ 
+    (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u]
+\end{empheq}
+    \caption{Regras de redução}
+    \label{table:red_lambex}
+
+\end{table}
+
+A nova construção é chamada \textit{substituição explícita}, e é o que permite as
+manipulações sintáticas com substituições no cálculo. Como consequência desta
+mudança, novas regras de redução são definidas, como mostrado na tabela
+\ref{table:red_lambex}.  As 5 primeiras regras formam a relação $\rightarrow_x$,
+e o acréscimo da última forma a relação $\rightarrow_{Bx}$. 
+
+Observe que, devido ao acréscimo das substituições explícitas, é possível
+definir termos que possuem uma sintaxe distinta, diferindo apenas na permutação
+de substituições independentes, e que constiturem o mesmo
+$\lambda$-termo no sistema original. Um exemplo simples pode ser visto a seguir.
+
+\[ (0\ 1) \{0/x\}\{1/y\} = (0\{0/x\}\ 1\{1/y\}) = (x\ y) =  (0\ 1) \{1/y\}\{0/x\} \]
+\[ (0\ 1) [0/x][1/y] \neq  (0\ 1) [1/y][0/x] \]
+
+Onde a noção de igualdade usada é a sintática.
+
+Assim, é necessário tornar o novo sistema
+equacional, adicionando uma relação de equivalência:
+
+\[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
+
+A relação de equivalência $=_e$ é formada com a junção de $=_C$ e
+$\alpha$-equivalência. As relações $\rightarrow_{ex}$ e $\rightarrow_{\lambda
+    ex}$ são definidas como:
+
+\[t\ \rightarrow_{ex}\ t'\ \iff\ \exists\ s,s'\ t.q.\ t\ =_{e}\ s\
+    \rightarrow_x\ s'\ =_e\ t' \]
+\[t\ \rightarrow_{\lambda ex}\ t'\ \iff\ \exists\ s,s'\ t.q.\ t\ =_{e}\ s\
+    \rightarrow_{Bx}\ s'\ =_e\ t' \]
+
+Estas relações serão amplamente utilizadas ao decorrer deste trabalho. 
+O foco principal é a formalização da propriedade \textbf{IE} do sistema, que
+pode ser entendida intuitivamente da seguinte maneira: Dados \textbf{t},
+\textbf{u} tais que \emph{u} e \emph{t\{x/u\}} são fortemente normalizáveis
+no sistema, então o correspondente utilizando substituições explícitas,
+\emph{t[x/u]} também será. Ou seja, a normalização da substituição implícita
+implica a normalização da explícita.
+
+\subsection{A Gramática de pré-termos}
+\label{sec:termos}
+
+Nesta seção, será feita um paralelo entre as estruturas básicas do sistema
+$\lambda ex$ e sua formalização em Coq.
+
+Como visto em \ref{sub:int_lex}, o sistema possui uma gramática que pode ser vista como
+uma extensão do cálculo lambda original, consistindo de variáveis, abstrações,
+aplicações e \emph{substituições explícitas}. Ela pode ser descrita sucintamente
+como abaixo.
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+
+Já encontramos então nossa primeira divergência na formalização. Neste projeto,
+será usada a representação chamada \textit{Locally Nameless Representation}
+(LNR), onde as variáveis ligadas são representadas por índices. Por conta disso,
+existem termos nesta nova gramática que não possuem correspondentes no sistema
+original, por conta de índices que não estão ligados a nenhuma abstração.
+
+Assim, torna-se necessária uma gramática de \emph{pré-termos}, que consiste de
+todos os termos possíveis de serem escritos em LNR. Esta gramática é formalizada
+usando um tipo indutivo.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive pterm : Set :=
+  | pterm_bvar : nat -> pterm
+  | pterm_fvar : var -> pterm
+  | pterm_app  : pterm -> pterm -> pterm
+  | pterm_abs  : pterm -> pterm
+  | pterm_sub  : pterm -> pterm -> pterm 
+  | pterm_lsub : pterm -> pterm -> pterm.
+\end{lstlisting}
+
+Veja que variáveis livres e ligadas possuem construtores distintos. Para as
+livres, o construtor correto é \texttt{pterm\_bvar}, que recebe um natural
+representando um índice. As variáveis livres são construídas com
+\texttt{pterm\_fvar}, recebendo um elemento do tipo \texttt{var}, definido no
+framework de Charguéraud.
+As aplicações, abstrações e substituições são representadas através do
+construtores \texttt{pterm\_app}, \texttt{pterm\_abs} e \texttt{pterm\_sub},
+respectivamente. Todos recebem um ou dois pré-termos, que correspondem aos
+termos internos das estruturas.
+
+O último construtor, \texttt{pterm\_lsub}, será usado para representar
+\emph{substituições marcadas}, um formalismo necessário para as provas de
+correspondência com a meta-substituição.
+
+\section{Termos e Relações}
+\subsection{Termos bem formados}
+
+Devido à correspondência assimétrica entre os termos do sistema $\lambda ex$ e
+em LNR, torna-se necessário definir os predicados de boa formação de termos.
+
+Como pré-requisito para a definição destes predicados, precisamos implementar as
+noções de abertura e fechamento de termos, como visto em \ref{sub:int_lnr}. 
+Relembrando, a operação de abertura foi definida como $t^{x} \equiv t\{0/x\}$.
+
+Para implementar tal operação, precisaremos de duas funções, \texttt{open\_rec}
+e \texttt{open}.
+
+\begin{lstlisting}[basicstyle=\small]
+Fixpoint open_rec (k : nat) (u : pterm) (t : pterm) {struct t} 
+        : pterm := ...
+
+Definition open t u := open_rec 0 u t.
+\end{lstlisting}
+
+A primeira adentra o termo \texttt{t} recursivamente, procurando pelo índice
+\texttt{k} e substituindo pelo termo \texttt{u}. Ao encontrar uma abstração ou
+substituição, o índice \texttt{k} é incrementado.  A segunda, que é a chamada da
+operação de fato, apenas chama \texttt{open\_rec} com $k = 0$.
+
+Similarmente, a operação de fechamento foi definida como $ ^{\textbackslash x}t
+\equiv \{0 \leftarrow t\}$. Esta operação é definida através da função
+\texttt{close}.
+
+\begin{lstlisting}[basicstyle=\small]
+Fixpoint close_rec  (k : nat) (x : var) (t : pterm) {struct t} 
+    : pterm := ...
+
+Definition close t x := close_rec 0 x t.
+\end{lstlisting}
+
+Podemos agora definir o predicado \texttt{term}, representando termos bem
+formados, com base nas seguintes regras de inferência.
+
+\begin{mathpar} 
+    \inferrule*[Right=term\_var]{  }
+    {lc(x)}
+    \and
+    \inferrule*[Right=term\_app]{lc\ t1 \\ lc\ t2}
+    {lc(t1\ t2)}
+    \and
+    \inferrule*[Right=term\_abs]{\forall x \notin L,\ lc\ (t^{x})}
+    {lc(\lambda. t)}
+    \\
+    \inferrule*[Right=term\_sub]{\forall x \notin L,\ lc\ (t^{x}) \\ lc\ u}
+    {lc(t[u])}
+\end{mathpar}
+
+O predicado \texttt{term} recebe um pré-termo, e indica que este elemento é bem
+formado, ou seja, não possui índices livres. Para cada tipo de pré-termo, temos
+um construtor diferente do predicado. Observe que não existe regra de inferência
+para índices livres, como desejado.
+
+Em alguns casos, como dito na subseção \ref{sub:int_lnr}, pode ser mais
+vantajoso verificar se um termo está bem formado com uma função recursiva.
+Tal verificação é feita através do predicado \texttt{term'}, que deve funcionar de
+maneira equivalente ao predicado \texttt{term}. Este novo predicado é definido
+com base na definição recursiva \texttt{lc\_at}. A função \texttt{lc\_at}
+verifica se o termo \emph{t} está \textit{fechado} a um nível \emph{k}, ou seja,
+se não existe índice livre de valor maior ou igual a \emph{k}. Sua implementação
+é feita com base na definição da tabela \ref{table:lc_at}, adicionando apenas o
+caso a seguir, para substituições explícitas.
+
+\begin{empheq}[box=\fbox]{align*}
+    lc\_at\ k\ (t1[t2])\ \ \ &\equiv\ (lc\_at\ (S k)\ t1)\ \&\ (lc\_at\ k\ t2) \\ 
+\end{empheq}
+
+\begin{lstlisting}[basicstyle=\small]
+Fixpoint lc_at (k:nat) (t:pterm) {struct t} : Prop := ...
+
+Definition term' t := lc_at 0 t.
+\end{lstlisting}
+
+Assim, essa equivalência também teve que ser formalizada, utilizando uma série
+de lemas auxiliares. 
+
+Primeiramente, foram provados dois resultados de enfraquecimento para o
+\texttt{lc\_at}.
+
+\begin{gather}
+ lc\_rec\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at\ k\ (open\_rec\ k\ x\
+    t))\ \rightarrow\ (lc\_at\ (S\ k)\ t) \nonumber \\
+ lc\_at\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at\ (S\ k)\ t)\ \rightarrow\
+    (lc\_at\ k\ (open\_rec\ k\ x\ t)) \nonumber 
+\end{gather}
+
+
+O primeiro lema garante que, se um termo \emph{t}, aberto com uma variável a um
+nível \emph{k}, é fechado a este mesmo nível \emph{k}, então o termo \emph{t}
+sem a abertura é fechado a nível \emph{k + 1}.
+
+O segundo é exatamente o contrário: Se um termo \emph{t} é fechado a um nível
+\emph{k + 1}, então este mesmo termo, aberto com uma variável a nível \emph{k},
+é fechado a nível \emph{k}.
+
+Já podemos agora provar a equivalência entre as duas definições de termos bem
+formados.
+
+\begin{gather}
+ term\_eq\_term':\ \forall\ t,\ (term\ t)\ \iff\ (term'\ t) \nonumber 
+\end{gather}
+
+\begin{itemize}
+    \item[($\Rightarrow$)] Este caso é bem direto, fazendo uma indução no
+        predicado \texttt{term t}. As hipóteses de indução resolvem os casos
+        diretamente, exceto para abstração e substituição. Nesses, a hipótese é
+        dada para $t^x$, quando precisamos provar $lc\_at\ 1\ t$. Felizmente os
+        lemas de enfraquecimento acima resolvem, bastando usar o lema
+        lc\_rec\_open\_var\_rec.
+    \item[($\Leftarrow$)] O segundo caso não é tão imediato, pois fazemos uma
+        indução no \emph{tamanho do termo}, para auxiliar na prova. A hipótese
+        de indução se refere a termos com tamanho igual ao do termo sobre qual
+        queremos provar a propriedade. Isto é útil pois o tamanho de um termo ao
+        ser aberto não muda. Novamente, no caso da abstração e substituição,
+        precisamos fazer um ajuste utilizando o lema lc\_at\_open\_var\_rec.
+\end{itemize}
+
+\subsection{Equivalência de termos}
+\label{sub:equival_ncia_de_termos}
+
+Como dito anteriormente, o acréscimo de substituições explícitas pode nos levar
+a casos em que um mesmo termo no cálculo original tenha duas representações no
+sistema. Observe o exemplo abaixo:
+
+\[ t\{x/u\}\{y/v\},\ \ x \notin fv(v),\ y \notin fv(u) \]
+\[ t[x/u][y/v]\ \ \ t[y/v][x/u]\]
+
+Como as substituições são independentes, ambas as representações são válidas.
+Para resolver este problema, foi adicionado no sistema uma regra de
+\emph{permutação de substituições independentes}.
+
+\[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
+
+Dizemos que ambas as representações são \emph{equivalentes}.
+
+Precisamos, então, formalizar essa definição no sistema.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive eqc : pterm -> pterm -> Prop := 
+  | eqc_def: forall t u v, term u -> term v -> 
+          eqc (t[u][v]) ((& t)[v][u]).
+\end{lstlisting}
+
+As exigências que \emph{u} e \emph{v} sejam termos são puramente técnicas, pois
+queremos trabalhar apenas com termos sem índices livres no sistema. O único
+outro detalhe que muda na formalização é ocorrência do operador $\&$, que
+troca todas as ocorrências de índices zero e um, para que eles continuem se
+referindo à mesma substituição.
+
+Note que esta definição ainda possui muitas limitações. Por exemplo, se um termo
+possui uma lista de substituições, só podemos trocar as duas últimas. Também não
+é possível realizar permutações em subtermos, ou várias permutações seguidas.
+Assim, precisamos criar \emph{fechos} em cima dessa definição, para ajustar às
+nossas necessidades. Nas regras a seguir, \emph{R} indica uma relação entre dois
+termos. 
+
+\begin{mathpar} 
+    \inferrule*[Right=ES\_redex]{ (R\ t\ s) }
+    {(ES\_contextual\_closure\ R)\ t\ s}
+    \\
+    \inferrule*[Right=ES\_app\_left]{((ES\_contextual\_closure\ R)\ t\ t'),\
+        (term\ u)}
+    {((ES\_contextual\_closure\ R)\ (t\ u)\ (t'\ u))}
+    \\
+    \inferrule*[Right=ES\_app\_right]{((ES\_contextual\_closure\ R)\ t\ t'),\
+        (term\ u)}
+    {((ES\_contextual\_closure\ R)\ (u\ t)\ (u\ t'))}
+    \\
+    \inferrule*[Right=ES\_abs\_in]{(\forall\ x,\ x \notin L \rightarrow
+        ((ES\_contextual\_closure\ R)\ t^x\ t'^x))}
+    {((ES\_contextual\_closure\ R)\ (\lambda . t)\ (\lambda . t'))}
+    \\
+    \inferrule*[Right=ES\_subst\_left]{(\forall\ x,\ x \notin L \rightarrow
+        ((ES\_contextual\_closure\ R)\ t^x\ t'^x)),\ (term\ u)}
+    {((ES\_contextual\_closure\ R)\ (t[u])\ (t'[u]))}
+    \\
+    \inferrule*[Right=ES\_subst\_right]{((ES\_contextual\_closure\ R)\ u\ u'),\
+        (body\ t)}
+    {((ES\_contextual\_closure\ R)\ (t[u])\ (t[u']))}
+\end{mathpar}
+
+
+\begin{lstlisting}[basicstyle=\small]
+Definition eqc_ctx (t u: pterm) := ES_contextual_closure eqc t u.
+Notation "t =c u" := (eqc_ctx t u) (at level 66). 
+\end{lstlisting}
+
+A definição \texttt{ES\_contextual\_closure} é um dos chamados \emph{fechos
+    contextuais}. A ideia é que, se vale $t \rightarrow_R t'$, então, para
+qualquer termo construído a partir de \emph{t}, vale a redução pelo fecho contextual de
+R, para o mesmo termo, mas construído a partir de \emph{t'}. Como exemplo:
+
+\[(t \rightarrow_R t') \Rightarrow ((pterm\_app\ t\ u)
+    \rightarrow_{ES\_Contextual\_Closure\ R} (pterm\_app\ t'\ u)) \]
+
+Definimos também os fechos \emph{transitivo} e \emph{transitivo-reflexivo}.
+Essencialmente, se temos $t \rightarrow_R t'$ e $t' \rightarrow_R t''$, então
+vale o fecho transitivo $t \rightarrow_{R^+} t''$. Isto é representado pelo
+construtor \texttt{transitive\_reduction}. Note que isto vale para
+apenas um passo também: $t \rightarrow_R t'$ implica $t \rightarrow_{R^+} t'$.
+Este é representado pelo construtor \texttt{one\_step\_reduction}.
+
+\begin{table}
+\begin{mathpar} 
+    \inferrule*[Right=one\_step\_reduction]{ (R\ t\ s) }
+    {(trans\_closure\ R)\ t\ s}
+    \\
+    \inferrule*[Right=transitive\_reduction]{((trans\_closure\ R)\ t\ u),\
+        ((trans\_closure\ R)\ u\ t')}
+    {((trans\_closure\ R)\ (t\ t'))}
+\end{mathpar}
+    \caption{Fecho transitivo}
+\end{table}
+
+O fecho \emph{transitivo-reflexivo} é uma extensão do transitivo, onde vale $t
+\rightarrow_{R^*} t$, sempre. A extensão é presentada por dois construtores:
+\texttt{reflexive\_reduction}, que garante \texttt{star\_closure R t t}, e
+\texttt{star\_trans\_reduction}, que constrói \texttt{star\_closure R t u}, se
+vale \texttt{trans\_closure R t u}.
+
+\begin{table}
+\begin{mathpar} 
+    \inferrule*[Right=reflexive\_reduction]{  }
+    {(star\_closure\ R)\ t\ t}
+    \\
+    \inferrule*[Right=star\_trans\_reduction]{((trans\_closure\ R)\ t\ u)}
+    {((star_trans\_closure\ R)\ (t\ u))}
+\end{mathpar}
+    \caption{Fecho transitivo-reflexivo}
+\end{table}
+
+\begin{lstlisting}[basicstyle=\small]
+Definition eqc_trans (t u: pterm) := (trans_closure eqc_ctx) t u.
+Notation "t =c+ u" := (eqc_trans t u) (at level 66). 
+
+Definition eqC (t : pterm) (u : pterm) := (star_closure eqc_ctx) t u.
+Notation "t =e u" := (eqC t u) (at level 66). 
+\end{lstlisting}
+
+
+Assim, a relação de equivalência que é interessante ser estudada é a $=_e$, que
+permite vários passos de permutações, além de permutações no interior dos
+termos. Uma importante diferença de provas usando equivalências no papel e numa
+formalização é que resultados que são intuitivos e admitidos num ambiente
+informal devem ser provados minuciosamente.
+
+Como exemplo, podemos querer mostrar a compatibilidade da igualdade com a
+função \texttt{lc\_at}. Isto é intuitivo, pois permutar duas substituições não
+irá criar índices livres. Porém, é preciso entrar em detalhes na prova formal. 
+
+\begin{lstlisting}[basicstyle=\small]
+Lemma lc_at_eqc : forall n t u, eqc t u  -> (lc_at n t <-> lc_at n u).
+Lemma lc_at_ES_ctx_eqc: forall n t u, (ES_contextual_closure eqc) t u  
+                            -> (lc_at n t <-> lc_at n u).
+Lemma lc_at_eqC : forall n t t', t =e t' -> 
+                            (lc_at n t <-> lc_at n t').
+\end{lstlisting}
+
+Observe que precisamos provar três resultados. Não basta mostrar que o predicado
+\texttt{eqc} é compatível com \texttt{lc\_at}, pois ainda usaremos seus fechos.
+A prova de \texttt{lc\_at\_eqc} já apresenta certos detalhes. Ela é feita
+através de uma análise de casos do predicado \texttt{eqc}. É preciso realizar
+certos ajustes com índices e usar a equivalência entre \texttt{lc\_at} e o
+predicado \texttt{term}, além de regras de enfraquecimento para o \texttt{lc\_at}.
+
+Os casos dos fechos em geral saem mais rapidamente, fazendo indução no próprio
+fecho. No caso do fecho contextual, os casos de abstração e substituição se
+tornam um pouco mais longos, mas são facilmente resolvidos usando a propriedade
+\texttt{lc\_at\_open'}, que garante que se um termo está fechado a um nível
+\emph{n}, abrí-lo a um nível $k < n$ não gera índices livres.
+
+Esta é uma parte do trabalho especialmente extensa e detalhada. É preciso
+mostrar que vários predicados importantes da teoria são preservados pelas
+classes de equivâlencia entre termos. Várias vezes durante as provas
+trabalharemos com termos equivalentes módulo $=_e$ e, sem uma base bem
+construída de resultados sobre a relação de \texttt{eqC}, fica impossível
+concluir diversas provas.
+
+Os principais resultados a serem provados nesta parte incluem:
+
+\begin{itemize}
+    \item Preservação da estrutura de termos pela equivalência. Construtores de
+        termos, abertura de termos, substituições e renomeamento de variáveis
+        devem funcionar de maneira análoga para dois termos equivalentes.
+    \item Boa formação de termos e corpos de abstrações, conjunto de variáveis
+        livres e reduções dentro de fechos contextuais também devem ser
+        preservadas pela equivalência.
+\end{itemize}
+
+\subsection{Reduções do Sistema}
+\label{sub:redu_es_do_sistema}
+
+Com a estrutura de termos e as regras de equivalência bem estabelecidas, podemos
+iniciar a formalização das reduções do sistema $\lambda ex$.
+As regras de redução listadas em  \ref{table:red_lambex} serão formalizadas nos
+tipos indutivos \texttt{sys\_x} e \texttt{rule\_b}.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive rule_b : pterm -> pterm -> Prop := ...
+Notation "t ->_B u" := (rule_b t u) (at level 66).
+
+Inductive sys_x : pterm -> pterm -> Prop := ...
+Notation "t ->_x u" := (sys_x t u) (at level 59, left associativity).
+\end{lstlisting}
+
+A relação $\rightarrow_x$ é definida como sendo exatamente o predicado
+\texttt{sys\_x}. Algumas exigências técnicas de \emph{term} e \emph{body} são
+adicionadas para auxiliar nas provas, já que queremos sempre trabalhar com
+termos bem formados.
+
+O predicado \texttt{rule\_b} é o que formaliza a regra $\rightarrow_B$, sendo
+esta a regra que reduz uma aplicação a uma substituição explícita. Podemos, a
+partir destes dois predicados, definir a regra de redução principal do sistema
+$\lambda ex$.
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive sys_Bx: pterm -> pterm -> Prop :=
+| B_lx : forall t u, t ->_B u -> sys_Bx t u
+| sys_x_lx : forall t u, t ->_x u -> sys_Bx t u.
+
+Notation "t ->_Bx u" := (sys_Bx t u).
+
+red_ctx_mod_eqC = 
+fun (R : pterm -> pterm -> Prop) (t u : pterm) =>
+exist t' u', t =e t' /\ ES_contextual_closure R t' u' /\ u' =e u
+     : (pterm -> pterm -> Prop) -> pterm -> pterm -> Prop
+
+Definition lex t u :=  red_ctx_mod_eqC sys_Bx t u.
+Notation "t -->lex u" := (lex t u) (at level 66).
+
+Definition lex_trs t u := trans_closure lex t u.
+Notation "t -->lex+ u" := (lex_trs t u) (at level 66).
+
+Definition lex_str t u := star_closure lex t u.
+Notation "t -->lex* u" := (lex_str t u) (at level 66).
+\end{lstlisting}
+
+O análogo da regra $\rightarrow_{\lambda ex}$ no sistema será a relação
+\texttt{''-->lex*"}, construída a partir do fecho transitivo-reflexivo,
+contextual e equacional da relação $\rightarrow_{Bx}$.
+
+\vfill
+Para auxiliar nas provas, definimos alguns predicados que garantem que estamos
+trabalhando sempre com termos, e que representam algumas noções intuitivas das
+reduções.
+
+\begin{table}[h]
+\begin{mathpar} 
+    \inferrule*{(red\_regular\ R),\ (R\ t\ u)}
+    {term\ t\ \and term\ u}
+\end{mathpar}
+    \caption{Noção de regularidade}
+\end{table}
+
+
+A propriedade de regularidade é interessante para facilitar em diversas provas,
+já que desejamos evitar trabalhar com termos que possuem índices livres.
+Basicamente, se fizemos a redução \emph{R} entre dois pré-termos,
+ambos são termos bem formados.
+
+
+\begin{table}[h]
+\begin{mathpar} 
+    \inferrule*{(red\_out\ R),\ (R\ t\ u)}
+    {R\ ([x \rightarrow u]t)\ ([x \rightarrow u]t')}
+\end{mathpar}
+    \caption{Redução fora da meta-substituição}
+\end{table}
+
+
+A propriedade \texttt{red\_out} garante que a redução pode ser feita em um
+termo afetado por uma meta-substituição, sendo $[x\ \mapsto\ u]$ a substituição que
+troca todas as ocorrências de \texttt{x} pelo termo \texttt{u}. Ela é útil pois
+esta meta-substituição pode ser vista como uma generalização da abertura de um
+termo.
+
+\begin{table}[h]
+\begin{mathpar} 
+    \inferrule*{(red\_rename\ R),\ (\forall x,\ x \notin fv(t) \rightarrow R\
+        (t^x) \ (u^x))}
+    {R\ (t^y)\ (u^y)}
+\end{mathpar}
+    \caption{Renomeamento em abertura com variável}
+\end{table}
+
+A propriedade \emph{red\_out} pode ser comparada à $\alpha$-equivalência de termos no cálculo
+original. Basicamente, se um termo \textit{t} aberto com uma variável $x \notin
+fv(t)$ se reduz a um \textit{t'}, também aberto com \textit{x}, então este
+\textit{x} pode ser trocado por outra variável $y \notin fv(t)$, preservando a
+redução $\rightarrow_{lex}$.
+
+Estes resultados auxiliam muito em diversas provas. Em especial, os resultados
+envolvendo abertura de termos e índices livres são necessários para provas em
+que fazemos indução na estrutura do termo, pois, em geral, no caso da abstração
+as hipóteses se referem ao sub-termo aberto com uma variável.
+
+
+
+%------------------------------------------------------------------
+
+
+
+\section{Preservação da normalização forte}
+\label{sec:psn}
+
+Nesta seção, queremos dar uma visão geral da propriedade PSN e descrever a
+formalização da propriedade IE, foco deste trabalho. 
+
+A propriedade PSN é a que garante que, se um termo \emph{t} é fortemente
+normalizável no cálculo original, ou seja, toda cadeia de reduções a partir dele
+termina, então ele também é fortemente normalizável no sistema $\lambda ex$.
+
+A prova da PSN é feita primeiramente definindo uma estratégia de redução
+\emph{perpétua} para o sistema, definida da seguinte maneira: se um termo
+\emph{t} se reduz a um termo \emph{t'} por esta estratégia, e se \emph{t'} é
+fortemente normalizável, então \emph{t} também o é. Pela contrapositiva, vemos
+que se o termo \emph{t} não for fortemente normalizável, então a estratégia terá
+que fazer a redução para um termo \emph{t'} que também não é fortemente
+normalizável, e assim por diante, formando uma cadeia de redução infinita.
+
+Em particular, se um termo $t[x/u]$ é reduzido, por esta estratégia, para um
+termo $t\{x/u\}$, sendo este fortemente normalizável, então o termo original
+também será fortemente normalizável. Em outras palavras, a normalização da
+substituição \emph{implícita} implica na normalização da substituição
+\emph{explícita}. Esta é a chamada propriedade \textbf{IE}.
+
+Para a prova da propriedade IE, é adicionado mais uma estrutura no sistema,
+chamada de \emph{substituição marcada}.
+
+\subsection{Substituições marcadas}
+\label{sub:subst_marc}
+
+A ideia é controlar as reduções feitas envolvendo substituições explícitas. Para
+isto, adicionamos uma nova substituição na gramática.
+
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ |\
+    \tau[[x/u]]\ \]
+
+Note que na nova substituição, não podemos colocar qualquer qualquer termo no
+lugar de \textit{u}. Restringimos o termo \textit{u} a apenas termos da gramática
+original, ou seja, sem substituições marcadas. Além disso, é necessário que o
+termo seja fortementa normalizável.
+
+Na nossa gramática de pré-termos, este formalismo já está adicionado, sendo
+representado pelo construtor \texttt{pterm\_lsub}. Porém, assim como precisamos
+de um predicado para verificar se um termo comum está bem formado, vamos criar
+um outro predicado, chamado \texttt{lab\_term}. Este predicado terá a mesma
+funcionalidade, mas agora extendido para termos com substituições marcadas. 
+
+\begin{mathpar} 
+    \inferrule*[Right=lab\_term\_var]{  }
+    {lc(x)}
+    \\
+    \inferrule*[Right=lab\_term\_app]{lab\_term(t1) \\ lab\_term(t2)}
+    {lc(t1\ t2)}
+    \\
+    \inferrule*[Right=lab\_term\_abs]{\forall x \notin L,\ lab\_term(t^{x})}
+    {lc(\lambda. t)}
+    \\
+    \inferrule*[Right=lab\_term\_sub]{\forall x \notin L,\ lab\_term(t^{x}) \\
+        lab\_term(u)}
+    {lc(t[u])}
+    \\
+    \inferrule*[Right=lab\_term\_sub']{\forall x \notin L,\ lab\_term(t^{x}) \\
+        term(u) \\ (SN\ lex)\ u}
+    {lc(t[[u]])}
+\end{mathpar}
+
+Observe que no caso da substituição marcada, temos a exigência \texttt{(SN lex
+    t2)}, que indica que \texttt{t2} é fortemente normalizável.
+
+Também devemos estender a noção equivalente de ser localmente fechado, para
+manter a equivalência definida no caso do sistema sem as substituições marcadas.
+Assim, definimos uma nova função \texttt{lc\_at'}, análoga à do caso não
+marcado.  Sua implementação é também feita com base na definição da tabela
+\ref{table:lc_at}, com apenas uma extensão para os casos das substituição
+marcadas e explícitas.
+
+\begin{table}[h]
+\begin{empheq}[box=\fbox]{align*}
+    lc\_at'\ k\ (t1[t2])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t1)\ \&\ (lc\_at'\ k\ t2) \\ 
+    lc\_at'\ k\ (t1[[t2]])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t1)\ \&\ (lc\_at'\ k\ t2)\
+    \&\ (SN\ lex\ t2) \\ 
+\end{empheq}
+    \caption{Definição da função lc\_at'}
+    \label{table:lab_lc_at}
+\end{table}
+
+
+\begin{lstlisting}[basicstyle=\small]
+Fixpoint lc_at' (k:nat) (t:pterm) {struct t} : Prop := ...
+
+Definition term'' t := lc_at' 0 t.
+\end{lstlisting}
+
+
+Podemos seguir a prova da equivalência entre \texttt{lab\_term} e
+\texttt{lc\_at'} de maneira similar a prova do capítulo anterior, com a ajuda
+dos seguintes lemas auxiliares.
+
+\begin{gather}
+ lc\_rec\_open\_var\_rec':\ \forall\ x\ t\ k,\ (lc\_at'\ k\ (open\_rec\ k\ x\
+    t))\ \rightarrow\ (lc\_at'\ (S\ k)\ t) \nonumber \\
+ lc\_at\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at'\ (S\ k)\ t)\ \rightarrow\
+    (lc\_at'\ k\ (open\_rec\ k\ x\ t)) \nonumber \\
+ term\_impl\_lab\_term:\ \forall\ t,\ (term\ t)\ \rightarrow\ (lab\_term\ t)
+ \nonumber \\
+ term\_eq\_term':\ \forall\ t,\ (term\ t)\ \iff\ (term'\ t) \nonumber
+\end{gather}
+
+Como no caso do sistema simples, queremos definir classes de equivalências
+de termos, para trabalhar módulo permutação de substituições.
+Para isso, precisamos definir novos fechos contextuais para os termos com
+substituições marcadas.
+
+\begin{mathpar} 
+    \inferrule*[Right=lab\_redex]{ (R\ t\ s) }
+    {(lab\_contextual\_closure\ R)\ t\ s}
+    \\
+    \inferrule*[Right=lab\_app\_left]{((lab\_contextual\_closure\ R)\ t\ t'),\
+        (lab\_term\ u)}
+    {((lab\_contextual\_closure\ R)\ (t\ u)\ (t'\ u))}
+    \\
+    \inferrule*[Right=lab\_app\_right]{((lab\_contextual\_closure\ R)\ t\ t'),\
+        (lab\_term\ u)}
+    {((lab\_contextual\_closure\ R)\ (u\ t)\ (u\ t'))}
+    \\
+    \inferrule*[Right=lab\_abs\_in]{(\forall\ x,\ x \notin L \rightarrow
+        ((lab\_contextual\_closure\ R)\ t^x\ t'^x))}
+    {((lab\_contextual\_closure\ R)\ (\lambda . t)\ (\lambda . t'))}
+    \\
+    \inferrule*[Right=lab\_subst\_left]{(\forall\ x,\ x \notin L \rightarrow
+        ((lab\_contextual\_closure\ R)\ t^x\ t'^x)),\ (lab\_term\ u)}
+    {((lab\_contextual\_closure\ R)\ (t[u])\ (t'[u]))}
+    \\
+    \inferrule*[Right=lab\_subst\_right]{((lab\_contextual\_closure\ R)\ u\ u'),\
+        (lab\_body\ t)}
+    {((lab\_contextual\_closure\ R)\ (t[u])\ (t[u']))}
+    \\
+    \inferrule*[Right=lab\_subst'\_left]{(\forall\ x,\ x \notin L \rightarrow
+        ((lab\_contextual\_closure\ R)\ t^x\ t'^x)),\ (term\ u),\ (SN\ lex\ u)}
+    {((lab\_contextual\_closure\ R)\ (t[[u]])\ (t'[[u]]))}
+    \\
+    \inferrule*[Right=lab\_subst'\_right]{(R\ u\ u'),\
+        (lab\_body\ t)}
+    {((lab\_contextual\_closure\ R)\ (t[[u]])\ (t[[u']]))}
+\end{mathpar}
+
+Em sua maioria, os construtores são análogos aos definidos no caso não marcado.
+Vale notar que, ao invés de se necessitar \texttt{term t} como hipótese, é
+necessário que o termo seja marcado, ou seja, que consigamos demonstrar
+\texttt{lab\_term t}.  Adicionamos também construtores pras substituições
+marcadas.  Para uma redução fora da substituição marcada, o processo é análogo
+ao da comum.  Para dentro desta, não podemos construir um fecho a partir de
+outro: é necessário que o termo \texttt{u} se reduza para \texttt{u'}
+diretamente.
+
+São definidos também dois outros fechos análogos,
+\texttt{simpl\_lab\_contextual\_closure} e
+\texttt{ext\_lab\_contextual\_closure}. No primeiro, a diferença é que não é
+feita a exigência \texttt{(SN lex u)} no caso da redução à esquerda da
+substituição marcada. No segundo, queremos reduzir apenas fora de substituições
+marcadas. Assim, o fecho não possui este caso.
+
+
+Podemos então definir a relação equacional para termos marcados.
+
+\begin{lstlisting}[basicstyle=\small]
+    
+Inductive lab_eqc  : pterm -> pterm -> Prop := 
+| lab_eqc_rx1 : forall t u v, 
+                  lab_term u -> term v -> 
+                  lab_eqc (t[u][[v]]) ((& t)[[v]][u]) 
+| lab_eqc_rx2 : forall t u v, 
+                  term u -> lab_term v -> 
+                  lab_eqc (t[[u]][v]) ((& t)[v][[u]]) 
+| lab_eqc_rx3 : forall t u v, 
+                  term u -> term v -> 
+                  lab_eqc (t[[u]][[v]]) ((& t)[[v]][[u]]).
+\end{lstlisting}
+
+Os construtores basicamente definem como permutar duas substituições, desde que
+uma delas seja marcada. Como requisito, é necessário garantir a propriedade
+\texttt{lab\_term} ou \texttt{term}, dependendo da substituição. A ideia é
+permitir que as substituições marcadas sejam permutadas ``para dentro" do termo,
+passando por uma substuição comum ou marcada. A substituição normal não pode
+atravessar a marcada.
+
+Para uso futuro, definimos um lema de simetria da relação. Sua prova é feita por
+análise de casos simples, apenas usando o lema \texttt{bswap\_idemp} para
+reduzir permutações de índices que não alteram a semântica do termo.
+
+\begin{lstlisting}[basicstyle=\small]
+Lemma lab_eqc_sym : forall t u, lab_eqc t u -> lab_eqc u t.
+\end{lstlisting}
+
+A equação principal utilizada nos termos marcados será a relação 
+$=_{\underline{e}}$, formalizada como o fecho contextual e transitivo do
+predicado \texttt{lab\_eqc}.
+
+\begin{lstlisting}[basicstyle=\small]
+Definition lab_eqC (t: pterm) (u : pterm) :=  
+    trans_closure (simpl_lab_contextual_closure lab_eqc) t u . 
+Notation "t =~e u" := (lab_eqC t u) (at level 66).
+\end{lstlisting}
+
+
+Também é preciso definir um predicado análogo de regularidade para termos
+marcados.
+
+\begin{table}[h]
+\begin{mathpar} 
+    \inferrule*{(red\_lab\_regular\ R),\ (R\ t\ u)}
+    {lab\_term\ t\ \and lab\_term\ u}
+\end{mathpar}
+    \caption{Noção de regularidade para termos marcados}
+\end{table}
+
+Com todas as estruturas e propriedades para termos marcados bem definidos,
+podemos seguir com a prova da propriedade IE.
+
+
+\subsection{Equivalência de reduções com o sistema original}
+\label{sub:equiv_red}
+
+Queremos utilizar esse sistema extendido com as substituições marcadas para
+estudar o sistema original. Para isto, precisamos estender a regra de redução do
+sistema para lidar com as novas substituições. Definimos então a redução
+$\rightarrow_{\underline{x}}$.
+
+\begin{table}[h]
+\begin{empheq}[box=\fbox]{align*}
+    x[\![x/u]\!]\ \ \             &\rightarrow_{Var}\ u \\
+    t[\![x/u]\!]\ \ \             &\rightarrow_{Gc}\ t    & se\ \emph{x} \notin fv(t)\\
+    (t\ u)[\![x/v]\!]\ \ \        &\rightarrow_{App}\ t[\![x/v]\!]\ u[\![x/v]\!] \\
+    (\lambda y.\ u)[\![x/v]\!]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[\![x/v]\!])\\
+    t[\![x/u]\!][\![y/v]\!]\ \ \        &\rightarrow_{Comp}\ t[\![y/v]\!][\![x/u[\![y/v]\!]]\!] & se\ y\ \in
+    fv(u)  
+\end{empheq}
+    \caption{A redução $\rightarrow_{x}$ }
+    \label{table:red_label_x}
+
+\end{table}
+
+Assim, a relação $\rightarrow_{\lambda \underline{ex}}$ é definida como a união
+das reduções $\rightarrow_{Bx}$ e $\rightarrow_{\underline{x}}$, módulo
+$=_{\alpha}$, $=_e$ e $=_{\underline{e}}$:
+
+\[ t \rightarrow_{\lambda \underline{ex}} t' \iff \exists s,\ s';\ t =_{e \cup
+        \underline{e} \cup \alpha} s \rightarrow_{Bx \cup \underline{x}} s' =_{e \cup
+        \underline{e} \cup \alpha} t' \] 
+
+Para provar a propriedade PSN, será necessário relacionar a redução
+$\rightarrow_{\lambda \underline{ex}}$ com a redução original,
+$\rightarrow_{\lambda ex}$. Para isto, iremos decompor a redução em termos
+marcados em duas novas reduções, $\rightarrow_{\lambda \underline{ex}^i}$ e
+$\rightarrow_{\lambda \underline{ex}^e}$, que também agem em termos marcados.
+
+A relação $\lambda \underline{ex}^i$, chamada de \emph{redução interna}, é
+definida adicionando à redução $\rightarrow_{\underline{ex}}$ a redução
+$\rightarrow_{\lambda ex}$ no corpo das substituições marcadas.
+Formalmente, a relação $\rightarrow_{\lambda \underline{ex}^i}$ é definida como a
+seguinte redução, $\rightarrow_{\lambda \underline{x}^i}$, módulo $=_{\alpha}$,
+$=_e$ e $=_{\underline{e}}$:
+
+\begin{itemize}
+    \item Se $u \rightarrow_{Bx} u'$ e $u,\ u'$ são termos, então $t[\![x/u]\!]
+        \rightarrow_{\lambda \underline{x}^i} t[\![x/u']\!]$ 
+    \item Se $t
+        \rightarrow_{\underline{x}} t'$, então $t \rightarrow_{\lambda
+            \underline{x}^i} t'$
+    \item Se $t \rightarrow_{\lambda \underline{x}^i} t'$, então vale 
+        $t\ u \rightarrow_{\lambda \underline{x}^i} t'\ u$,  
+        $u\ t \rightarrow_{\lambda \underline{x}^i} u\ t'$, 
+        $\lambda x. t \rightarrow_{\lambda \underline{x}^i} \lambda x. t'$, 
+        $t[x/u] \rightarrow_{\lambda \underline{x}^i} t'[x/u]$, 
+        $u[x/t] \rightarrow_{\lambda \underline{x}^i} u[x/t']$ e 
+        $t[\![x/u]\!] \rightarrow_{\lambda \underline{x}^i} t'[\![x/u]\!]$.
+\end{itemize}
+
+
+A relação $\lambda \underline{ex}^e$, chamada de \emph{redução externa}, é
+definida como a redução $\lambda ex$ em todos os lugares de um
+termo, \emph{exceto} no corpo das substituições marcadas.
+Formalmente, a relação $\rightarrow_{\lambda \underline{ex}^e}$ é definida como a
+seguinte redução, $\rightarrow_{\lambda \underline{x}^e}$, módulo $=_{\alpha}$,
+$=_e$ e $=_{\underline{e}}$:
+
+\begin{itemize}
+    \item Se $t \rightarrow_{Bx} t'$ ocorre fora de uma substituição marcada, então 
+        $t \rightarrow_{\lambda \underline{x}^e} t$ 
+    \item Se $t \rightarrow_{\lambda \underline{x}^e} t'$, então vale 
+        $t\ u \rightarrow_{\lambda \underline{x}^e} t'\ u$,  
+        $u\ t \rightarrow_{\lambda \underline{x}^e} u\ t'$, 
+        $\lambda x. t \rightarrow_{\lambda \underline{x}^e} \lambda x. t'$, 
+        $t[x/u] \rightarrow_{\lambda \underline{x}^e} t'[x/u]$, 
+        $u[x/t] \rightarrow_{\lambda \underline{x}^e} u[x/t']$ e 
+        $t[\![x/u]\!] \rightarrow_{\lambda \underline{x}^e} t'[\![x/u]\!]$.
+\end{itemize}
+
+O objetivo principal deste trabalho será a formalização destas duas reduções e a
+prova de equivalências da união destas com a redução ``\texttt{-{}->[lex]}'', que é a
+redução $\lambda \underline{ex}$ formalizada.
+
+Para a formalização das reduções $\lambda \underline{ex}^i$ e $\lambda
+\underline{ex}^e$, definimos os seguintes fechos e relações:
+
+\begin{lstlisting}[basicstyle=\small]
+Inductive lab_x_i: pterm -> pterm -> Prop :=
+| xi_from_bx_in_les: forall t1 t2 t2', 
+                       lab_term (t1 [[ t2 ]]) ->
+                       (sys_Bx t2 t2') ->
+                       lab_x_i (t1 [[ t2 ]]) (t1 [[ t2' ]])
+| xi_from_x : forall t t', 
+                lab_term t ->
+                lab_sys_x t t' -> 
+                lab_x_i t t'. 
+
+Definition lab_EE_ctx_red 
+(R: pterm -> pterm -> Prop) (t: pterm) (u : pterm) := 
+exists t' u', (t =EE t')/\(lab_contextual_closure R t' u')/\(u' =EE u).
+
+Definition ext_lab_EE_ctx_red 
+(R: pterm -> pterm -> Prop) (t: pterm) (u : pterm) := 
+exists t' u', (t =EE t')/\(ext_lab_contextual_closure R t' u')/\(u' =EE u).
+
+Definition lab_x_i_eq := ext_lab_EE_ctx_red lab_x_i.
+Definition lab_x_e_eq := ext_lab_EE_ctx_red sys_Bx.
+
+Notation "t -->[lx_i] u" := (lab_x_i_eq t u) (at level 59, left associativity).
+Notation "t -->[lx_e] u" := (lab_x_e_eq t u) (at level 59, left associativity).
+\end{lstlisting}
+
+A relação \texttt{lab\_x\_i} formaliza a relação $\rightarrow_{\underline{x}}$.
+O fecho \texttt{ext\_lab\_EE\_ctx\_red} realiza uma relação em qualquer ponto de
+um termo, \textbf{exceto} dentro de uma substituição marcada. Ele permite
+permutação de substituições tanto antes quanto depois da redução ser feita. Este
+fecho é utilizado então para formalizar as reduções de interesse. Assim,
+$\lambda \underline{ex}^i$ é formalizada como a redução "t -{}->[lx\_i] u",
+definida por \texttt{(ext\_lab\_EE\_ctx\_red lab\_x\_i) t u}. Por outro lado, a
+relação $\lambda \underline{ex}^e$ formalizada como a redução "t -{}->[lx\_e] u",
+definida por \texttt{(ext\_lab\_EE\_ctx\_red lab\_x\_e) t u}. 
+
+Uma estratégia utilizada para facilitar as provas foi abstrair, em lemas
+auxiliares, vários problemas destas que se repetem. Podemos então tratar tais
+problemas com um contexto limpo, facilitando as provas por indução. 
+
+\begin{lstlisting}[basicstyle=\small]
+Lemma star_lab_closure_app_left: forall R t t' u, lab_term u -> 
+star_closure (simpl_lab_contextual_closure R) t t' -> 
+star_closure (simpl_lab_contextual_closure R) (pterm_app t u) (pterm_app t' u).
+
+
+Lemma EE_clos_app_left: forall R t t' u, lab_term u -> 
+((lab_EE_ctx_red R) t t') -> 
+((lab_EE_ctx_red R) (pterm_app t u) (pterm_app t' u)).
+
+
+Lemma EE_ext_clos_app_left: forall R t t' u, lab_term u -> 
+((ext_lab_EE_ctx_red R) t t') -> 
+((ext_lab_EE_ctx_red R) (pterm_app t u) (pterm_app t' u)).
+\end{lstlisting}
+
+Os lemas acima exemplificam uma das principais simplificações feita: para cada
+fecho, definimos um lema para se realizar a redução em um termo maior, a partir
+da redução em um subtermo. Estes lemas são úteis para se evitar que tenhamos que
+destrinchar as reduções dentro da prova principal, facilitando muito o processo.
+Para cada construtor de termo temos um lema análogo a cada um dos três acima
+exemplificados, \texttt{star\_lab\_closure\_app\_left},
+\texttt{EE\_clos\_app\_left} e \texttt{EE\_ext\_clos\_app\_left}.
+
+Além disso, alguns lemas para lidar com a relação entre as reduções e equações
+foram precisos:
+
+\bigskip
+\coqdockw{Lemma} \coqdocvar{EE\_presv\_ie}: \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{t'} \coqdocvar{u} \coqdocvar{u'}, \coqdocvar{t}
+=\coqdocvar{EE} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{u'}
+=\coqdocvar{EE} \coqdocvar{t'} \ensuremath{\rightarrow} ((\coqdocvar{u}
+-->[\coqdocvar{lx\_i}] \coqdocvar{u'} \ensuremath{\lor} \coqdocvar{u}
+-->[\coqdocvar{lx\_e}] \coqdocvar{u'}) \ensuremath{\rightarrow} (\coqdocvar{t}
+-->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+-->[\coqdocvar{lx\_e}] \coqdocvar{t'})).\coqdoceol
+
+\smallskip
+
+\coqdockw{Lemma} \coqdocvar{EE\_presv\_lab\_lex}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{u}
+\coqdocvar{u'}, \coqdocvar{t} =\coqdocvar{EE} \coqdocvar{u}
+\ensuremath{\rightarrow} \coqdocvar{u'} =\coqdocvar{EE} \coqdocvar{t'}
+\ensuremath{\rightarrow} ((\coqdocvar{u} -->[\coqdocvar{lex}] \coqdocvar{u'})
+\ensuremath{\rightarrow} (\coqdocvar{t} -->[\coqdocvar{lex}]
+\coqdocvar{t'})).\coqdoceol
+\bigskip
+
+
+Novamente, esses lemas evitam que precisemos adentrar na definição das
+equações, reduzindo o tamanho das provas principais. Podemos então partir para
+o resultado principal deste trabalho.
+
+\bigskip
+
+\coqdockw{Theorem} \coqdocvar{lab\_ex\_eq\_i\_e}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'},
+\coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t}
+-->[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\leftrightarrow} (\coqdocvar{t}
+-->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+-->[\coqdocvar{lx\_e}] \coqdocvar{t'})).\coqdoceol
+
+\bigskip
+
+Dividimos a prova de que $\lambda \underline{ex} =
+\lambda \underline{ex}^i \cup \lambda \underline{ex}^e$, formalizada no teorema
+\texttt{lab\_ex\_eq\_i\_e}, em dois lemas, cada um representado uma direção da
+equivalência.
+
+\bigskip
+
+\coqdocnoindent \coqdockw{Lemma} \coqdocvar{lab\_ex\_impl\_i\_e}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'},
+\coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{t}
+-->[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\rightarrow} (\coqdocvar{t}
+-->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+-->[\coqdocvar{lx\_e}] \coqdocvar{t'}).\coqdoceol
+
+\begin{addmargin}[1em]{2em}
+\textbf{Prova:} Escolhemos, para cada redução possível feita pela relação
+\texttt{-{}->[lex]}, a redução apropriada entre a interna e a externa.  Para
+isto, abrimos a definição da relação \texttt{-{}->[lex]} e fazemos indução no
+fecho contextual, ou seja, fazemos indução no predicado
+\texttt{lab\_contextual\_closure lab\_sys\_lx t t'}. O caso base é tratado no
+lema auxiliar \texttt{lab\_sys\_x\_i\_e}, feito com análise de casos simples nos
+construtores da relação \texttt{lab\_sys\_lx}. 
+
+Nos passos indutivos, utilizamos o lema \texttt{EE\_presv\_ie} para adequar o
+objetivo à hipótese de indução, substituindo os termos dados pelos termos
+equivalentes, obtidos pela definição da redução \texttt{-{}->[lex]}, podendo assim
+aplicar a hipótese. No caso em que a redução é feita dentro da substituição
+marcada, devemos obrigatoriamente realizar a redução interna. Em todos os outros
+casos, realizamos a prova tanto para a redução interna quanto para a externa.
+Nos casos em que lidamos com abstrações e substituições, são necessários os
+lemas de renomeamento mencionados na subseção \ref{sub:subst_marc}.
+\end{addmargin}
+
+\bigskip
+
+\coqdocnoindent \coqdockw{Lemma} \coqdocvar{lab\_ie\_impl\_ex}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'},
+\coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t}
+-{}->[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+-{}->[\coqdocvar{lx\_e}] \coqdocvar{t'}) \ensuremath{\rightarrow} \coqdocvar{t}
+-{}->[\coqdocvar{lex}] \coqdocvar{t'}.\coqdoceol
+
+\begin{addmargin}[1em]{2em}
+\textbf{Prova:} A prova deste lema é dividida em duas partes: quando a redução realizada é a
+interna, e quando é a externa. 
+
+No caso da interna, a indução é feita no fecho do predicado interno, ou seja, é
+feita no predicado \texttt{ext\_lab\_contextual\_closure lab\_x\_i t t'}. O caso
+base é feito apenas analisando os construtores da relação \texttt{lab\_x\_i}, e
+casando com o construtor adequado de lab\_sys\_lx. Nos passos indutivos, fazemos
+de maneira análoga ao lema anterior: utilizamos agora o predicado
+\texttt{EE\_presv\_lab\_lex} para ajustar o objetivo à hipótese, e utilizamos os
+lemas relacionando as reduções aos construtores, como
+\texttt{EE\_clos\_app\_left}, para reduzir o objetivo à redução dada como
+hipótese. Novamente, no caso de abstrações e substituições, precisamos dos lemas
+de renomeamento.
+
+No caso da externa, o processo é exatamente o mesmo. A diferença é que no passo
+base, fazemos a análise de casos na redução \texttt{sys\_Bx} e, além disso, não
+temos que lidar com o caso da redução dentro de substituição marcada.
+\end{addmargin}
+
+\bigskip
+
+Com ambos os lemas completos, a prova do teorema \texttt{lab\_ex\_eq\_i\_e} se
+reduz a apenas aplicá-los. Assim, terminamos a prova de que a redução marcada
+formalizada, \texttt{-{}->[lex]} é equivalente à união das reduções interna
+e externa, \texttt{-{}->[lx\_i]} e \texttt{-{}->[lx\_e]}.

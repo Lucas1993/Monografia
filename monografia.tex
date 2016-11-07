@@ -2,50 +2,138 @@
 % Classe do documento
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Opções:
-%  - Graduação: bacharelado|engenharia|licenciatura
-%  - Pós-graduação: [qualificacao], mestrado|doutorado, ppca|ppginf
+% Nós usamos a classe "unb-cic".  Deixe apenas uma das linhas
+% abaixo não-comentada, dependendo se você for do bacharelado ou
+% da licenciatura.
 
-% \documentclass[engenharia]{UnB-CIC}%
-\documentclass[bacharelado]{UnB-CIC}%
+\documentclass[bacharelado]{unb-cic}
+%\documentclass[licenciatura]{unb-cic}
 
-\usepackage{pdfpages}% incluir PDFs, usado no apêndice
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pacotes importados
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[brazil,american]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{indentfirst}
+\usepackage{natbib}
+\usepackage{xcolor,graphicx,url}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{empheq}
 \usepackage{mathpartir}
 \usepackage{listings}
+\usepackage{scrextend}
+\usepackage[color]{coqdoc}
+\usepackage[utf8]{inputenc}
+
 
 \lstset{frame = single, aboveskip=20pt, belowskip=20pt }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Informações do Trabalho
+% Cores dos links
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Veja o arquivos cores.tex se quiser ver que outras cores estão
+% pré-definidas.  Utilizando o comando \hypersetup abaixo nós
+% evitamos aquelas caixas vermelhas feias em volta dos links.
+
+\input{cores}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=DarkScarletRed,
+  citecolor=DarkScarletRed,
+  filecolor=DarkScarletRed,
+  urlcolor= DarkScarletRed
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Informações sobre a monografia
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Formalização das propriedades de normalização no sistema $\lambda$ex}%
+
 \orientador{\prof \dr Flávio L. C. de Moura}{CIC/UnB}%
-%\coorientador{\prof \dr José Ralha}{CIC/UnB}
 \coordenador{\prof \dr Rodrigo Bonifácio de Almeida}{Universidade de Brasília}%
-\diamesano{01}{Abril}{2016}%
+\diamesano{09}{Dezembro}{2016}%
 
 \membrobanca{\prof \dr Flávio L. C. de Moura}{Universidade de Brasília}%
-\membrobanca{\prof \dr Maurício Ayala-Ríncon}{Universidade de Brasília}%
+\membrobanca{\prof \dr Mauricio Ayala-Ríncon}{Universidade de Brasília}%
 
 \autor{Lucas de Moura}{Amaral}%
 
-\titulo{Formalização das propriedades de normalização no sistema $\lambda$ex}%
+\CDU{004.4}
 
 \palavraschave{lambda, formalização, trabalho de conclusão de curso}%
 \keywords{lambda, formalization, thesis}%
 
-\newcommand{\unbcic}{\texttt{UnB-CIC}}%
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Texto
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{document}%
-    \capitulo{1_Introducao}{Introdução}%
-    \capitulo{2_Estruturas_Basicas}{Estruturas Básicas}%
-    \capitulo{3_Propriedade_IE}{Propriedade IE}%
 
-    %\bibliographystyle{plain}
-    %\bibliography{bibliografia}
-\end{document}%
+\begin{document}
+  \maketitle
+  \pretextual
+
+  \begin{dedicatoria}
+  Dedico a....
+  \end{dedicatoria}
+
+  \begin{agradecimentos}
+  Agradeço a....
+  \end{agradecimentos}
+
+  \begin{resumo}
+    O cálculo lambda é um sistema formal, capaz de expressar o processo
+    computacional.  Pela sua simplicidade e expressividade, este cálculo é usado
+    como modelo teórico para o paradigma de programação funcional. Em consequência
+    disto, uma grande quantidade de extensões do cálculo foi proposta, com o
+    objetivo de obter um sistema formal intermediário entre o cálculo lambda e suas
+    implementações.  O objeto de estudo deste trabalho é uma destas variantes,
+    chamada $\lambda$ex, um cálculo com substituições explicitas proposto por Delia
+    Kesner, em \cite{delia}.  Em resumo, o objetivo é continuar o trabalho de
+    formalização deste cálculo, no assistente de prova Coq, iniciado em
+    \cite{initial}, a fim de enunciar suas definições e teoremas em uma linguagem
+    que permite que estes sejam verificados automaticamente por um algoritmo.  Em
+    especial, o foco é a prova formal da preservação da normalização forte dos
+    termos do cálculo.
+  \end{resumo}
+
+  \selectlanguage{american}
+  \begin{abstract}
+    Lambda calculus is a formal system, capable of expressing the computational
+    process.  Because of it's simplicity and expressiveness, this calculus is used
+    as a theorical model for the paradigm of functional programming. Consequently, a
+    great variety of extensions was proposed, with the objective of obtaining an
+    intermidiate formal system between the lambda calculus and its implementations.
+    The object of study of this work is one of these variants, called $\lambda$ex, a
+    calculus with explicit subsititutions, proposed by Delia Kesner, on
+    \cite{delia}.  In short, the goal is to continue the work in the formalization
+    of this calculus, in the Coq proof assistant, initiated in \cite{initial}, in
+    order to enunciate it's definitions and theorems on a language that allows these
+    to be automatically verified by an algorithm.  In particular, the focus is the
+    formal proof of the calculus' preservation of strong normalization of terms.
+  \end{abstract}
+  \selectlanguage{brazil}
+
+  \tableofcontents
+  \listoffigures
+  \listoftables
+
+  \textual
+  \input{capitulos/capitulo1}
+  \input{capitulos/capitulo2}
+  \input{capitulos/capitulo3}
+  % ...
+
+  \postextual
+  \bibliographystyle{abbrv}
+  \bibliography{bibliografia}
+
+\end{document}
