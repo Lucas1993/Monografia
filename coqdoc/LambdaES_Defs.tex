@@ -1,0 +1,347 @@
+\documentclass[12pt]{report}
+\usepackage[]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{coqdoc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file has been automatically generated with the command
+%% coqdoc --latex LambdaES_Defs.v -o /home/amaral/code/TCC/Monografia/coqdoc/LambdaES_Defs.tex 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\coqlibrary{LambdaES Defs}{Library }{LambdaES\_Defs}
+
+\begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Set Implicit Arguments}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{Metatheory}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Pre-terms are expressions arbitrarily built from the following constructors: \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{LambdaES Defs.pterm}{pterm}{\coqdocinductive{pterm}} : \coqdockw{Set} :=\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm bvar}{pterm\_bvar}{\coqdocconstructor{pterm\_bvar}} : \coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm fvar}{pterm\_fvar}{\coqdocconstructor{pterm\_fvar}} : \coqdocdefinition{var} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm app}{pterm\_app}{\coqdocconstructor{pterm\_app}}  : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm abs}{pterm\_abs}{\coqdocconstructor{pterm\_abs}}  : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm sub}{pterm\_sub}{\coqdocconstructor{pterm\_sub}} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm lsub}{pterm\_lsub}{\coqdocconstructor{pterm\_lsub}} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}.\coqdoceol
+\end{coqdoccode}
+Bound and free variables have different constructors. In fact, \coqdocvar{pterm\_bvar} will be used to represent bound variables that are codified by deBruijn indexes. Free variables are represented with names, so the free variable x will be denoted by \coqdocvar{pterm\_fvar} \coqdocvar{x}. The constructor \coqdocvar{pterm\_app} and \coqdocvar{pterm\_abs} are used respectively for representing applications and abstractions. Explicit substitutions appear in two flavors: with or without marks. Therefore, \coqdocvar{pterm\_sub} \coqdocvar{t} \coqdocvar{u} represents the term \coqdocvar{t} with an explicit substitution \coqdocvar{u}, while \coqdocvar{pterm\_lsub} \coqdocvar{t} \coqdocvar{u} is the constructor for labeled substitutions. The adopted notations for explicit substitutions are as follows: \begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::x '[' x ']'}{"}{"}t [ u ]" := (\coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 70).\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::x '[[' x ']]'}{"}{"}t [[ u ]]" := (\coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 70).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Opening up abstractions and substitutions \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.open rec}{open\_rec}{\coqdocdefinition{open\_rec}} (\coqdocvar{k} : \coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}}) (\coqdocvar{u} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqdockw{if} \coqdocvariable{k} \coqdocnotation{===} \coqdocvar{i} \coqdockw{then} \coqdocvariable{u} \coqdockw{else} (\coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} \coqdocvariable{k} \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} \coqdocvariable{k} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{u} \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} \coqdocvariable{k} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} \coqdocvariable{k} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{LambdaES Defs.open}{open}{\coqdocdefinition{open}} \coqdocvar{t} \coqdocvar{u} := \coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} 0 \coqdocvariable{u} \coqdocvariable{t}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::'x7B' x 'x7E>' x 'x7D' x}{"}{"}\{ k \~{}> u \} t" := (\coqref{LambdaES Defs.open rec}{\coqdocdefinition{open\_rec}} \coqdocvar{k} \coqdocvar{u} \coqdocvar{t}) (\coqdoctac{at} \coqdockw{level} 67).\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::x 'x5Ex5E' x}{"}{"}t \^{}\^{} u" := (\coqref{LambdaES Defs.open}{\coqdocdefinition{open}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 67).\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::x 'x5E' x}{"}{"}t \^{} x" := (\coqref{LambdaES Defs.open}{\coqdocdefinition{open}} \coqdocvar{t} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x})).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Variable closing \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.close rec}{close\_rec}{\coqdocdefinition{close\_rec}}  (\coqdocvar{k} : \coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}}) (\coqdocvar{x} : \coqdocdefinition{var}) (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x'}    \ensuremath{\Rightarrow} \coqdockw{if} \coqdocvar{x'} \coqdocnotation{==} \coqdocvariable{x} \coqdockw{then} (\coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvariable{k}) \coqdockw{else} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x'}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} \coqdocvariable{k} \coqdocvariable{x} \coqdocvar{t1}) (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} \coqdocvariable{k} \coqdocvariable{x} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{x} \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{x} \coqdocvar{t1}) (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} \coqdocvariable{k} \coqdocvariable{x} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvariable{x} \coqdocvar{t1}) (\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} \coqdocvariable{k} \coqdocvariable{x} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{LambdaES Defs.close}{close}{\coqdocdefinition{close}} \coqdocvar{t} \coqdocvar{x} := \coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} 0 \coqdocvariable{x} \coqdocvariable{t}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.fv}{fv}{\coqdocdefinition{fv}} (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqdocdefinition{vars} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqdocnotation{\{\}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}    \ensuremath{\Rightarrow} \coqdocnotation{\{\{}\coqdocvar{x}\coqdocnotation{\}\}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t1}\coqdocnotation{)} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t2}\coqdocnotation{)}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} (\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t1}\coqdocnotation{)} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t2}\coqdocnotation{)}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t1}\coqdocnotation{)} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocnotation{(}\coqref{LambdaES Defs.fv}{\coqdocdefinition{fv}} \coqdocvar{t2}\coqdocnotation{)}\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.bswap rec}{bswap\_rec}{\coqdocdefinition{bswap\_rec}} (\coqdocvar{k} : \coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}}) (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqdockw{if} \coqdocvariable{k} \coqdocnotation{===} \coqdocvar{i} \coqdockw{then} (\coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}))\coqdoceol
+\coqdocindent{11.50em}
+\coqdockw{else} (\coqdockw{if} \coqdocnotation{(}\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}\coqdocnotation{)} \coqdocnotation{===} \coqdocvar{i} \coqdockw{then} (\coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvariable{k}) \coqdockw{else} (\coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}))\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} \coqdocvariable{k} \coqdocvar{t1}) (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} \coqdocvariable{k} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvar{t1}) (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} \coqdocvariable{k} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} (\coqexternalref{S}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocconstructor{S}} \coqdocvariable{k}) \coqdocvar{t1}) (\coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} \coqdocvariable{k} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{LambdaES Defs.bswap}{bswap}{\coqdocdefinition{bswap}} \coqdocvar{t} := \coqref{LambdaES Defs.bswap rec}{\coqdocdefinition{bswap\_rec}} 0 \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::'x26' x}{"}{"}\& t" := (\coqref{LambdaES Defs.bswap}{\coqdocdefinition{bswap}} \coqdocvar{t}) (\coqdoctac{at} \coqdockw{level} 67).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.swap}{swap}{\coqdocdefinition{swap}} (\coqdocvar{x} \coqdocvar{y} : \coqdocdefinition{var}) (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{z}    \ensuremath{\Rightarrow} \coqdockw{if} \coqdocvar{z} \coqdocnotation{==} \coqdocvariable{x} \coqdockw{then} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvariable{y}) \coqdockw{else} \coqdoceol
+\coqdocindent{11.50em}
+\coqdockw{if} \coqdocvar{z} \coqdocnotation{==} \coqdocvariable{y} \coqdockw{then} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvariable{x}) \coqdockw{else} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{z}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t1}) (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t1}) (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t1}) (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvariable{x} \coqdocvariable{y} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::'[(' x ',' x ')]' x}{"}{"}[( x , y )] t" := (\coqref{LambdaES Defs.swap}{\coqdocdefinition{swap}} \coqdocvar{x} \coqdocvar{y} \coqdocvar{t}) (\coqdoctac{at} \coqdockw{level} 67).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+\section{Definitions}
+
+
+
+\subsection{Size of a term}
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.pterm size}{pterm\_size}{\coqdocdefinition{pterm\_size}} (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} : \coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}} :=\coqdoceol
+\coqdocindent{0.50em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} 1\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}    \ensuremath{\Rightarrow} 1\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} 1 \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t1}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} 1 \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t1}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t2}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} 1 \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t1}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t2}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{0.50em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} 1 \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t1}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{+}} \coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{(}}\coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvar{t2}\coqexternalref{:nat scope:x '+' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{0.50em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{LambdaES Defs.pterm size non null}{pterm\_size\_non\_null}{\coqdoclemma{pterm\_size\_non\_null}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvariable{t} \coqexternalref{:nat scope:x '>' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{>}} 0.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{induction} \coqdocvar{t}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Implicit substitution, for free names \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.m sb}{m\_sb}{\coqdocdefinition{m\_sb}} (\coqdocvar{z} : \coqdocdefinition{var}) (\coqdocvar{u} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) (\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}) : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm bvar}{\coqdocconstructor{pterm\_bvar}} \coqdocvar{i}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x}    \ensuremath{\Rightarrow} \coqdockw{if} \coqdocvar{x} \coqdocnotation{==} \coqdocvariable{z} \coqdockw{then} \coqdocvariable{u} \coqdockw{else} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvar{x})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvar{t1}    \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow} \coqref{LambdaES Defs.pterm lsub}{\coqdocconstructor{pterm\_lsub}} (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t1}) (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvariable{z} \coqdocvariable{u} \coqdocvar{t2})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{LambdaES Defs.::'[' x 'x7E>' x ']' x}{"}{"}[ z \~{}> u ] t" := (\coqref{LambdaES Defs.m sb}{\coqdocdefinition{m\_sb}} \coqdocvar{z} \coqdocvar{u} \coqdocvar{t}) (\coqdoctac{at} \coqdockw{level} 62).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+ES terms are expressions without dangling deBruijn indexes. \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{LambdaES Defs.term}{term}{\coqdocinductive{term}} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.term var}{term\_var}{\coqdocconstructor{term\_var}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x},\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvariable{x})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.term app}{term\_app}{\coqdocconstructor{term\_app}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t1} \coqdocvar{t2},\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t1} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t2} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvariable{t1} \coqdocvariable{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.term abs}{term\_abs}{\coqdocconstructor{term\_abs}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{L} \coqdocvar{t1},\coqdoceol
+\coqdocindent{3.00em}
+(\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqdocvariable{t1} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x})) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvariable{t1})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.term sub}{term\_sub}{\coqdocconstructor{term\_sub}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{L} \coqdocvar{t1} \coqdocvar{t2},\coqdoceol
+\coqdocindent{2.50em}
+(\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqdocvariable{t1} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x})) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t2} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm sub}{\coqdocconstructor{pterm\_sub}} \coqdocvariable{t1} \coqdocvariable{t2}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{LambdaES Defs.term size non null}{term\_size\_non\_null}{\coqdoclemma{term\_size\_non\_null}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvariable{t} \coqexternalref{:nat scope:x '>' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{>}} 0.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{Ht}. \coqdoctac{destruct} \coqdocvar{t}. \coqdoctac{inversion} \coqdocvar{Ht}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}. \coqdoctac{inversion} \coqdocvar{Ht}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Body \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{LambdaES Defs.body}{body}{\coqdocdefinition{body}} \coqdocvar{t} := \coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{L}\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}} \coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqdocvariable{t} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Hint Constructors} \coqref{LambdaES Defs.term}{\coqdocinductive{term}}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Pure lambda terms. \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{LambdaES Defs.Lterm}{Lterm}{\coqdocinductive{Lterm}} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.Lterm var}{Lterm\_var}{\coqdocconstructor{Lterm\_var}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x},\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} (\coqref{LambdaES Defs.pterm fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvariable{x})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.Lterm app}{Lterm\_app}{\coqdocconstructor{Lterm\_app}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t1} \coqdocvar{t2},\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} \coqdocvariable{t1} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} \coqdocvariable{t2} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} (\coqref{LambdaES Defs.pterm app}{\coqdocconstructor{pterm\_app}} \coqdocvariable{t1} \coqdocvariable{t2})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.Lterm abs}{Lterm\_abs}{\coqdocconstructor{Lterm\_abs}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{L} \coqdocvar{t1},\coqdoceol
+\coqdocindent{3.00em}
+(\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} (\coqdocvariable{t1} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x})) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{3.00em}
+\coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} (\coqref{LambdaES Defs.pterm abs}{\coqdocconstructor{pterm\_abs}} \coqdocvariable{t1}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{LambdaES Defs.Lterm size non null}{Lterm\_size\_non\_null}{\coqdoclemma{Lterm\_size\_non\_null}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqref{LambdaES Defs.pterm size}{\coqdocdefinition{pterm\_size}} \coqdocvariable{t} \coqexternalref{:nat scope:x '>' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Peano}{\coqdocnotation{>}} 0.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{Ht}. \coqdoctac{destruct} \coqdocvar{t}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{Ht}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{omega}. \coqdoctac{inversion} \coqdocvar{Ht}. \coqdoctac{inversion} \coqdocvar{Ht}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Body for pure lambda terms \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{LambdaES Defs.Lbody}{Lbody}{\coqdocdefinition{Lbody}} \coqdocvar{t} := \coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{L}\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}} \coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}} (\coqdocvariable{t} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Hint Constructors} \coqref{LambdaES Defs.Lterm}{\coqdocinductive{Lterm}}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+\end{document}

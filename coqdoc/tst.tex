@@ -1,0 +1,72 @@
+\documentclass[12pt]{report}
+\usepackage[]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{coqdoc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file has been automatically generated with the command
+%% coqdoc --latex tst.v 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\coqlibrary{tst}{Library }{tst}
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Set Implicit Arguments}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocvar{even} : \coqdocvar{N} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{even\_0} : \coqdocvar{even} 0\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{even\_S} \coqdocvar{n} : \coqdocvar{odd} \coqdocvar{n} \ensuremath{\rightarrow} \coqdocvar{even} (\coqdocvar{n} + 1)\coqdoceol
+\coqdocnoindent
+\coqdockw{with} \coqdocvar{odd} : \coqdocvar{N} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{odd\_S} \coqdocvar{n} : \coqdocvar{even} \coqdocvar{n} \ensuremath{\rightarrow} \coqdocvar{odd} (\coqdocvar{n} + 1).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Theorem} \coqdocvar{my\_first\_proof} : (\coqdockw{\ensuremath{\forall}} \coqdocvar{A} : \coqdockw{Prop}, \coqdocvar{A} \ensuremath{\rightarrow} \coqdocvar{A}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{proof\_of\_A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{exact} \coqdocvar{proof\_of\_A}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Theorem} \coqdocvar{dummy}: \coqdockw{\ensuremath{\forall}} \coqdocvar{A} \coqdocvar{B} : \coqdockw{Prop}, \coqdocvar{A} \ensuremath{\rightarrow} (\coqdocvar{A} \ensuremath{\lor} \coqdocvar{B}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{proof\_of\_A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{exact} \coqdocvar{proof\_of\_A}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{sqr} (\coqdocvar{x} : \coqdocvar{N}) := \coqdoctac{\ensuremath{\exists}} \coqdocvar{z}, \coqdocvar{z} \ensuremath{\times} \coqdocvar{z} = \coqdocvar{x}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocvar{nat} : \coqdockw{Set} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} 0 : \coqdocvar{nat}\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdocvar{S} : \coqdocvar{nat} \ensuremath{\rightarrow} \coqdocvar{nat}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{fun} (\coqdocvar{n}:\coqdocvar{nat}) \ensuremath{\Rightarrow} \coqdocvar{\_}\coqdoceol
+\coqdocnoindent
+\coqdoceol
+\coqdocnoindent
+\coqdocvar{prova\_simples} = \coqdockw{fun} (\coqdocvar{A} : \coqdockw{Prop}) (\coqdocvar{prova\_de\_A} : \coqdocvar{A}) \ensuremath{\Rightarrow} \coqdocvar{prova\_de\_A} : \coqdockw{\ensuremath{\forall}} \coqdocvar{A} : \coqdockw{Prop}, \coqdocvar{A} \ensuremath{\rightarrow} \coqdocvar{A}\coqdoceol
+\coqdocnoindent
+\coqdoceol

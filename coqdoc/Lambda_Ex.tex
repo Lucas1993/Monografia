@@ -1,0 +1,198 @@
+\documentclass[12pt]{report}
+\usepackage[]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{coqdoc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file has been automatically generated with the command
+%% coqdoc --latex Lambda_Ex.v -o /home/amaral/code/TCC/Monografia/coqdoc/Lambda_Ex.tex 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\coqlibrary{Lambda Ex}{Library }{Lambda\_Ex}
+
+\begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Set Implicit Arguments}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{Metatheory} \coqdoclibrary{LambdaES\_Defs} \coqdoclibrary{LambdaES\_Infra} \coqdoclibrary{LambdaES\_FV}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{Rewriting}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{Lambda} \coqdoclibrary{Equation\_C}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Lambda\_ex calculus \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{Lambda Ex.rule b}{rule\_b}{\coqdocinductive{rule\_b}} : \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{1.50em}
+\coqdef{Lambda Ex.reg rule b}{reg\_rule\_b}{\coqdocconstructor{reg\_rule\_b}} : \coqdockw{\ensuremath{\forall}} (\coqdocvar{t} \coqdocvar{u}:\coqdocinductive{pterm}),  \coqdocdefinition{body} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow}  \coqdoceol
+\coqdocindent{2.50em}
+\coqref{Lambda Ex.rule b}{\coqdocinductive{rule\_b}} (\coqdocconstructor{pterm\_app}(\coqdocconstructor{pterm\_abs} \coqdocvariable{t}) \coqdocvariable{u}) (\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{]}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-> B' x}{"}{"}t ->\_B u" := (\coqref{Lambda Ex.rule b}{\coqdocinductive{rule\_b}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{Lambda Ex.sys x}{sys\_x}{\coqdocinductive{sys\_x}} : \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.reg rule var}{reg\_rule\_var}{\coqdocconstructor{reg\_rule\_var}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocinductive{term} \coqdocvariable{t} \ensuremath{\rightarrow} \coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} (\coqdocconstructor{pterm\_bvar} 0 \coqdocnotation{[}\coqdocvariable{t}\coqdocnotation{]}) \coqdocvariable{t}\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.reg rule gc}{reg\_rule\_gc}{\coqdocconstructor{reg\_rule\_gc}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocinductive{term} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow} \coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} (\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{]}) \coqdocvariable{t}\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.reg rule app}{reg\_rule\_app}{\coqdocconstructor{reg\_rule\_app}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t1} \coqdocvar{t2} \coqdocvar{u}, \coqdocdefinition{body} \coqdocvariable{t1} \ensuremath{\rightarrow} \coqdocdefinition{body} \coqdocvariable{t2} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{1.00em}
+\coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} (\coqdocnotation{(}\coqdocconstructor{pterm\_app} \coqdocvariable{t1} \coqdocvariable{t2}\coqdocnotation{)[}\coqdocvariable{u}\coqdocnotation{]}) (\coqdocconstructor{pterm\_app} (\coqdocvariable{t1}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{]}) (\coqdocvariable{t2}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{]}))\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.reg rule lamb}{reg\_rule\_lamb}{\coqdocconstructor{reg\_rule\_lamb}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocdefinition{body} (\coqdocconstructor{pterm\_abs} \coqdocvariable{t}) \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{1.00em}
+\coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} (\coqdocnotation{(}\coqdocconstructor{pterm\_abs} \coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{u}\coqdocnotation{]}) (\coqdocconstructor{pterm\_abs} (\coqdocnotation{(}\coqdocnotation{\&} \coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{u}\coqdocnotation{]}))\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.reg rule comp}{reg\_rule\_comp}{\coqdocconstructor{reg\_rule\_comp}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdocdefinition{body} (\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{]}) \ensuremath{\rightarrow} \coqexternalref{:type scope:'x7E' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{v} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{1.00em}
+\coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} (\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{][}\coqdocvariable{v}\coqdocnotation{]}) (\coqdocnotation{((}\coqdocnotation{\&} \coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{v}\coqdocnotation{])[} \coqdocvariable{u}\coqdocnotation{[} \coqdocvariable{v} \coqdocnotation{]} \coqdocnotation{]}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-> x' x}{"}{"}t ->\_x u" := (\coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.ex}{ex}{\coqdocdefinition{ex}} \coqdocvar{t} \coqdocvar{u} := \coqdocdefinition{red\_ctx\_mod\_eqC} \coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->ex' x}{"}{"}t -->ex u" := (\coqref{Lambda Ex.ex}{\coqdocdefinition{ex}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.ex trs}{ex\_trs}{\coqdocdefinition{ex\_trs}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{trans\_closure} \coqref{Lambda Ex.ex}{\coqdocdefinition{ex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->ex+' x}{"}{"}t -->ex+ u" := (\coqref{Lambda Ex.ex trs}{\coqdocdefinition{ex\_trs}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.ex str}{ex\_str}{\coqdocdefinition{ex\_str}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{star\_closure} \coqref{Lambda Ex.ex}{\coqdocdefinition{ex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->ex*' x}{"}{"}t -->ex* u" := (\coqref{Lambda Ex.ex str}{\coqdocdefinition{ex\_str}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{Lambda Ex.sys Bx}{sys\_Bx}{\coqdocinductive{sys\_Bx}}: \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.B lx}{B\_lx}{\coqdocconstructor{B\_lx}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvariable{t} \coqref{Lambda Ex.::x '-> B' x}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqref{Lambda Ex.::x '-> B' x}{\coqdocnotation{\_B}} \coqdocvariable{u} \ensuremath{\rightarrow} \coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t} \coqdocvariable{u}\coqdoceol
+\coqdocnoindent
+\ensuremath{|} \coqdef{Lambda Ex.sys x lx}{sys\_x\_lx}{\coqdocconstructor{sys\_x\_lx}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvariable{t} \coqref{Lambda Ex.::x '-> x' x}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqref{Lambda Ex.::x '-> x' x}{\coqdocnotation{\_x}} \coqdocvariable{u} \ensuremath{\rightarrow} \coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-> Bx' x}{"}{"}t ->\_Bx u" := (\coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.lex}{lex}{\coqdocdefinition{lex}} \coqdocvar{t} \coqdocvar{u} :=  \coqdocdefinition{red\_ctx\_mod\_eqC} \coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->lex' x}{"}{"}t -->lex u" := (\coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.lex trs}{lex\_trs}{\coqdocdefinition{lex\_trs}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{trans\_closure} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->lex+' x}{"}{"}t -->lex+ u" := (\coqref{Lambda Ex.lex trs}{\coqdocdefinition{lex\_trs}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.lex str}{lex\_str}{\coqdocdefinition{lex\_str}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{star\_closure} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Lambda Ex.::x '-->lex*' x}{"}{"}t -->lex* u" := (\coqref{Lambda Ex.lex str}{\coqdocdefinition{lex\_str}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+The two definitions of SN are equivalent for lex. \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Lambda Ex.SN equivSN alt}{SN\_equivSN\_alt}{\coqdoclemma{SN\_equivSN\_alt}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocdefinition{SN} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocinductive{SN\_alt} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}. \coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Properties of the sys\_x  \begin{coqdoccode}
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\end{coqdoccode}
+\end{document}

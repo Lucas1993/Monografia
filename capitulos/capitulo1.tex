@@ -7,16 +7,16 @@
 \subsection{Motivação}
 
 Assistentes de provas são sistemas computacionais que permitem aos usuários
-realizar provas e definições em um computador. Neles, o usuário pode construir
-toda sua teoria matemática em uma linguagem em que o sistema seja capaz de
-verificar automaticamente. Ou seja, a principal motivação por trás de um
-assistente de prova é verificar formalmente as provas de uma teoria. Apesar de
-já existir um processo humano de verificação, muitas vezes ocorrem erros neste
-processo, e provas que foram aceitas numa primeira avaliação são descobertas
-problemáticas algum tempo depois. Como exemplo, podemos citar o teorema das
-quatro cores \cite{four_colour}, que desafiou matemáticos por anos e foram
-apresentadas falsas provas diversas vezes. Eventualmente, o teorema foi provado
-em um assistente de prova e hoje sua corretude é aceita.
+especificar teorias e provar propriedades destas em um computador. Neles, o
+usuário pode construir toda sua teoria matemática em uma linguagem em que o
+sistema seja capaz de verificar sua correção. Ou seja, a principal motivação por
+trás de um assistente de prova é verificar formalmente as propriedades de uma
+teoria. Apesar de já existir um processo humano de verificação, muitas vezes
+ocorrem erros neste processo, e provas que foram aceitas numa primeira avaliação
+são descobertas problemáticas algum tempo depois. Como exemplo, podemos citar o
+teorema das quatro cores \cite{four_colour}, que desafiou matemáticos por anos e
+foram apresentadas falsas provas diversas vezes. Este teorema foi provado em
+2008, no assistente de prova  Coq, estabelecendo, assim, a sua correção.
 
 Mas, então, o que exatamente significa uma prova? Uma prova normalmente é
 definida como o processo de se estabelecer a validade de alguma afirmação. Na
@@ -25,10 +25,10 @@ a se tornar indiscutível quando analizada com cuidado. Porém, matemáticos sã
 humanos e, infelizmente, cometem erros. Com isto em mente, foi definida uma
 noção ainda mais forte de prova, chamada \emph{prova formal}.
 
-Uma prova formal é uma sequência finita de sentenças tal que cada uma delas ou é
-um axioma, uma suposição ou é derivada diretamente das sentenças anteriores
-através das chamadas regras de inferência. A vantagem do rigor das provas
-formais é que conferí-la se torna um processo muito mais simples, sendo
+Uma prova formal é uma sequência finita de fórmulas lógicas tal que cada uma
+delas ou é um axioma, uma suposição ou é derivada diretamente das sentenças
+anteriores através das chamadas regras de inferência. A vantagem do rigor das
+provas formais é que conferí-la se torna um processo muito mais simples, sendo
 necessário apenas confirmar de onde vem cada uma das sentenças.
 
 Por este motivo, provas formais são comumente construídas e verificadas pelos
@@ -46,11 +46,39 @@ isto gera outra dúvida: Por que confiar nos assistentes de prova?
         podemos analizar seus algoritmos, demonstrar que só é possível provar
         teoremas derivados no sistema lógico interno e testar seu funcionamento
         como um programa normal.
-    \item[Critério de De Bruijn:] Muitos assistentes de prova criam um
-        \emph{objeto de prova}, uma prova formal independente do sistema que
-        pode ser checada tanto por outro programa, quanto por um matemático
-        interessado.  
+    \item[Critério de De Bruijn:] O critério de de Bruijn afirma que a correção
+        de um sistema deve ser garantida por um verificador \emph{pequeno}
+        \cite{reek}. Em outras palavras, deve haver um \emph{kernel} pelo qual
+        todas as fórmulas passam. Assim, se torna mais fácil estabelecer a
+        confiabilidade do sistema, pois podemos verificar o kernel
+        separadamente. Nem todos os assistentes de prova passam neste critério,
+        como visto na Tabela \ref{table:dbj_crit}.
 \end{description}
+
+\begin{table}[h]
+\centering
+\caption{Relação entre assistentes de prova e o critério de de Bruijn \cite{freek}}
+\label{table:dbj_crit}
+\begin{tabular}{l|c}
+              & \multicolumn{1}{l}{Critério de de Bruijn} \\ \hline
+HOL           & $\bullet$                                 \\
+Mizar         & \multicolumn{1}{l}{}                      \\
+PVS           & \multicolumn{1}{l}{}                      \\ 
+Coq           & $\bullet$                                 \\
+Otter/Ivy     & $\bullet$                                 \\
+Isabelle/Isar & $\bullet$                                 \\
+Alfa/Agda     & $\bullet$                                 \\
+ACL2          &                                           \\
+PhoX          & $\bullet$                                 \\
+IMPS          &                                           \\
+Metamath      & $\bullet$                                 \\
+Theorema      &                                           \\
+Lego          & $\bullet$                                 \\
+NuPRL         &                                           \\
+$\Omega$mega  & $\bullet$                                        
+\end{tabular}
+\end{table}
+
 
 Recentemente, existe um grande número de matemáticos interessados em assistentes
 de prova, buscando construir uma teoria consistente para o uso destes e
@@ -73,36 +101,43 @@ com uma vasta biblioteca de definições e teoremas comuns.
 A ferramenta vem acompanhada de uma linguagem de programação funcional, com
 tipos dependentes. É através desta linguagem que podemos criar as definições e
 provar os lemas de nossa teoria. Ela é baseada no Cálculo de Construções
-Indutivas, uma extensão do cálculo lambda que serve como modelo teórico para o
-sistema. O processo de se verificar a corretude de uma prova em Coq se reduz ao
-problema de \emph{checagem de tipos}. A seguir, será feita uma introdução à
-sintaxe e o funcionamento da ferramenta, baseada em tutoriais disponibilizados
-na página oficial do sistema, em \cite{coq} e \cite{coq2}.
+Indutivas \cite{coquand}, uma extensão do cálculo $\lambda$ que serve como modelo
+teórico para o sistema. O processo de se verificar a correção de uma prova em
+Coq se reduz ao problema de \emph{checagem de tipos}. A seguir, será feita uma
+introdução à sintaxe e o funcionamento da ferramenta, baseada em tutoriais
+disponibilizados na página oficial do sistema, em \cite{coq} e \cite{coq2}.
 
 
 Os objetos de Coq podem ser divididos em duas categorias, \emph{Prop} e
 \emph{Type}. A categoria \emph{Prop} é a das proposições bem formadas. Um
 exemplo de proposição na linguagem seria:
 
-\begin{lstlisting}[basicstyle=\small]
-    forall A B : Prop, A -> (A \/ B).
-\end{lstlisting}
+\bigskip
+\coqdockw{\ensuremath{\forall}} \coqdocvar{A} \coqdocvar{B} : \coqdockw{Prop},
+\coqdocvar{A} \ensuremath{\rightarrow} (\coqdocvar{A} \ensuremath{\lor}
+\coqdocvar{B}).\coqdoceol
+\bigskip
 
 Predicados podem ser definidos indutivamente, como a seguir.
 
-\begin{lstlisting}[basicstyle=\small]
-    Inductive even : N -> Prop :=
-    | even_0 : even 0
-    | even_S n : odd n -> even (n + 1)
-    with odd : N -> Prop :=
-    | odd_S n : even n -> odd (n + 1).
-\end{lstlisting}
+\bigskip \coqdockw{Inductive} \coqdocvar{even} : \coqdocvar{N}
+\ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol 
+\coqdocindent{2.00em}\ensuremath{|} \coqdocvar{even\_0} : \coqdocvar{even} 0\coqdoceol
+\coqdocindent{2.00em}\ensuremath{|} \coqdocvar{even\_S} \coqdocvar{n} :
+\coqdocvar{odd} \coqdocvar{n} \ensuremath{\rightarrow} \coqdocvar{even}
+(\coqdocvar{n} + 1)\coqdoceol \coqdockw{with} \coqdocvar{odd} :
+\coqdocvar{N} \ensuremath{\rightarrow} \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{2.00em}\ensuremath{|} \coqdocvar{odd\_S} \coqdocvar{n} :
+\coqdocvar{even} \coqdocvar{n} \ensuremath{\rightarrow} \coqdocvar{odd}
+(\coqdocvar{n} + 1).\coqdoceol \bigskip
 
 Predicados também podem ser feitos como definições diretas, como:
 
-\begin{lstlisting}[basicstyle=\small]
-    Definition sqr(x : N) := exists z, z*z = x.
-\end{lstlisting}
+\bigskip
+\coqdockw{Definition} \coqdocvar{sqr} (\coqdocvar{x} : \coqdocvar{N}) :=
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{z}, \coqdocvar{z}
+\ensuremath{\times} \coqdocvar{z} = \coqdocvar{x}.\coqdoceol
+\bigskip
 
 Assim, podemos utilizar estes predicados como propriedades de algum objeto,
 provando algo como \emph{even(2)} ou \emph{sqr(4)}.
@@ -110,42 +145,49 @@ provando algo como \emph{even(2)} ou \emph{sqr(4)}.
 \emph{Type} é a categoria de estruturas matemáticas e estruturas de dados.
 Alguns exemplos de tipos são:
 
-\begin{lstlisting}[basicstyle=\small]
-    Z x Z -> Z
-\end{lstlisting}
+\bigskip
+\coqdocvar{Z} \ensuremath{\times} \coqdocvar{Z} \ensuremath{\rightarrow} \coqdocvar{Z}
+\bigskip
 
 Tipos também podem ser definidos indutivamente:
 
-\begin{lstlisting}[basicstyle=\small]
-    Inductive nat : Set :=
-    | 0 : nat
-    | S : nat -> nat.
-\end{lstlisting}
+\bigskip
+\coqdockw{Inductive} \coqdocvar{nat} : \coqdockw{Set} :=\coqdoceol
+\coqdocindent{2.00em} \ensuremath{|} 0 : \coqdocvar{nat}\coqdoceol 
+\coqdocindent{2.00em} \ensuremath{|} \coqdocvar{S} : \coqdocvar{nat} \ensuremath{\rightarrow}
+\coqdocvar{nat}.\coqdoceol
+\bigskip
 
 Neste caso, elementos do tipo \emph{nat} são: 0, S ( 0 ), S ( S ( 0 ) ), etc.
 
 O desenvolvimento de provas em Coq é feito através de uma linguagem de provas,
 que permite um processo guiado pelo usuário. Ao utilizar uma tática, o usuário
 está construindo os objetos de prova. Por exemplo, a tática
-\texttt{intro n}, onde \emph{n} é do tipo \texttt{nat}, constrói o termo (com um
+\texttt{intro n}, onde \texttt{n} é do tipo \texttt{nat}, constrói o termo (com um
 buraco):
 
-\begin{lstlisting}[basicstyle=\small]
-    fun (n:nat) => _
-\end{lstlisting}
+\bigskip
+\coqdockw{fun} (\coqdocvar{n}:\coqdocvar{nat}) \ensuremath{\Rightarrow} \coqdocvar{\_}\coqdoceol
+\bigskip
 
-Onde \_ representa um termo que irá ser construído futuramente, utilizando
+Onde \_\ representa um termo que irá ser construído futuramente, utilizando
 outras táticas. Um exemplo de proposição simples que podemos querer provar é
 \texttt{forall A : Prop, A -> A}. Provamos isto da seguinte maneira:
 
-\begin{lstlisting}[basicstyle=\small]
-    Theorem prova_simples : (forall A : Prop, A -> A).
-    Proof.
-        intros A.
-        intros prova_de_A.
-        exact prova_de_A.
-    Qed.
-\end{lstlisting}
+\bigskip
+\coqdocnoindent
+\coqdockw{Theorem} \coqdocvar{prova\_simples} : (\coqdockw{\ensuremath{\forall}} \coqdocvar{A} : \coqdockw{Prop}, \coqdocvar{A} \ensuremath{\rightarrow} \coqdocvar{A}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{prova\_de\_A}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{exact} \coqdocvar{prova\_de\_A}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\bigskip
 
 Onde \emph{prova\_simples} é o nome do teorema, e \emph{Proof/Qed} delimita a
 prova. A ferramenta disponibliza uma maneira de visualizar os estados da prova
@@ -167,30 +209,31 @@ dizer que a prova é exatamente o elemento \texttt{prova\_de\_A}.
 Usando o comando \texttt{Print prova\_simples}, podemos ver o termo de prova
 gerado pelas táticas.
 
-\begin{lstlisting}[basicstyle=\small]
-prova_simples = 
-    fun (A : Prop) (prova_de_A : A) => prova_de_A
-         : forall A : Prop, A -> A
-
-\end{lstlisting}
+\coqdocnoindent
+\coqdocvar{prova\_simples} = \coqdockw{fun} (\coqdocvar{A} : \coqdockw{Prop})
+(\coqdocvar{prova\_de\_A} : \coqdocvar{A}) \ensuremath{\Rightarrow}
+\coqdocvar{prova\_de\_A} : \coqdoceol 
+\coqdocindent{2.00em} \coqdockw{\ensuremath{\forall}} \coqdocvar{A} :
+\coqdockw{Prop}, \coqdocvar{A} \ensuremath{\rightarrow} \coqdocvar{A}\coqdoceol
+\bigskip
 
 Para um melhor entendimento do funcionamento da ferramenta, da linguagem e
-teoria envolvidos, ver \cite{pierce}.
+teoria envolvidas, ver \cite{pierce}.
 
 
-\section{O cálculo lambda}
+\section{O cálculo $\lambda$}
 
 \subsection{Visão geral}
 
-No início do século XX, tornou-se necessária, na matemática, uma definição 
+Um dos grandes desafios do início do século XX, era obter uma definição 
 precisa para a noção intuitiva do processo computacional. Diversos modelos foram
-propostos para resolver este problema. Entre eles está o cálculo lambda,
+propostos para resolver este problema. Entre eles está o cálculo $\lambda$,
 proposto por Alonzo Church \cite{lambda_first}, em 1936. Inicialmente, o cálculo
 fazia parte de um sistema maior, proposto para servir como uma base
 formal para o estudo das fundações da matemática. Porém, devido a
 inconsistências neste sistema, Alonzo Church foi obrigado a abrir mão de seu
 objetivo inicial, separou a parte utilizável do sistema e formou o que hoje
-conhecemos como cálculo lambda.
+conhecemos como cálculo $\lambda$.
 
 O grande diferencial deste cálculo está em sua expressividade, com poder
 computacional equivalente ao da Máquina de Turing, e sua simplicidade,
@@ -205,35 +248,59 @@ funções, denotada como "$ (\lambda x.\ 2*x)$  $3$".
 É importante notar que os exemplos acima não são representados exatamente desta
 maneira. Como dito anteriormente, o sistema possui uma gramática simples, e
 todas as noções, inclusive números e operações, devem ser definidas com base em
-abstrações e aplicações. A gramática do cálculo lambda pode ser descrita
+abstrações e aplicações. A gramática do cálculo $\lambda$ pode ser descrita
 sucintamente como:
 
-\[ \tau := x\ |\ \lambda y.\tau\ |\ \tau \tau \]
+\[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau \]
 
-Onde $\tau$ representa um termo, e \textbf{x} representa uma variável livre. A
-variável \textbf{y} no segundo caso é chamada de \textit{variável ligada},
-pois suas ocorrências em $\tau$ estão associadas à abstração. 
-O conjunto de variáveis livres de \emph{t} é denotado por \emph{fv(t)}. O processo
-computacional é simulado no sistema através da regra de $\beta$-redução,
-definida como:
+Onde $\tau$ representa um termo, e $x$ representa uma variável. Assim, um termo
+do cálculo pode ser, respectivamente, uma variável, uma abstração de um termo
+$\tau$ por uma variável $x$, e uma aplicação de dois termos.  
+
+\begin{definicao}[Variável Livre]
+    Dizemos que uma variável $x$ é livre em um termo $\tau$ se não está contida
+    em nenhuma abstração cujo argumento é $x$. 
+\end{definicao}
+
+Como exemplo, a variável $x$ é livre em $(\lambda y.\ y)\ x$, enquanto a
+variável $y$ não é.  O conjunto de variáveis livres de \emph{t} é denotado por
+\emph{fv(t)}. 
+
+\begin{definicao}
+    Definimos o conjunto de variáveis livres de $t$, denotado por $fv(t)$,
+    indutivamente. Na definição abaixo, $t,u$ denotam termos e $x$ denota uma
+    variável.
+\begin{empheq}{align*}
+    fv(x)\ & \equiv \{x\} \\
+    fv(t\ u)\ & \equiv\ fv(t)\ \cup\ fv(u) \\
+    fv(\lambda x. t)\ & \equiv\ fv(t)\setminus \{x\}
+\end{empheq}
+\end{definicao}
+
+\bigskip
+
+O processo computacional é simulado no sistema através da regra de
+$\beta$-redução, definida como:
 
 \[ (\lambda x.t)\ u \rightarrow_{\beta} t\{x/u\} \]
 
-
-
-\begin{table}[h]
-\begin{empheq}[box=\fbox]{align*}
-    fv(x)\ & \equiv \{x\} \\
-    fv(t\ u)\ & \equiv\ fv(t)\ U\ fv(u) \\
-    fv(\lambda x. t)\ & \equiv\ fv(t)/ \{x\}
-\end{empheq}
-    \caption{Definição da função fv}
-    \label{table:fv}
-\end{table}
-
 Note que \emph{t\{x/u\}} é uma \textit{meta-operação}, definida pela substituição das
-ocorrências da variável \textbf{x}, no termo \textbf{t}, pelo termo \textbf{u}.
-Abaixo, alguns exemplos de $\lambda$-termos.
+ocorrências da variável $x$ no termo $t$ pelo termo $u$.
+
+
+\begin{definicao}\label{classic_subst}
+    Sejam $t, u, v$ termos; $x,y$ variáveis e $k,i$ índices.
+    A operação de substituição é definida indutivamente como:
+\smallskip
+\begin{empheq}{align*}
+    \ y\{x/u\}\ \ \ \  & \equiv\ u,\ se\ (x = y);\ y,\ c.c \\
+    \ (t\ v)\{x/u\} \ \ \ \  & \equiv\ (t\{x/u\}\ v\{x/u\}) \\
+    \ (\lambda y. t) \{x/u\}  \ \ \ \  & \equiv\ (\lambda y. t), se (x = y);  
+        (\lambda y. t\{x/u\}),\ c.c. \\
+\end{empheq}
+\end{definicao}
+
+A seguir, alguns exemplos de $\lambda$-termos.
 
 \begin{itemize}
     \item A função identidade pode ser representada pelo termo $ (\lambda x. x) $.
@@ -247,7 +314,7 @@ Abaixo, alguns exemplos de $\lambda$-termos.
         retorna o primeiro, como $ (\lambda x. \lambda y. x)$. Sua aplicação é
         reduzida da seguinte maneira: $ ((\lambda x. \lambda y. x)\ M)\ N)
     \rightarrow_\beta ((\lambda y. x) \{x/M\} N) \rightarrow (\lambda y. M) N
-    \rightarrow_\beta M \{y/N\} \rightarrow N$, com \textbf{x,y} não ocorrendo 
+    \rightarrow_\beta M \{y/N\} \rightarrow N$, com $x$,$y$ não ocorrendo 
     livres em M ou N.
 \end{itemize}
 
@@ -257,134 +324,222 @@ A partir destas definições, várias propriedades sobre o sistema podem ser
 estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
  normal} e de \textit{confluência}:
 
-\begin{description}
-    \item[Forma normal:] Um termo \textbf{t} é dito estar em forma
-    normal quando não existe \textbf{t'} tal que $ t \rightarrow_\beta t' $. 
-    É possível demonstrar que nem todo termo que pode ser expressado no sistema
-    possui uma forma normal. Como exemplo, observe que $ (\lambda x.x\ x)\ (\lambda
-    x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $. Um termo é
-    dito normalizável quando existe uma estratégia de redução que leva a uma
-    forma normal. O termo é \emph{fortemente normalizável} se toda estratégia
-    leva à forma normal. A noção de normalização é especialmente importante,
-    pois indica se um termo pode ou não terminar quando for avaliado, o que é de
-    grande interesse no estudo computacional.
+\begin{definicao}[Forma normal]
+    Um termo $t$ é dito estar em forma normal quando não existe $t'$ tal que $ t
+    \rightarrow t' $.  Um termo é dito \textbf{normalizável} quando existe uma
+    estratégia de redução que leva a uma forma normal. O termo é
+    \textbf{fortemente normalizável} se toda estratégia leva à forma normal. 
+\end{definicao}
 
-    \item[Confluência:] Um sistema de reescrita, tomando como exemplo o cálculo
-    lambda, é dito confluente se, para todo termo \textbf{t}, se $ t
-    \rightarrow_\beta t' $ e $ t \rightarrow_\beta t'' $, então deve existir
-    um termo \textbf{u} tal que \textbf{t'} e \textbf{t''} reduzem para ele,
-    em zero ou mais passos da $\beta$-redução.  Os termos \textbf{t'} e
-    \textbf{t''} são ditos \textit{$\beta$-equivalentes}.  A propriedade de
-    confluência pode ser entendida, essencialmente, como uma garantia que a
-    ordem que as reduções são feitas dentro de um termo não afetam o
-    resultado final do processo. Ou seja, a confluência garante o determinismo
-    do processo computacional.
-\end{description}
+É possível demonstrar que nem todo termo que pode ser expressado no sistema
+possui uma forma normal. Como exemplo, observe que $ (\lambda x.x\ x)\ (\lambda
+x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x) $. A noção de
+normalização é especialmente importante, pois indica se um termo pode ou não
+terminar quando for avaliado, o que é de grande interesse no estudo
+de propriedades computacionais.
+
+\begin{definicao}[Confluência]
+    Um sistema de reescrita, tomando como exemplo o cálculo $\lambda$, é dito
+    fracamente confluente se, para todo termo $t$, se $ t \rightarrow_\beta t' $
+    e $ t \rightarrow_\beta t'' $, então deve existir um termo $u$ tal que $t'
+    \rightarrow_\beta^* u$ e $t'' \rightarrow_\beta^* u$, onde
+    $\rightarrow_\beta^*$ representa zero ou mais passos da $\beta$-redução.  O
+    sistema é dito fortemente confluente se, para todo termo $t$ tal que $ t
+    \rightarrow_\beta^* t' $ e $ t \rightarrow_\beta^* t'' $, deve existir um
+    termo $u$ tal que $t' \rightarrow_\beta^* u$ e $t'' \rightarrow_\beta^*$ em
+    zero ou mais passos da $\beta$-redução. Neste caso, os termos $t'$ e $t''$
+    são ditos \textit{$\beta$-equivalentes}.  
+\end{definicao}
+
+A propriedade de confluência pode ser entendida, essencialmente, como uma
+garantia que a ordem que as reduções são feitas dentro de um termo não afetam o
+resultado final do processo. Ou seja, a confluência garante o determinismo do
+processo computacional.
+
 
 Outro ponto importante a ser mencionado é a noção de $\alpha$-equivalência de
-termos. Um termo $(\lambda x. t)$ é dito $\alpha$-equivalente a $(\lambda y. u)$
-se $ t\{x/y\} = u $. Esta noção captura a ideia de que a escolha do nome das
+termos. 
+
+\begin{definicao}[$\alpha$-equivalência]
+    Um termo $(\lambda x. t)$ é dito $\alpha$-equivalente a\ $(\lambda y. u)$ se
+    $ t\{x/y\} = u $. Mais geralmente, dois termos são ditos
+    $\alpha$-equivalentes se um pode ser obtido a partir do outro através de
+    renomeamento de variáveis ligadas.
+\end{definicao}
+
+Esta noção captura a ideia de que a escolha do nome das
 variáveis ligadas não importa em geral, sendo o real objeto de interesse a
 estrutura do termo. Esta definição é útil para evitar certos problemas, como por
 exemplo o de \textit{captura de variáveis livres}. No exemplo:
 
-\[ ((\lambda x.\ x\ y)\ u)\{y/x\},\ x\ \neq\ y,\ y  \notin fv(u) \]
+\[ (\lambda x.\ y)\{y/x\},\ x\ \neq\ y \]
 
-Observe que, reduzindo a aplicação antes de aplicar a substituição, temos:
+Efetuando a substituição como visto na Definição \cite{classic_subst}, teremos o
+termo $\lambda x.\ x$, que representa a função identidade. Note que isto mudou
+completamente a semântica do termo! O termo anterior, $\lambda x.\ y$,
+representava uma função constante, que sempre é avaliada para $y$, independente
+do termo dado como argumento. Aplicando a substituição, seria razoável esperar
+que teríamos uma função que é sempre avaliada para a variável $x$, o que não é o
+caso. 
 
+Veja que a variável $x$ na substituição não é a mesma da que está ligada na
+abstração. Isto pode causar vários problemas inesperados, como, por exemplo, a
+perda da normalização do termo.  Como exemplo, considere o termo $((\lambda x.\
+y\ y)\ (\lambda x.\ y\ y))$. É fácil ver que este termo deveria avaliar para
+$(y\ y)$. Se queremos substituir $y$ por $x$, deveríamos obter o termo $(x\ x)$.
+Porém, aplicando a substituição no termo original, temos $((\lambda x.\ y\ y)\
+(\lambda x.\ y\ y))\{y/x\}$, que é avaliado para $((\lambda x.\ x\ x)\ (\lambda
+x.\ x\ x))$, que não possui forma normal!
 
-\[ ((\lambda x.\ x\ y)\ u)\{y/x\} \rightarrow_\beta ((x\ y)\{x/u\}\{y/x\})
-\rightarrow (u\ y)\{y/x\} \rightarrow (u\ x) \]
-
-Mas, fazendo a substituição imediatamente, temos:
-
-\[ ((\lambda x.\ x\ y)\ u)\{y/x\} \rightarrow ((\lambda x.\ x\ x) u)
-\rightarrow_\beta (x\ x)\{x/u\} \rightarrow (u\ u) \]
-
-Veja que isto muda completamente o funcionamento do termo. A variável \textbf{x}
-na substituição não é a mesma da que está ligada na abstração! Isto pode causar
-vários problemas inesperados, como, por exemplo, a perda da normalização do
-termo. Se o termo \textbf{u} for da forma $(\lambda z. z z)$, ao realizar a
-substituição imediatamente, obtemos o termo $(\lambda z. z z)\ (\lambda z. z z)$,
-que, como dito anteriormente, não termina.
-Para evitar este problema, podemos renomear a variável ligada \textbf{x}, antes
-da substituição, por uma variável nova, de maneira a obter um termo
+Para evitar este problema, podemos renomear a variável ligada $x$, antes da
+substituição, por uma variável nova, de maneira a obter um termo
 $\alpha$-equivalente e podendo então realizar a substituição sem modificar a
-estrutura do termo.
+semântica do termo. Nos exemplos anteriores:
+
+\[ (\lambda x.\ y)\{y/x\}\ =_{\alpha} (\lambda z.\ y)\{y/x\} = (\lambda z.\ x) \]
+
+Observe que chegamos ao resultado esperado, ou seja, a função constante que é
+sempre avaliada para $x$.
+
+\[ ((\lambda x.\ y\ y)\ (\lambda x.\ y\ y))\{y/x\} =_{\alpha} ((\lambda z.\ y\
+    y)\ (\lambda z.\ y\ y))\{y/x\} \\
+    = ((\lambda z.\ x\ x)\ (\lambda z.\ x\ x)) \rightarrow_{\beta} (x\ x)\]
+
+Observe que conseguimos evitar a perda da normalização do termo.
+
 
 \subsection{Representação de $\lambda$-termos}
 \label{sub:int_lnr}
 
-Como dito anteriormente, o cálculo lambda é usado como modelo teórico para
+Como dito anteriormente, o cálculo $\lambda$ é usado como modelo teórico para
 linguagens funcionais. A noção de $\alpha$-equivalência, apesar de útil, pode ser
 muito custosa em uma implementação prática. Por este motivo, foram propostas
 algumas representações diferentes de termos, de modo a evitar a necessidade do
 renomeamento de variáveis. 
 
 Uma das primeiras, e mais importantes, tentativas de resolver o problema da
-$\alpha$-conversão é a notação utilizando indices de De Bruijn. Nela, são
+$\alpha$-conversão é a notação utilizando índices de De Bruijn \cite{debruijn72}. Nela, são
 utilizados números naturais para representar as variáveis. Cada número
-representa a quantidade de abstrações no escopo da ocorrência. Números que
-ultrapassam esta quantidade representam variáveis livres. A gramática pode ser
-definida como:
+representa a quantidade de abstrações no escopo da ocorrência da variávels.
+Números que ultrapassam esta quantidade representam variáveis livres. A
+gramática pode ser definida como:
 
-\[ \tau := n\ |\ \lambda . \tau\ |\ \tau \tau \]
+\[ \tau := n\ |\ \lambda \tau\ |\ \tau \tau \]
 
-Onde \textit{n} representa um número natural, a partir do 1. Exemplos de termos
+Onde $n$ representa um número natural, a partir do 1. Exemplos de termos
 nesta notação incluem a identidade $(\lambda. 1)$, a função constante $(\lambda.
-u)$, com \textit{u} não contendo 1 como índice livre, e um termo com índice
+u)$, com $u$ não contendo 1 como índice livre, e um termo com índice
 livre, como $((\lambda.2)\ u)$. Apesar de sua aparente praticidade de
 implementação, esta notação se afasta muito da utilização do cálculo no papel.
 Além disto, introduz a necessidade de se manter um contexto externo para
 registrar as variáveis livres, junto com uma álgebra para lidar com tal
-contexto.
+contexto. Para lidar com substituições utilizando a notação de de Bruijn,
+devemos introduzir a noção de $i$-elevação.
+
+\begin{definicao}[$i$-elevação] Seja M um termo da gramática de de Bruijn. A
+    $i$-elevação de M, denotada por M$^{+i}$, é definida indutivamente como:
+    \begin{itemize}
+        \item $(M\ N)^{+i} = (M^{+i}\ N^{+i})$
+        \item $(\lambda M)^{+i} = \lambda (M^{+(i+1)})$
+        \item $n^{+i} = \begin{cases}
+                            n + 1   & \text{se } n > i \\
+                            n       & \text{se } n \leq i
+                        \end{cases}$
+    \end{itemize}
+    A elevação de um termo M é sua $0$-elevação, e é denotada por M$^+$.
+    
+\end{definicao}
+
+A definição de substituição deve ser adaptada para lidar com os índices de de
+Bruijn.
+
+\begin{definicao} A substituição de um termo M, no nível $n - 1$, pelo termo N,
+    denotada por $M\{n/N\}$, é definida indutivamente como:
+    \begin{itemize}
+        \item $(M_1\ M_2)\{n/N\} = (M_1\{n/N\}\ M_2\{n/N\})$
+        \item $(\lambda M)\{n/N\} = \lambda M\{n+1/N^+\}$
+        \item $m\{n/N\} = \begin{cases}
+                             m - 1 & \text{se } m > n \\
+                             N     & \text{se } m = n \\
+                             m     & \text{se } m \leq n
+                          \end{cases}$
+    \end{itemize}
+\end{definicao}
+
+
+\smallskip
+Temos então que a relação de $\beta$-redução é definida por $(\lambda M)\ N
+\rightarrow_{\beta} M\{1/N\}$.
+\smallskip
 
 Como exemplo das complexidades introduzidas por esta notação, podemos observar a
-representação do termo $(\lambda x.\ x\ a)\ b$, onde \textit{a, b} são
+representação do termo $(\lambda x.\ x\ a)\ b$, onde $a,b$ são
 variáveis livres. Este termo é representado na notação de de Bruijn como:
 
-\[ (\lambda.\ 1\ 2)\ 3 \]
+\[ (\lambda\ 1\ 2)\ 3 \]
 
-Junto com o seguinte contexto $[a,\ b]$, que representa as variáveis livres.
-Utilizando esse contexto, vemos que o índice 1 representa a variável \textit{x},
-pois temos apenas uma abstração. Após isso, os índices 2 e 3 representam as
-variáveis livres, e estão relacionadas em ordem com as variáveis no contexto.
-Assim, $(2\ \rightarrow\ a)$ e $(3\ \rightarrow\ b)$. 
+Junto com o contexto $[a,\ b]$, que representa as variáveis livres.  Utilizando
+esse contexto, vemos que o índice 1 representa a variável $x$, pois temos apenas
+uma abstração. Após isso, os índices 2 e 3 representam as variáveis livres, e
+estão relacionadas em ordem com as variáveis no contexto.  Assim, o índice $2$
+deve ser substituído por $a$, e $3$ deve ser substituído por $b$.
 
 Após realizar a $\beta$-redução, o termo original é representado por $(b\ a)$.
 Porém, o termo na notação da representação de de Bruijn não é representado por
-$(3\ 2)$, mas sim por $(2\ 1)$. Isto porque os novos termos não possuem
-abstratores, logo o primeiro índice para representar variáveis livres não é
-\textit{2}, mas \textit{1}.
+$(3\ 2)$, mas sim por $(2\ 1)$, devido às manipulações efetuadas pela
+substituição. Isto é necessário porque os novos termos não possuem abstratores,
+logo o primeiro índice para representar variáveis livres não é \textit{2}, mas
+\textit{1}.
 
 Uma solução para estes problemas é usar a \textit{locally nameless
 representation}, usada para representar os $\lambda$-termos neste trabalho.
-A gramática do sistema é modificada parcialmente:
+O conjunto $\Lambda_{lnr}$ de expressões na notação LNR é definido a partir da
+gramática a seguir:
 
-\[ \tau := x\ |\ n\ |\ \lambda . \tau\ |\ \tau \tau \]
+\[ \tau := x\ |\ n\ |\ \lambda \tau\ |\ \tau \tau \]
 
-Observe que a abstração também não carrega uma variável ligada. Ao invés disso,
-são usados índices (que podem ser números naturais, como em de Bruijn) para
-representar estas variáveis. As variáveis livres, denotadas na gramática por
-\textit{x}, devem pertencer a um conjunto infinito e disjunto dos índices que
-representa as variáveis ligadas. A meta-substituição deve ser adaptada para
-levar em conta estes índices, como no exemplo:
+Como nos casos anteriores, $x$ representa uma variável; $n$ é um índice,
+representado por um natural, a partir de 1; $\lambda \tau$ representa uma
+abstração, que não carrega nenhuma variável e $\tau \tau$ representa uma
+aplicação.
 
-\[ (\lambda.\ 2) \{1/t\} \rightarrow ( \lambda. (2 \{2/t\}) ) \]
+Os índices $n$ representam as variáveis ligadas da expressão. O valor do índice
+representa a abstração a qual ele se refere, ou seja, um índice $k$ está ligado
+à $k$-ésima abstração que o contém.
+
+\begin{definicao}[Pré-termos e termos bem formados]
+    Dizemos que uma expressão é um pré-termo se pertence ao conjunto
+    $\Lambda_{lnr}$ gerado pela gramática acima.
+    Dizemos que um pré-termo é um termo bem formado se toda ocorrência de um
+    índice pertence a um número correspondete de abstrações. Em outras palavras,
+    o termo não possui índices livres.
+\end{definicao}
+
+A meta-substituição deve ser adaptada para levar em conta estes índices, como no
+exemplo:
+
+\[ (\lambda\ 2) \{1 \rightarrow t\} \Rightarrow ( \lambda (2 \{2 \rightarrow t\}) ) \]
 
 Note que o índice a ser substituído foi incrementado quando a substituição entra
-na abstração, de modo a corresponder à variável correta a ser substituída. 
-A operação de substituição pode ser melhor definida como:
+na abstração, de modo a corresponder à variável correta a ser substituída.
+Precisamos, então, definir formalmente a operação.
 
-\begin{empheq}[box=\fbox]{align*}
-    \{k \rightarrow x\} i\ \ \ \  & \equiv\ \ x,\ se\ (i = k);\ i,\ c.c\\
+
+\begin{definicao}
+    Sejam $t,u$ termos; $x,y$ variáveis e $k,i$ índices.
+    A operação de substituição é definida indutivamente como:
+\smallskip
+\begin{empheq}{align*}
+    \{k \rightarrow x\} i\ \ \ \  & \equiv\ x,\ se\ (i = k);\ i,\ c.c\\
     \{k \rightarrow x\} y\ \ \ \  & \equiv\ y\\
     \{k \rightarrow x\} (t\ u)\ \ \ \  & \equiv\ (\{k \rightarrow x\}t\ \{k
     \rightarrow x\}u)\\
     \{k \rightarrow x\} (\lambda . t) \ \ \ \  & \equiv\ 
     (\lambda . \{k+1 \rightarrow x\}t)
 \end{empheq}
+\end{definicao}
 
+\medskip
 
 
 Esta representação foi detalhada por Arthur Charguéraud em \cite{chargueraud},
@@ -393,56 +548,68 @@ Coq.  Entraremos agora em alguns detalhes do uso desta notação, descritos em
 \cite{chargueraud}, já que ela tem um interesse especial neste trabalho.
 
 Na notação usual, quando queremos estudar o corpo de uma abstração $(\lambda x.
-t)$, podemos trabalhar diretamente com o termo \textit{t}. Porém, nesta nova
+t)$, podemos trabalhar diretamente com o termo $t$. Porém, nesta nova
 representação, a abstração tem a forma $(\lambda . t)$, e é necessário que seja
-fornecida uma variável \textit{x} para se trabalhar com o corpo. Esta operação é
-chamada \emph{abrir o termo} \textit{t} com \textit{x}, e será representada por
+fornecida uma variável $x$. Esta operação é
+chamada \emph{abrir o termo} $t$ com $x$ e será representada por
 $t^{x}$. Mais precisamente, a abertura do termo $(\lambda . t)$ cria uma cópia
-de \emph{t} onde todas as ocorrências do índice ligado à abstração mais externa
-são trocados pela variável \emph{x}. Como exemplo, abrir a abstração $(\lambda.
-(0\ y))$ com \emph{x} nos dá o termo $(x\ y)$. A operação de abrir o termo deve
+de $t$ onde todas as ocorrências do índice ligado à abstração mais externa
+são trocados pela variável $x$ Como exemplo, abrir a abstração $(\lambda.
+(0\ y))$ com $x$ nos dá o termo $(x\ y)$. A operação de abrir o termo deve
 ajustar o índice a ser mudado à medida que entra no termo. Assim, podemos usar a
-já definida operação de substituição, diretamente com a variável \emph{x}, para
-realizar a abertura. Temos, então, $t^{x} \equiv t\{0/x\}$.
+já definida operação de substituição, diretamente com a variável $x$, para
+realizar a abertura. Temos, então, $t^{x} \equiv t\{0 \rightarrow x\}$.
 
-Similarmente, podemos querer abstrair todas as ocorrências de \emph{x} no termo
-\emph{t}, construindo então o termo $(\lambda x. t)$. Com a nova notação, é
-necessário definir uma operação que substitui todas as ocorrências de \emph{x}
+Similarmente, podemos querer abstrair todas as ocorrências de $x$ no termo
+$t$, construindo então o termo $(\lambda x. t)$. Com a nova notação, é
+necessário definir uma operação que substitui todas as ocorrências de $x$
 pelo índice 0, antes de adicionar a abstração. Esse processo é chamado
 \emph{fechar o termo}, representado por $ ^{\textbackslash x}t$. Assim, para
 construir a abstração de maneira equivalente, fazemos $(\lambda .
-^{\textbackslash x}t)$. Podemos definir a operação de fechamento como $
-^{\textbackslash x}t \equiv \{0 \leftarrow t\}$, onde esta nova substituição é
-definida como:
+^{\textbackslash x}t)$. 
 
-\begin{empheq}[box=\fbox]{align*}
+\begin{definicao}
+    Sejam $t,u$ termos; $x,y$ variáveis e $k,i$ índices.
+    A operação de fechamento é definida indutivamente como:
+    
+\begin{empheq}{align*}
     \{k \leftarrow x\} i\ \ \ \  & \equiv\ i\\
-    \{k \leftarrow x\} y\ \ \ \  & \equiv\ \ 0,\ se\ (x = y);\ y,\ c.c.\\
+    \{k \leftarrow x\} y\ \ \ \  & \equiv\ \ k,\ se\ (x = y);\ y,\ c.c.\\
     \{k \leftarrow x\} (t\ u)\ \ \ \  & \equiv\ (\{k \leftarrow x\}t\ \{k
     \leftarrow x\}u)\\
     \{k \leftarrow x\} (\lambda . t) \ \ \ \  & \equiv\ 
     (\lambda . \{k+1 \leftarrow x\}t)
 \end{empheq}
+\end{definicao}
+
+Podemos, então, definir a operação de fechamento como $ ^{\textbackslash x}t
+\equiv \{0 \leftarrow t\}$.
 
 Como dito anteriormente, esta representação possui termos que contém
 \emph{índices livres}. Tais termos não possuem correspondentes no sistema
 original, pois os índices não estão ligados a nenhuma abstração e não
 representam variáveis livres. Assim, precisamos tomar cuidado para evitar
 trabalhar com termos com tais índices, já que estes não são nosso objeto de
-interesse. Para isto, chamaremos um termo sem índices livres de \emph{localmente
-fechado}.
+interesse. Para isto, chamaremos um termo sem índices livres, ou seja, um termo
+bem formado, de \emph{localmente fechado}.
 
 Existem duas maneiras de conferir se um termo é localmente fechado. A primeira
-consiste em andar pela estrutura do termo, abrindo cada abstração com uma nova
+consiste em percorrer a estrutura do termo, abrindo cada abstração com uma nova
 variável. Desta maneira, se o termo for de fato fechado, nunca encontraremos um
 índice. A segunda abordagem consiste em analizar diretamente os índices do termo,
 checando, para cada um deles, se o seu valor é menor ou igual ao número de
-abstrações que o rodeiam.
+abstrações que o contêm.
 
 A primeira opção dá lugar a uma definição natural de um predicado, denotado por
-\emph{lc\ t} indicando que o termo é localmente fechado. Com apenas três regras
+$lc\ t$ indicando que o termo é localmente fechado. Com apenas três regras
 de inferência, podemos facilmente fazer uma análise mais formal da propriedade
 de ser localmente fechado, sendo bastante útil em provas.
+
+\begin{definicao}[Localmente fechado]
+    Sejam $t, t1, t2$ termos, $x$ uma variável e $L$ um conjunto finito de
+    variáveis. Dizemos que um termo é localmente fechado se não possui índices
+    livres. Formalmente, isto é definido através do predicado $lc$, definido
+    pelas regras de inferência abaixo.
 
 \begin{mathpar} 
     \inferrule*[Right=lc\_fvar]{  }
@@ -454,11 +621,12 @@ de ser localmente fechado, sendo bastante útil em provas.
     \inferrule*[Right=lc\_abs]{\forall x \notin L,\ lc\ (t^{x})}
     {lc(\lambda. t)}
 \end{mathpar}
+\end{definicao}
 
-A premissa $\forall x \notin L$ no caso da abstração captura a ideia de \emph{x}
+A premissa $\forall x \notin L$ no caso da abstração captura a ideia de $x$
 ser uma variável nova, pois podemos tomar o conjunto L, sempre finito, como
 sendo o conjunto de variáveis já usadas e, assim, sempre ter uma escolha nova de
-\emph{x}.
+$x$.
 
 A segunda abordagem tem um caráter mais naturalmente computacional, dando lugar
 a uma função recursiva para conferir se um termo é localmente fechado. Tal
@@ -467,45 +635,64 @@ contador. Quando entrar em uma abstração, a função incrementa tal contador. 
 encontrar um índice, basta conferir se ele é menor que o contador. Assim, a
 função pode ser definida como a seguir.
 
-\begin{table}[h]
-\begin{empheq}[box=\fbox]{align*}
+\begin{definicao}\label{def_lc_at}
+    Sejam $t1,t2$ termos; $x,y$ variáveis e $k,i$ índices.
+    A função $lc\_at$ é definida indutivamente como:
+    
+\begin{empheq}{align*}
     lc\_at\ k\ (i)\ \ \ &\equiv\ i<k \\ 
-    lc\_at\ k\ (x)\ \ \ &\equiv\ True \\ 
+    lc\_at\ k\ (x)\ \ \ &\equiv\ \textbf{True} \\ 
     lc\_at\ k\ (t1\ t2)\ \ \ &\equiv\ (lc\_at\ k\ t1)\ \&\ (lc\_at\ k\ t2) \\ 
     lc\_at\ k\ (\lambda. t1)\ \ \ &\equiv\ (lc\_at\ k + 1\ t1)
 \end{empheq}
-    \caption{Definição da função lc\_at}
-    \label{table:lc_at}
-\end{table}
+\end{definicao}
 
-Dizemos que o termo \emph{t} é localmente fechado se a função \emph{(lc\_at 0
-t)} retorna \textbf{True}.  Não é difícil provar a equivalência de ambas as
-definições, ou seja, que vale $lc\ t\ \iff\ (lc\_at\ 0\ t)\ =\ True$.
+\medskip
 
-Ambas as implicações possuem uma demonstração simples. Para o caso em que $lc\ t
-\rightarrow (lc\_at\ 0\ t)\ =\ True$, podemos fazer uma indução no predicado
-\emph{lc}. O único subcaso que não sai imediatamente é o da abstração, que pode
-ser facilmente resolvido se observarmos que um termo $t^{x}$ é fechado a um
-nível k se, e somente se, \emph{t} é fechado a nível k + 1.
+Dizemos que o termo $t$ é localmente fechado se a função $lc\_at\ 0\ 
+t$ retorna \textbf{True}.  Não é difícil provar a equivalência de ambas as
+definições, ou seja, que vale $lc\ t\ \iff\ (lc\_at\ 0\ t\ =\ \textbf{True})$.
+Para isto, precisaremos do seguinte lema, que é bem intuitivo:
 
-A volta, ou seja $lc\ t \leftarrow (lc\_at\ 0\ t)\ =\ True$, se faz por uma
-indução na estrutura do termo \emph{t}. Novamente, o caso da abstração merece um
-cuidado especial, mas ainda sai de maneira simples, escolhendo o conjunto L como
-sendo exatamente o conjunto de variáveis livres de \emph{t}.
+\begin{lema}\label{lema_lc_open}
+    Seja \ $t$ um termo, $k$ um índice e $x$ uma variável. Então vale 
+    $(lc\_at\ k\ t\{k \rightarrow x\}) \iff (lc\_at\ (S\ k)\ t)$
+\end{lema}
+
+\begin{teorema} $lc\ t\ \iff\ (lc\_at\ 0\ t\ =\ \textbf{True})$
+\end{teorema}
+
+\begin{proof} 
+    $ $\par\nobreak\ignorespaces
+\begin{itemize}
+    \item[($\Leftarrow$)] Indução no predicado $lc$. O único
+        subcaso que não sai imediatamente é o da abstração, que pode ser
+        facilmente resolvido se observarmos que um termo $t\{k \rightarrow x\}$
+        é fechado a um nível k se, e somente se, $t$ é fechado a nível k + 1,
+        como visto no Lema \ref{lema_lc_open}.
+    \item[($\Rightarrow$)] Indução na estrutura do termo $t$.
+        Novamente, o caso da abstração merece um cuidado especial, mas ainda sai
+        de maneira simples, escolhendo o conjunto L referenciado no construtor
+        de $lc$ como sendo exatamente o conjunto de variáveis livres de $t$.
+\end{itemize}
+\end{proof}
+
+Estas definições serão extremamente importantes ao decorrer do trabalho e podem
+ser citadas com frequência. Em especial, a definição de localmente fechado,
+correspondente à noção de termo bem formado, é essencial, pois são estes os
+termos que possuem correspondentes no cálculo $\lambda$.
 
 Vale a pena ressaltar duas outras equivalências, referentes às noções de
 abertura e fechamento de termos. Temos:
 
-\begin{empheq}[box=\fbox]{align*}
-    ^{\setminus x}(t^{x})\ &=\ t,\ se\ x\ \notin\ fv(t) \\
-    (^{\setminus x}t)^{x}\ &=\ t,\ se\ vale\ (lc\ t)
-\end{empheq}
+\begin{lema}
+    $^{\setminus x}(t^{x})\ =\ t,\ se\ x\ \notin\ fv(t) $
+\end{lema}
+\begin{lema}
+    $(^{\setminus x}t)^{x}\ =\ t,\ se\ vale\ (lc\ t)$
+\end{lema}
 
-
-Estas definições serão extremamente importantes ao decorrer do trabalho e podem
-ser citadas com frequência.
-
-Para mais informações a respeito do cálculo lambda, veja \cite{barendregt}.
+Para mais informações a respeito do cálculo $\lambda$, veja \cite{barendregt}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -530,7 +717,7 @@ estratégias na normalização. Como exemplo, observe os seguintes casos:
     \rightarrow x \{0/y\} \rightarrow x \]
 
 Veja que, na segunda abordagem, evitamos uma operação potencialmente custosa de
-realizar uma substituição em um termo \emph{t} que seria imediatamente
+realizar uma substituição em um termo $t$ que seria imediatamente
 descartado. Infelizmente, o uso da meta-operação nos impede de realizar este
 tipo de manipulação, pois a substituição não faz parte da sintaxe do sistema.
 
@@ -542,7 +729,7 @@ mais precisa.
 
 Por este motivo, várias tentativas de se formalizar a noção de substituição,
 dando então espaço para o formalismo conhecido como \textit{substituição
-explícita}. A princípio, podemos tentar extender a gramática de termos da
+explícita}. A princípio, podemos tentar estender a gramática de termos da
 seguinte maneira:
 
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
@@ -572,7 +759,7 @@ da preservação da normalização forte (\textbf{PSN}), que pode ser definida c
 
 \begin{description}
     \item[PSN:] Se $\lambda$z é um cálculo baseado no cálculo $\lambda$, deve
-        valer a seguinte afirmação. Se \emph{t} é um $\lambda$-termo fortemente
+        valer a seguinte afirmação. Se $t$ é um $\lambda$-termo fortemente
         normalizável, então seu correspondente em $\lambda$z também o é neste
         novo sistema.
 \end{description}

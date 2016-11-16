@@ -1,0 +1,963 @@
+\documentclass[12pt]{report}
+\usepackage[]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{coqdoc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file has been automatically generated with the command
+%% coqdoc --latex Equation_C.v -o /home/amaral/code/TCC/Monografia/coqdoc/Equation_C.tex 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\coqlibrary{Equation C}{Library }{Equation\_C}
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqexternalref{}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Arith}{\coqdoclibrary{Arith}} \coqdoclibrary{Metatheory}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{LibTactics} \coqdoclibrary{LambdaES\_Defs} \coqdoclibrary{Rewriting}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Import} \coqdoclibrary{LambdaES\_FV} \coqdoclibrary{LambdaES\_Infra} \coqdoclibrary{LambdaES\_Tac}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Require} \coqdockw{Export} \coqexternalref{}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Classes.Morphisms}{\coqdoclibrary{Morphisms}}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Instance} \coqdef{Equation C.iff eq}{iff\_eq}{\coqdocinstance{iff\_eq}} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqexternalref{iff}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocdefinition{iff}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{split}; \coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{split}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{split}; \coqdoctac{apply} \coqdocvar{H}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{split}. \coqdoctac{intro} \coqdocvar{H1}. \coqdoctac{apply} \coqdocvar{H0}. \coqdoctac{apply} \coqdocvar{H}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intro} \coqdocvar{H1}. \coqdoctac{apply} \coqdocvar{H}. \coqdoctac{apply} \coqdocvar{H0}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+=e definition: The equation c defines permutation of independent
+ substitutions, which corresponds to forbid dangling deBruijn
+ indexes in both u and v, i.e. u and v are terms.  \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{Equation C.eqc}{eqc}{\coqdocinductive{eqc}} : \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop} := \coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdef{Equation C.eqc def}{eqc\_def}{\coqdocconstructor{eqc\_def}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdocdefinition{lc\_at} 2 \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdocinductive{term} \coqdocvariable{v} \ensuremath{\rightarrow} \coqref{Equation C.eqc}{\coqdocinductive{eqc}} (\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{][}\coqdocvariable{v}\coqdocnotation{]}) (\coqdocnotation{(}\coqdocnotation{\&} \coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{v}\coqdocnotation{][}\coqdocvariable{u}\coqdocnotation{]}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.lc at bswap}{lc\_at\_bswap}{\coqdoclemma{lc\_at\_bswap}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{k}, \coqdocvariable{k} \coqexternalref{:type scope:x '<>' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\not=}}} 1 \ensuremath{\rightarrow} \coqdocdefinition{lc\_at} \coqdocvariable{k} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocdefinition{lc\_at} \coqdocvariable{k} (\coqdocnotation{\&} \coqdocvariable{t}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocnoindent
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc sym}{eqc\_sym}{\coqdoclemma{eqc\_sym}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{u} \ensuremath{\rightarrow} \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{u} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{intros\_all}. \coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{replace} \coqdocvar{t0} \coqdockw{with} (\coqdocnotation{\&(\&} \coqdocvar{t0}\coqdocnotation{)}) \coqdoctac{at} 2.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.eqc def}{\coqdocconstructor{eqc\_def}}. \coqdoctac{apply} \coqref{Equation C.lc at bswap}{\coqdocaxiom{lc\_at\_bswap}}. \coqdoctac{auto}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{assumption}. \coqdoctac{assumption}. \coqdoctac{apply} \coqdoclemma{bswap\_idemp}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc bvar term}{eqc\_bvar\_term}{\coqdoclemma{eqc\_bvar\_term}}  : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} (\coqdocconstructor{pterm\_bvar} \coqdocvariable{x}) \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_bvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{H}; \coqdoctac{inversion} \coqdocvar{H}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc fvar term}{eqc\_fvar\_term}{\coqdoclemma{eqc\_fvar\_term}}  : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} (\coqdocconstructor{pterm\_fvar} \coqdocvariable{x}) \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_fvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{H}; \coqdoctac{inversion} \coqdocvar{H}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc abs term}{eqc\_abs\_term}{\coqdoclemma{eqc\_abs\_term}} :  \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} (\coqdocconstructor{pterm\_abs} \coqdocvariable{t}) \coqdocvariable{t'} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_abs} \coqdocvariable{t} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t'} .\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H}; \coqdoctac{inversion} \coqdocvar{H}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc app term}{eqc\_app\_term}{\coqdoclemma{eqc\_app\_term}} :  \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} (\coqdocconstructor{pterm\_app} \coqdocvariable{u} \coqdocvariable{v}) \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_app} \coqdocvariable{u} \coqdocvariable{v} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v} \coqdocvar{H}; \coqdoctac{inversion} \coqdocvar{H}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc regular}{eqc\_regular}{\coqdoclemma{eqc\_regular}}: \coqdocdefinition{red\_regular} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqdocdefinition{red\_regular}. \coqdocvar{intros\_all}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}. \coqdoctac{clear} \coqdocvar{H}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_sub} \coqdockw{with} (\coqdocdefinition{fv} \coqdocvar{t0} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocdefinition{fv} \coqdocvar{u}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{unfold} \coqdocdefinition{open}. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_sub} \coqdockw{with} (\coqdocdefinition{fv} \coqdocvar{t0} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocnotation{\{\{}\coqdocvar{x}\coqdocnotation{\}\}}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{apply} \coqdoclemma{term'\_to\_term}. \coqdoctac{unfold} \coqdocdefinition{term'}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{term'\_to\_term}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{term\_to\_term'} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{unfold} \coqdocdefinition{term'} \coqdoctac{in} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} 0. \coqdoctac{assumption}. \coqdoctac{auto}. \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}. \coqdoctac{clear} \coqdocvar{H}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_sub} \coqdockw{with} (\coqdocdefinition{fv} \coqdocvar{t0} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocdefinition{fv} \coqdocvar{u}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{unfold} \coqdocdefinition{open}. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_sub} \coqdockw{with} (\coqdocdefinition{fv} \coqdocvar{t0} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocnotation{\{\{}\coqdocvar{x}\coqdocnotation{\}\}}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{apply} \coqdoclemma{term'\_to\_term}. \coqdoctac{unfold} \coqdocdefinition{term'}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.lc at bswap}{\coqdocaxiom{lc\_at\_bswap}}. \coqdoctac{auto}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{term'\_to\_term}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_open}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{term\_to\_term'} \coqdoctac{in} \coqdocvar{H2}. \coqdoctac{unfold} \coqdocdefinition{term'} \coqdoctac{in} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} 0. \coqdoctac{assumption}. \coqdoctac{auto}. \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Equation C.eqc ctx}{eqc\_ctx}{\coqdocdefinition{eqc\_ctx}} (\coqdocvar{t} \coqdocvar{u}: \coqdocinductive{pterm}) := \coqdocinductive{ES\_contextual\_closure} \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Equation C.::x '=c' x}{"}{"}t =c u" := (\coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Compatibility of =c with the structure of terms. \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.ESctx eqc bvar}{ESctx\_eqc\_bvar}{\coqdoclemma{ESctx\_eqc\_bvar}}  : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqref{Equation C.::x '=c' x}{\coqdocnotation{(}}\coqdocconstructor{pterm\_bvar} \coqdocvariable{x}\coqref{Equation C.::x '=c' x}{\coqdocnotation{)}} \coqref{Equation C.::x '=c' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c' x}{\coqdocnotation{c}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_bvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{H}. \coqdoctac{inversion} \coqdocvar{H}. \coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.ESctx eqc fvar}{ESctx\_eqc\_fvar}{\coqdoclemma{ESctx\_eqc\_fvar}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqref{Equation C.::x '=c' x}{\coqdocnotation{(}}\coqdocconstructor{pterm\_fvar} \coqdocvariable{x}\coqref{Equation C.::x '=c' x}{\coqdocnotation{)}} \coqref{Equation C.::x '=c' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c' x}{\coqdocnotation{c}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_fvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{H}. \coqdoctac{inversion} \coqdocvar{H}. \coqdoctac{inversion} \coqdocvar{H0}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.ESctx eqc sym}{ESctx\_eqc\_sym}{\coqdoclemma{ESctx\_eqc\_sym}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvariable{t} \coqref{Equation C.::x '=c' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c' x}{\coqdocnotation{c}} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdocvariable{u} \coqref{Equation C.::x '=c' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c' x}{\coqdocnotation{c}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{H}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{apply} \coqdocconstructor{ES\_redex}. \coqdoctac{apply} \coqref{Equation C.eqc sym}{\coqdoclemma{eqc\_sym}}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_app\_left}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_app\_right}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_abs\_in} \coqdockw{with} \coqdocvar{L}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_subst\_left} \coqdockw{with} \coqdocvar{L}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_subst\_right}; \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Verificar necessidade deste lema.
+Lemma ESctx\_eqc\_app\_term :  forall t u v, (pterm\_app u v) =c t -> ((exists v', t = pterm\_app u v' /\symbol{92} v =c v') \symbol{92}/ (exists u', t = pterm\_app u' v /\symbol{92} u =c u')).
+Proof. 
+  intros t u v H. inversion H; subst.
+  apply eqc\_app\_term in H0. subst.
+  left. exists v.
+  split; trivial.
+  apply ES\_redex. reflexivity.
+  right. exists t'. split. reflexivity. assumption.
+  left. exists u'.
+  split. reflexivity. assumption.
+Qed. 
+
+ Verificar necessidade deste lema.
+Lemma ESctx\_eqc\_abs\_term :  forall t t', (pterm\_abs t) =c t' ->
+                       exists u, exists L, pterm\_abs u = t' /\symbol{92} (forall x, x \symbol{92}notin L -> (u \^{} x) =c (t \^{} x)).
+Proof. 
+   intros t t' H. inversion H; subst. 
+   exists t \{\}. split; trivial.
+   apply eqc\_abs\_term in H0; assumption.
+   intros x H'. apply ES\_redex. reflexivity.
+   exists t'0 L. split; trivial. intros. 
+   apply ESctx\_eqc\_sym. apply H1; assumption.
+Qed. 
+
+ Verificar necessidade deste lema.
+Lemma ESctx\_eqc\_sub\_term :  forall t u v, (t\coqdocvar{u}) =c v -> exists t', exists u', v = (t'\coqdocvar{u'}).
+Proof. 
+  intros t u v H. inversion H; subst.
+  apply eqc\_sub\_term in H0.
+  destruct H0. subst.
+  exists t u; trivial. 
+  destruct H0. destruct H0. destruct H0. destruct H1. destruct H2. subst.
+  exists (\& x \coqdocvar{u}) x0; trivial.
+  exists t' u; trivial.
+  exists t u'; reflexivity.
+Qed. \begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red out eqc}{red\_out\_eqc}{\coqdoclemma{red\_out\_eqc}} : \coqdocdefinition{red\_out} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{T} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}; \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{assert} (\coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocnotation{[}\coqdocvar{x} \coqdocnotation{\~{}>} \coqdocvar{u}\coqdocnotation{](}\coqdocnotation{\&} \coqdocvar{t}\coqdocnotation{)}\coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocnotation{\&} \coqdocnotation{(}\coqdocnotation{[}\coqdocvar{x} \coqdocnotation{\~{}>} \coqdocvar{u}\coqdocnotation{]}\coqdocvar{t}\coqdocnotation{)}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite} (\coqdoclemma{subst\_bswap\_rec} 0). \coqdoctac{reflexivity}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{term\_eq\_term'}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite} \coqdocvar{H2}. \coqdoctac{apply} \coqref{Equation C.eqc def}{\coqdocconstructor{eqc\_def}}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_subst}; \coqdoctac{trivial}. \coqdoctac{apply} \coqdoclemma{term\_to\_term'} \coqdoctac{in} \coqdocvar{T}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqdocdefinition{term'} \coqdoctac{in} \coqdocvar{T}. \coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} 0. \coqdoctac{assumption}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red rename eqc}{red\_rename\_eqc}{\coqdoclemma{red\_rename\_eqc}} : \coqdocdefinition{red\_rename} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t}).\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t'}).\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.red out eqc}{\coqdoclemma{red\_out\_eqc}}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red out eqc ctx}{red\_out\_eqc\_ctx}{\coqdoclemma{red\_out\_eqc\_ctx}} : \coqdocdefinition{red\_out} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdoctac{in} *. \coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{ES\_redex}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red out eqc}{\coqdoclemma{red\_out\_eqc}}. \coqdoctac{assumption}. \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{apply} \coqdocconstructor{ES\_app\_left}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{apply} \coqdocconstructor{ES\_app\_right}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{apply} \coqdocconstructor{ES\_abs\_in} \coqdockw{with} (\coqdocnotation{\{\{}\coqdocvar{x}\coqdocnotation{\}\}} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocvar{L}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H2}. \coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_singleton} \coqdoctac{in} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{repeat} \coqdoctac{rewrite} \coqdoclemma{subst\_open\_var}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{H1}. \coqdoctac{assumption}. \coqdoctac{assumption}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{assumption}. \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{apply} \coqdocconstructor{ES\_subst\_left} \coqdockw{with} (\coqdocnotation{\{\{}\coqdocvar{x}\coqdocnotation{\}\}} \coqdocnotation{\symbol{92}}\coqdocnotation{u} \coqdocvar{L}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H3}. \coqdoctac{destruct} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_singleton} \coqdoctac{in} \coqdocvar{H3}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{repeat} \coqdoctac{rewrite} \coqdoclemma{subst\_open\_var}. \coqdoctac{apply} \coqdocvar{H1}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{assumption}. \coqdoctac{assumption}. \coqdoctac{assumption}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{assumption}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{1.00em}
+\coqdoctac{simpl}. \coqdoctac{apply} \coqdocconstructor{ES\_subst\_right}. \coqdoctac{apply} \coqdocvar{IHES\_contextual\_closure}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{subst\_term}; \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red rename eqc ctx}{red\_rename\_eqc\_ctx}{\coqdoclemma{red\_rename\_eqc\_ctx}}: \coqdocdefinition{red\_rename} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t'}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red out eqc ctx}{\coqdoclemma{red\_out\_eqc\_ctx}}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_var}. \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red regular eqc ctx}{red\_regular\_eqc\_ctx}{\coqdoclemma{red\_regular\_eqc\_ctx}}: \coqdocdefinition{red\_regular} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}}. \coqdoctac{apply} \coqdoclemma{red\_regular\_ctx}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.eqc regular}{\coqdoclemma{eqc\_regular}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Equation C.eqc trans}{eqc\_trans}{\coqdocdefinition{eqc\_trans}} (\coqdocvar{t} \coqdocvar{u}: \coqdocinductive{pterm}) := \coqdocinductive{trans\_closure} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Equation C.::x '=c+' x}{"}{"}t =c+ u" := (\coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red regular eqc trans}{red\_regular\_eqc\_trans}{\coqdoclemma{red\_regular\_eqc\_trans}}: \coqdocdefinition{red\_regular} \coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{unfold} \coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}}. \coqdoctac{apply} \coqdoclemma{red\_regular\_trans}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red regular eqc ctx}{\coqdoclemma{red\_regular\_eqc\_ctx}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red out eqc trans}{red\_out\_eqc\_trans}{\coqdoclemma{red\_out\_eqc\_trans}} : \coqdocdefinition{red\_out} \coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{unfold} \coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}} \coqdoctac{in} *. \coqdoctac{induction} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{one\_step\_reduction}. \coqdoctac{apply} \coqref{Equation C.red out eqc ctx}{\coqdoclemma{red\_out\_eqc\_ctx}}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{transitive\_reduction} \coqdockw{with} (\coqdocnotation{[}\coqdocvar{x} \coqdocnotation{\~{}>} \coqdocvar{u}\coqdocnotation{]}\coqdocvar{u0}); \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red rename eqc trans}{red\_rename\_eqc\_trans}{\coqdoclemma{red\_rename\_eqc\_trans}}: \coqdocdefinition{red\_rename} \coqref{Equation C.eqc trans}{\coqdocdefinition{eqc\_trans}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t'}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red out eqc trans}{\coqdoclemma{red\_out\_eqc\_trans}}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_var}. \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.close rec fresh}{close\_rec\_fresh}{\coqdoclemma{close\_rec\_fresh}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t} \coqdocvar{k}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocdefinition{fv}(\coqdocdefinition{close\_rec} \coqdocvariable{k} \coqdocvariable{x} \coqdocvariable{t}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t}. \coqdocvar{gen} \coqdocvar{x}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{induction} \coqdocvar{t}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdoctac{simpl}. \coqdoctac{apply} \coqdoclemma{notin\_empty}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdoctac{simpl}. \coqdocvar{case\_var}\ensuremath{\times}. \coqdoctac{simpl}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_empty}. \coqdoctac{simpl}. \coqdoctac{apply} \coqdoclemma{notin\_singleton}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdoctac{simpl}. \coqdoctac{apply} \coqdoclemma{notin\_union}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHt1}; \coqdoctac{assumption}. \coqdoctac{apply} \coqdocvar{IHt2}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdocvar{simpls}. \coqdoctac{apply} \coqdocvar{IHt}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdocvar{simpls}. \coqdoctac{apply} \coqdoclemma{notin\_union}; \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHt1}. \coqdoctac{apply} \coqdocvar{IHt2}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{k}. \coqdocvar{simpls}. \coqdoctac{apply} \coqdoclemma{notin\_union}; \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHt1}. \coqdoctac{apply} \coqdocvar{IHt2}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Corollary} \coqdef{Equation C.close fresh}{close\_fresh}{\coqdoclemma{close\_fresh}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocdefinition{fv}(\coqdocdefinition{close} \coqdocvariable{t} \coqdocvariable{x}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t}. \coqdoctac{unfold} \coqdocdefinition{close}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.close rec fresh}{\coqdoclemma{close\_rec\_fresh}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.close spec}{close\_spec}{\coqdoclemma{close\_spec}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{x}, \coqdocinductive{term} \coqdocvariable{t} \ensuremath{\rightarrow} \coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{u}\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{t} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{u}\coqdocnotation{\^{}}\coqdocvariable{x} \coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqdocdefinition{body} \coqdocvariable{u} \coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocdefinition{fv} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{x} \coqdocvar{H}. \coqdoctac{\ensuremath{\exists}} (\coqdocdefinition{close} \coqdocvar{t} \coqdocvar{x}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{splits} 3. \coqdoctac{apply} \coqdoclemma{open\_close\_var}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{close\_var\_body}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.close fresh}{\coqdoclemma{close\_fresh}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc trans abs}{eqc\_trans\_abs}{\coqdoclemma{eqc\_trans\_abs}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{L}, (\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L} \ensuremath{\rightarrow} \coqdocvariable{t}\coqdocnotation{\^{}}\coqdocvariable{x} \coqref{Equation C.::x '=c+' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{c}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{+}} \coqdocvariable{t'}\coqdocnotation{\^{}}\coqdocvariable{x}) \ensuremath{\rightarrow} \coqdocconstructor{pterm\_abs} \coqdocvariable{t} \coqref{Equation C.::x '=c+' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{c}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{+}} \coqdocconstructor{pterm\_abs} \coqdocvariable{t'}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{H}. \coqdocvar{pick\_fresh} \coqdocvar{x}. \coqdocvar{forwards}\ensuremath{\lnot} \coqdocvar{Red}: (\coqdocvar{H} \coqdocvar{x}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{asserts} \coqdocvar{Ht1}: (\coqdocinductive{term} (\coqdocconstructor{pterm\_abs} \coqdocvar{t'})).\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{apply\_fresh} \coqdocconstructor{term\_abs} \coqdockw{as} \coqdocvar{y}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{asserts} \coqdocvar{Ht'}: (\coqdocinductive{term} (\coqdocvar{t'} \coqdocnotation{\^{}} \coqdocvar{x})).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{red\_regular\_trans} \coqdoctac{in} \coqdocvar{Red}. \coqdoctac{apply} \coqdocvar{Red}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red regular eqc ctx}{\coqdoclemma{red\_regular\_eqc\_ctx}}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{term\_open\_rename} \coqdockw{with} \coqdocvar{x}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{gen\_eq} \coqdocvar{u}:(\coqdocvar{t}\coqdocnotation{\^{}}\coqdocvar{x}). \coqdocvar{gen\_eq} \coqdocvar{v}:(\coqdocvar{t'}\coqdocnotation{\^{}}\coqdocvar{x}). \coqdoctac{clear} \coqdocvar{H}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{gen} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{x} \coqdocvar{L}. \coqdoctac{induction} \coqdocvar{Red}; \coqdoctac{intros}; \coqdoctac{subst}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{one\_step\_reduction}. \coqdoctac{apply} \coqdocconstructor{ES\_abs\_in} \coqdockw{with} \coqdocvar{L}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{apply}\ensuremath{\times} (\coqref{Equation C.red rename eqc ctx}{\coqdoclemma{red\_rename\_eqc\_ctx}} \coqdocvar{x}); \coqdocvar{simpls}\ensuremath{\times}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{destruct}\ensuremath{\lnot} (@\coqref{Equation C.close spec}{\coqdoclemma{close\_spec}} \coqdocvar{u} \coqdocvar{x}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.red regular eqc trans}{\coqdoclemma{red\_regular\_eqc\_trans}} \coqdoctac{in} \coqdocvar{Red2}. \coqdoctac{apply} \coqdocvar{Red2}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{destruct} \coqdocvar{H}. \coqdoctac{subst}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{transitive\_reduction} \coqdockw{with} (\coqdocconstructor{pterm\_abs} \coqdocvar{x0}).\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHRed1} \coqdockw{with} \coqdocvar{x} \coqdocvar{L}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{term\_abs} \coqdockw{with} (\coqdocdefinition{fv} \coqdocvar{x0}). \coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{apply} \coqdoclemma{body\_to\_term}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union}. \coqdoctac{split}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{destruct} \coqdocvar{Fr}. \coqdoctac{assumption}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{reflexivity}. \coqdoctac{reflexivity}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocvar{IHRed2} \coqdockw{with} \coqdocvar{x} \coqdocvar{L}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}  \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}  \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{assumption}. \coqdoctac{destruct} \coqdocvar{H0}. \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply}  \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{assumption}. \coqdoctac{reflexivity}. \coqdoctac{reflexivity}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc trans sym}{eqc\_trans\_sym}{\coqdoclemma{eqc\_trans\_sym}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'}, \coqdocvariable{t} \coqref{Equation C.::x '=c+' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{c}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{+}} \coqdocvariable{t'} \ensuremath{\rightarrow} \coqdocvariable{t'} \coqref{Equation C.::x '=c+' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{c}}\coqref{Equation C.::x '=c+' x}{\coqdocnotation{+}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{intros\_all}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{apply} \coqdocconstructor{one\_step\_reduction}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqref{Equation C.ESctx eqc sym}{\coqdoclemma{ESctx\_eqc\_sym}}; \coqdoctac{assumption}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqdocconstructor{transitive\_reduction} \coqdockw{with} \coqdocvar{u}; \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+Este lema não vale com as novas definições. Verificar o que é realmente necessário. 
+Lemma eqc\_trans\_app\_term : forall t u v, (pterm\_app u v) =c+ t -> pterm\_app u v = t.
+Proof. 
+   introv H. remember (pterm\_app u v) as t0.
+   induction H. rewrite Heqt0 in *.
+   generalize dependent u0.
+   induction u0. intro H.
+   apply ESctx\_eqc\_sym in H.
+   apply ESctx\_eqc\_bvar in H. inversion H.
+   intro H. apply ESctx\_eqc\_sym in H.
+   apply ESctx\_eqc\_fvar in H. inversion H.
+   intro H. subst.
+
+
+Qed.\begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Equation C.eqC}{eqC}{\coqdocdefinition{eqC}} (\coqdocvar{t} : \coqdocinductive{pterm}) (\coqdocvar{u} : \coqdocinductive{pterm}) := \coqdocinductive{star\_closure} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{Equation C.::x '=e' x}{"}{"}t =e u" := (\coqref{Equation C.eqC}{\coqdocdefinition{eqC}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+=e is an equivalence relation \begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC rf}{eqC\_rf}{\coqdoclemma{eqC\_rf}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{intros\_all}. \coqdoctac{apply} \coqdocconstructor{reflexive\_reduction}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC sym}{eqC\_sym}{\coqdoclemma{eqC\_sym}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdocvariable{u} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{t} \coqdocvar{u} \coqdocvar{H}. \coqdoctac{induction} \coqdocvar{H}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdocconstructor{reflexive\_reduction}. \coqdoctac{constructor} 2. \coqdoctac{apply} \coqref{Equation C.eqc trans sym}{\coqdoclemma{eqc\_trans\_sym}}. \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC trans}{eqC\_trans}{\coqdoclemma{eqC\_trans}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{u} \ensuremath{\rightarrow} \coqdocvariable{u} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{v} \ensuremath{\rightarrow} \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{v}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{introv} \coqdocvar{H} \coqdocvar{H'}. \coqdoctac{apply} \coqdoclemma{star\_closure\_composition} \coqdockw{with} \coqdocvar{u}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Instance} \coqdef{Equation C.eqC eq}{eqC\_eq}{\coqdocinstance{eqC\_eq}} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqref{Equation C.eqC}{\coqdocdefinition{eqC}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{split}; \coqdocvar{intros\_all}. \coqdoctac{apply} \coqref{Equation C.eqC rf}{\coqdoclemma{eqC\_rf}}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.eqC sym}{\coqdoclemma{eqC\_sym}}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.eqC trans}{\coqdoclemma{eqC\_trans}} \coqdockw{with} \coqdocvar{y}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red out eqC}{red\_out\_eqC}{\coqdoclemma{red\_out\_eqC}} : \coqdocdefinition{red\_out} \coqref{Equation C.eqC}{\coqdocdefinition{eqC}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{u} \coqdocvar{t'} \coqdocvar{t} \coqdocvar{T} \coqdocvar{H}. \coqdocvar{gen} \coqdocvar{x} \coqdocvar{u}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdocconstructor{reflexive\_reduction}. \coqdoctac{intros}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdocconstructor{star\_trans\_reduction}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.red out eqc trans}{\coqdoclemma{red\_out\_eqc\_trans}}; \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red rename eqC}{red\_rename\_eqC}{\coqdoclemma{red\_rename\_eqC}} : \coqdocdefinition{red\_rename} \coqref{Equation C.eqC}{\coqdocdefinition{eqC}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{intros\_all}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t}).\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite}\ensuremath{\times} (@\coqdoclemma{subst\_intro} \coqdocvar{x} \coqdocvar{t'}).\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.red out eqC}{\coqdoclemma{red\_out\_eqC}}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\end{coqdoccode}
+Verificar necessidade deste lema.
+Lemma eqc\_sub\_term :  forall t u t0, (t\coqdocvar{u}) =e t0 -> 
+(t\coqdocvar{u} = t0 \symbol{92}/ exists t', exists v, term u /\symbol{92} term v /\symbol{92} t'\coqdocvar{v} = t /\symbol{92} (\& t')\coqdocvar{u}\coqdocvar{v} = t0) .
+Proof. 
+   intros t u t0 H. inversion H; subst. 
+   left; trivial. right. exists t1 u0. 
+   split; trivial. split; trivial. split; trivial.
+Qed. \begin{coqdoccode}
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC bvar term}{eqC\_bvar\_term}{\coqdoclemma{eqC\_bvar\_term}}  : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqdocconstructor{pterm\_bvar} \coqdocvariable{x} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_bvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{H}. \coqdocvar{remember} (\coqdocconstructor{pterm\_bvar} \coqdocvar{x}) \coqdockw{as} \coqdocvar{t0}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}. \coqdoctac{reflexivity}.\coqdoceol
+\coqdocnoindent
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC fvar term}{eqC\_fvar\_term}{\coqdoclemma{eqC\_fvar\_term}}  : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}, \coqdocconstructor{pterm\_fvar} \coqdocvariable{x} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t} \ensuremath{\rightarrow} \coqdocconstructor{pterm\_fvar} \coqdocvariable{x} \coqexternalref{:type scope:x '=' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{t}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdocvar{introv} \coqdocvar{H}. \coqdocvar{remember} (\coqdocconstructor{pterm\_fvar} \coqdocvar{x}) \coqdockw{as} \coqdocvar{t0}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{inversion} \coqdocvar{H}; \coqdoctac{subst}. \coqdoctac{reflexivity}.\coqdoceol
+\coqdocnoindent
+\coqdocvar{Admitted}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Equation C.red ctx mod eqC}{red\_ctx\_mod\_eqC}{\coqdocdefinition{red\_ctx\_mod\_eqC}} (\coqdocvar{R}: \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocinductive{pterm}) (\coqdocvar{u} : \coqdocinductive{pterm}) := \coqdoceol
+\coqdocindent{5.50em}
+\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{t'}\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}} \coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{u'}\coqexternalref{:type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}} \coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t'}\coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)/\symbol{92}(}}\coqdocinductive{ES\_contextual\_closure} \coqdocvariable{R} \coqdocvariable{t'} \coqdocvariable{u'}\coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)/\symbol{92}(}}\coqdocvariable{u'} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{u}\coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+=e Properties \begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.lc at eqc}{lc\_at\_eqc}{\coqdoclemma{lc\_at\_eqc}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{u}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{u}  \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{n} \coqdocvar{t} \coqdocvar{u} \coqdocvar{H}. \coqdoctac{destruct} \coqdocvar{H}; \coqdoctac{split}; \coqdoctac{simpl}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intro} \coqdocvar{H2}. \coqdoctac{split}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{unfold} \coqdocdefinition{bswap}. \coqdoctac{apply} \coqref{Equation C.lc at bswap}{\coqdocaxiom{lc\_at\_bswap}}; \coqdoctac{try} \coqdoctac{omega}; \coqdoctac{trivial}. \coqdoctac{apply} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} (\coqdocvar{k1} := 0); \coqdoctac{try} \coqdoctac{omega}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{term\_eq\_term'}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} (\coqdocvar{k1} := 0); \coqdoctac{try} \coqdoctac{omega}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{term\_eq\_term'}; \coqdoctac{trivial}. \coqdoctac{intro} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{replace} \coqdocvar{t} \coqdockw{with} (\coqdocnotation{\&} \coqdocnotation{\&} \coqdocvar{t}). \coqdoctac{split}. \coqdoctac{split}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqref{Equation C.lc at bswap}{\coqdocaxiom{lc\_at\_bswap}}; \coqdoctac{try} \coqdoctac{omega}; \coqdoctac{trivial}. \coqdoctac{apply} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} (\coqdocvar{k1} := 0); \coqdoctac{try} \coqdoctac{omega}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{term\_eq\_term'}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} \coqdoclemma{lc\_at\_weaken\_ind} \coqdockw{with} (\coqdocvar{k1} := 0); \coqdoctac{try} \coqdoctac{omega}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{term\_eq\_term'}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \coqdoclemma{bswap\_rec\_id} \coqdockw{with} (\coqdocvar{n} := 0); \coqdoctac{reflexivity}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.lc at ES ctx eqc}{lc\_at\_ES\_ctx\_eqc}{\coqdoclemma{lc\_at\_ES\_ctx\_eqc}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{u}, (\coqdocinductive{ES\_contextual\_closure} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}) \coqdocvariable{t} \coqdocvariable{u}  \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{u}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros}. \coqdoctac{generalize} \coqdoctac{dependent} \coqdocvar{n}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H}; \coqdoctac{intros}. \coqdoctac{apply} \coqref{Equation C.lc at eqc}{\coqdoclemma{lc\_at\_eqc}}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intro} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H1}; \coqdoctac{subst}. \coqdoctac{constructor}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H1}; \coqdoctac{subst}. \coqdoctac{constructor}. \coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intro} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H1}; \coqdoctac{subst}. \coqdoctac{constructor}. \coqdoctac{auto}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{inversion} \coqdocvar{H1}; \coqdoctac{subst}. \coqdoctac{constructor}. \coqdoctac{auto}. \coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{simpl}. \coqdoctac{simpl} \coqdoctac{in} *. \coqdoctac{case} \coqdoclemma{var\_fresh} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}). \coqdoctac{intros}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0). \coqdoctac{symmetry}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocdefinition{open} \coqdoctac{in} *. \coqdoctac{symmetry}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intuition} \coqdoctac{eauto}. \coqdoctac{intuition} \coqdoctac{eauto}. \coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intuition} \coqdoctac{eauto}. \coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{simpl}; \coqdoctac{intros} \coqdocvar{H'}. \coqdoctac{simpl} \coqdoctac{in} *. \coqdoctac{case} \coqdoclemma{var\_fresh} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}).\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocdefinition{open} \coqdoctac{in} *. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0). \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}. \coqdoctac{auto}. \coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{simpl} \coqdoctac{in} *. \coqdoctac{case} \coqdoclemma{var\_fresh} \coqdockw{with} (\coqdocvar{L} := \coqdocvar{L}). \coqdoctac{intros} \coqdocvar{x} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{destruct} \coqdocvar{H'}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0); \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{unfold} \coqdocdefinition{open} \coqdoctac{in} *. \coqdoctac{rewrite} \coqdocvar{H0}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdoclemma{lc\_at\_open'} \coqdockw{with} (\coqdocvar{u} := \coqdocconstructor{pterm\_fvar} \coqdocvar{x}) (\coqdocvar{k} := 0). \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}. \coqdoctac{auto}. \coqdoctac{apply} \coqexternalref{neq 0 lt}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Arith.Lt}{\coqdoclemma{neq\_0\_lt}}. \coqdoctac{trivial}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intros} \coqdocvar{H1}; \coqdoctac{split}; \coqdoctac{destruct} \coqdocvar{H1}; \coqdoctac{auto}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.lc at eqC}{lc\_at\_eqC}{\coqdoclemma{lc\_at\_eqC}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{t'}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t'} \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t'}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{n} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H}. \coqdoctac{generalize} \coqdocvar{n}; \coqdoctac{clear} \coqdocvar{n}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{induction} \coqdocvar{H}. \coqdoctac{intro}; \coqdoctac{reflexivity}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intro} \coqdocvar{n}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{apply} \coqref{Equation C.lc at ES ctx eqc}{\coqdoclemma{lc\_at\_ES\_ctx\_eqc}}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \coqdocvar{IHtrans\_closure1}. \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqc fv}{eqc\_fv}{\coqdoclemma{eqc\_fv}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{t'} \ensuremath{\rightarrow} (\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t'}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{simpl}. \coqdoctac{unfold} \coqdocdefinition{bswap}. \coqdoctac{rewrite} \coqdoclemma{fv\_bswap\_rec}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdocvar{admit}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.ES eqc fv}{ES\_eqc\_fv}{\coqdoclemma{ES\_eqc\_fv}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'}, (\coqdocinductive{ES\_contextual\_closure} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}) \coqdocvariable{t} \coqdocvariable{t'} \ensuremath{\rightarrow} (\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t'}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{induction} \coqdocvar{H}. \coqdoctac{apply} \coqref{Equation C.eqc fv}{\coqdoclemma{eqc\_fv}}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intros} \coqdocvar{H1}. \coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{apply} \coqdoclemma{in\_union}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{apply} \coqdoclemma{in\_union}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intros} \coqdocvar{H1}. \coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{apply} \coqdoclemma{in\_union}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}. \coqdoctac{apply} \coqdoclemma{in\_union}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{y}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H1}. \coqdoctac{destruct} \coqdocvar{H1}. \coqdoctac{apply} \coqdoclemma{notin\_singleton} \coqdoctac{in} \coqdocvar{H4}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{assert} (\coqdocvar{Q}: (\coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} (\coqdocvar{t} \coqdocnotation{\^{}} \coqdocvar{y}) \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvar{t})). \coqdoctac{apply} \coqdoclemma{fv\_open\_}. \coqdoctac{intuition} \coqdoctac{eauto}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{assert} (\coqdocvar{S}: (\coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} (\coqdocvar{t'} \coqdocnotation{\^{}} \coqdocvar{y}) \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvar{t'})). \coqdoctac{apply} \coqdoclemma{fv\_open\_}. \coqdoctac{intuition} \coqdoctac{eauto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{S}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{H0}. \coqdoctac{rewrite} \coqdocvar{Q}; \coqdoctac{auto}. \coqdoctac{auto}. \coqdoctac{reflexivity}. \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdocvar{pick\_fresh} \coqdocvar{y}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{Fr}. \coqdoctac{destruct} \coqdocvar{Fr}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H2}. \coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H2}. \coqdoctac{destruct} \coqdocvar{H2}. \coqdoctac{apply} \coqdoclemma{notin\_union} \coqdoctac{in} \coqdocvar{H2}. \coqdoctac{destruct} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{apply} \coqdoclemma{notin\_singleton} \coqdoctac{in} \coqdocvar{H6}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{assert} (\coqdocvar{Q}: (\coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} (\coqdocvar{t} \coqdocnotation{\^{}} \coqdocvar{y}) \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvar{t})). \coqdoctac{apply} \coqdoclemma{fv\_open\_}. \coqdoctac{intuition} \coqdoctac{eauto}.\coqdoceol
+\coqdocindent{4.00em}
+\coqdoctac{assert} (\coqdocvar{S}: (\coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} (\coqdocvar{t'} \coqdocnotation{\^{}} \coqdocvar{y}) \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvar{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvar{t'})). \coqdoctac{apply} \coqdoclemma{fv\_open\_}. \coqdoctac{intuition} \coqdoctac{eauto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intros} \coqdocvar{H7}. \coqdoctac{apply} \coqdoclemma{in\_union} \coqdoctac{in} \coqdocvar{H7}; \coqdoctac{destruct} \coqdocvar{H7}. \coqdoctac{apply} \coqdoclemma{in\_union}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{Q} \coqdoctac{in} \coqdocvar{H7}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{S}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{H0}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{right}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdoclemma{in\_union} \coqdoctac{in} \coqdocvar{H7}; \coqdoctac{destruct} \coqdocvar{H7}. \coqdoctac{apply} \coqdoclemma{in\_union}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{S} \coqdoctac{in} \coqdocvar{H7}. \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{Q}. \coqdoctac{rewrite} \coqdocvar{H0}. \coqdoctac{auto}. \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{apply} \coqdoclemma{in\_union}. \coqdoctac{right}; \coqdoctac{auto}.\coqdoceol
+\coqdocemptyline
+\coqdocindent{2.00em}
+\coqdoctac{simpl}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{split}; \coqdoctac{intros} \coqdocvar{H1}; \coqdoctac{apply} \coqdoclemma{in\_union} \coqdoctac{in} \coqdocvar{H1}; \coqdoctac{destruct} \coqdocvar{H1}; \coqdoctac{apply} \coqdoclemma{in\_union}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}; \coqdoctac{auto}. \coqdoctac{right}; \coqdoctac{rewrite} \ensuremath{\leftarrow} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{2.00em}
+\coqdoctac{left}; \coqdoctac{auto}. \coqdoctac{right}; \coqdoctac{rewrite} \coqdocvar{IHES\_contextual\_closure}; \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.eqC fv}{eqC\_fv}{\coqdoclemma{eqC\_fv}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t'} \ensuremath{\rightarrow} (\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{in} \coqdocdefinition{fv} \coqdocvariable{t'}\coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{x} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H}. \coqdoctac{induction} \coqdocvar{H}. \coqdoctac{reflexivity}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{induction} \coqdocvar{H}. \coqdoctac{apply} \coqref{Equation C.ES eqc fv}{\coqdoclemma{ES\_eqc\_fv}}; \coqdoctac{auto}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \coqdocvar{IHtrans\_closure1}. \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red regular' eqc}{red\_regular'\_eqc}{\coqdoclemma{red\_regular'\_eqc}} : \coqdocdefinition{red\_regular'} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{unfold} \coqdocdefinition{red\_regular'}. \coqdoctac{intros} \coqdocvar{t0} \coqdocvar{t1} \coqdocvar{H'}. \coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'}. \coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'}.\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{unfold} \coqdocdefinition{term'}. \coqdoctac{apply} \coqref{Equation C.lc at eqc}{\coqdoclemma{lc\_at\_eqc}}; \coqdoctac{trivial}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{Equation C.red regular eqC}{red\_regular\_eqC}{\coqdoclemma{red\_regular\_eqC}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{R}, \coqdocdefinition{red\_regular} \coqdocvariable{R} \ensuremath{\rightarrow} \coqdoceol
+\coqdocindent{12.00em}
+\coqdocdefinition{red\_regular} (\coqref{Equation C.red ctx mod eqC}{\coqdocdefinition{red\_ctx\_mod\_eqC}} \coqdocvariable{R}).\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{intros} \coqdocvar{R} \coqdocvar{H}. \coqdoctac{unfold} \coqdocdefinition{red\_regular}. \coqdoctac{intros} \coqdocvar{t} \coqdocvar{t'} \coqdocvar{H'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{unfold} \coqref{Equation C.red ctx mod eqC}{\coqdocdefinition{red\_ctx\_mod\_eqC}} \coqdoctac{in} \coqdocvar{H'}. \coqdoctac{case} \coqdocvar{H'}; \coqdoctac{clear} \coqdocvar{H'}; \coqdoctac{intros} \coqdocvar{t0} \coqdocvar{H'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{case} \coqdocvar{H'}; \coqdoctac{clear} \coqdocvar{H'}; \coqdoctac{intros} \coqdocvar{u0} \coqdocvar{H'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{assert} (\coqdocvar{Q} : \coqdocdefinition{red\_regular} (\coqdocinductive{ES\_contextual\_closure} \coqdocvar{R})).\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{apply} \coqdoclemma{red\_regular\_ctx}; \coqdoctac{trivial}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{unfold} \coqdocdefinition{red\_regular} \coqdoctac{in} \coqdocvar{Q}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{assert} (\coqdocvar{Q'}: \coqdocinductive{term} \coqdocvar{t0} \coqexternalref{:type scope:x '/x5C' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqdocinductive{term} \coqdocvar{u0}).\coqdoceol
+\coqdocindent{1.50em}
+\coqdoctac{apply} \coqdocvar{Q}. \coqdoctac{apply} \coqdocvar{H'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{case} \coqdocvar{H'}; \coqdoctac{clear} \coqdocvar{H'}; \coqdoctac{intros} \coqdocvar{H0} \coqdocvar{H1}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{case} \coqdocvar{H1}; \coqdoctac{clear} \coqdocvar{H1}; \coqdoctac{intros} \coqdocvar{H1} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{apply} (\coqref{Equation C.lc at eqC}{\coqdoclemma{lc\_at\_eqC}} 0) \coqdoctac{in} \coqdocvar{H0}. \coqdoctac{apply} (\coqref{Equation C.lc at eqC}{\coqdoclemma{lc\_at\_eqC}} 0) \coqdoctac{in} \coqdocvar{H2}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'}. \coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'} \coqdoctac{in} \coqdocvar{Q'}. \coqdoctac{rewrite} \coqdoclemma{term\_eq\_term'} \coqdoctac{in} \coqdocvar{Q'}.\coqdoceol
+\coqdocindent{0.50em}
+\coqdoctac{unfold} \coqdocdefinition{term'}. \coqdoctac{split}; [\coqdoctac{apply} \coqdocvar{H0}; \coqdoctac{apply} \coqdocvar{Q'} \ensuremath{|} \coqdoctac{apply} \coqdocvar{H2}; \coqdoctac{apply} \coqdocvar{Q'}].\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\coqdocemptyline
+\coqdocemptyline
+\coqdocemptyline
+\end{coqdoccode}
+\end{document}

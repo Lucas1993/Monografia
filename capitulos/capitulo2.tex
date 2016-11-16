@@ -5,7 +5,7 @@
 
 %\subsection{Descrição do sistema}
 
-Como visto no capítulo anterior, várias extensões do cálculo lambda foram
+Como visto no capítulo anterior, várias extensões do cálculo $\lambda$ foram
 propostas com o objetivo de expressar de maneira concisa a noção de substituição
 explícita.
 
@@ -66,10 +66,10 @@ $\alpha$-equivalência. As relações $\rightarrow_{ex}$ e $\rightarrow_{\lambda
 
 Estas relações serão amplamente utilizadas ao decorrer deste trabalho. 
 O foco principal é a formalização da propriedade \textbf{IE} do sistema, que
-pode ser entendida intuitivamente da seguinte maneira: Dados \textbf{t},
-\textbf{u} tais que \emph{u} e \emph{t\{x/u\}} são fortemente normalizáveis
+pode ser entendida intuitivamente da seguinte maneira: Dados $t$,
+$u$ tais que $u$ e $t\{x/u\}$ são fortemente normalizáveis
 no sistema, então o correspondente utilizando substituições explícitas,
-\emph{t[x/u]} também será. Ou seja, a normalização da substituição implícita
+$t[x/u]$ também será. Ou seja, a normalização da substituição implícita
 implica a normalização da explícita.
 
 \subsection{A Gramática de pré-termos}
@@ -78,8 +78,8 @@ implica a normalização da explícita.
 Nesta seção, será feita um paralelo entre as estruturas básicas do sistema
 $\lambda ex$ e sua formalização em Coq.
 
-Como visto em \ref{sub:int_lex}, o sistema possui uma gramática que pode ser vista como
-uma extensão do cálculo lambda original, consistindo de variáveis, abstrações,
+Como visto em \ref{sec:int_lex}, o sistema possui uma gramática que pode ser vista como
+uma extensão do cálculo $\lambda$ original, consistindo de variáveis, abstrações,
 aplicações e \emph{substituições explícitas}. Ela pode ser descrita sucintamente
 como abaixo.
 
@@ -95,15 +95,38 @@ Assim, torna-se necessária uma gramática de \emph{pré-termos}, que consiste d
 todos os termos possíveis de serem escritos em LNR. Esta gramática é formalizada
 usando um tipo indutivo.
 
-\begin{lstlisting}[basicstyle=\small]
-Inductive pterm : Set :=
-  | pterm_bvar : nat -> pterm
-  | pterm_fvar : var -> pterm
-  | pterm_app  : pterm -> pterm -> pterm
-  | pterm_abs  : pterm -> pterm
-  | pterm_sub  : pterm -> pterm -> pterm 
-  | pterm_lsub : pterm -> pterm -> pterm.
-\end{lstlisting}
+\bigskip
+\coqdocnoindent \coqdockw{Inductive} \coqdef{LambdaES
+    Defs.pterm}{pterm}{\coqdocinductive{pterm}} : \coqdockw{Set} :=\coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdef{LambdaES Defs.pterm
+    bvar}{pterm\_bvar}{\coqdocconstructor{pterm\_bvar}} :
+\coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}}
+\ensuremath{\rightarrow} \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol \coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm
+    fvar}{pterm\_fvar}{\coqdocconstructor{pterm\_fvar}} : \coqdocdefinition{var}
+\ensuremath{\rightarrow} \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol \coqdocindent{1.00em}
+\ensuremath{|} \coqdef{LambdaES Defs.pterm
+    app}{pterm\_app}{\coqdocconstructor{pterm\_app}}  : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdef{LambdaES Defs.pterm
+    abs}{pterm\_abs}{\coqdocconstructor{pterm\_abs}}  : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}\coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdef{LambdaES Defs.pterm
+    sub}{pterm\_sub}{\coqdocconstructor{pterm\_sub}} : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdef{LambdaES Defs.pterm
+    lsub}{pterm\_lsub}{\coqdocconstructor{pterm\_lsub}} : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}.\coqdoceol 
+\bigskip
 
 Veja que variáveis livres e ligadas possuem construtores distintos. Para as
 livres, o construtor correto é \texttt{pterm\_bvar}, que recebe um natural
@@ -132,12 +155,20 @@ Relembrando, a operação de abertura foi definida como $t^{x} \equiv t\{0/x\}$.
 Para implementar tal operação, precisaremos de duas funções, \texttt{open\_rec}
 e \texttt{open}.
 
-\begin{lstlisting}[basicstyle=\small]
-Fixpoint open_rec (k : nat) (u : pterm) (t : pterm) {struct t} 
-        : pterm := ...
+\bigskip
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.open
+    rec}{open\_rec}{\coqdocdefinition{open\_rec}} (\coqdocvar{k} :
+\coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}})
+(\coqdocvar{u} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}})
+(\coqdocvar{t} : \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}})
+\{\coqdockw{struct} \coqdocvar{t}\} : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} := ...\coqdoceol
 
-Definition open t u := open_rec 0 u t.
-\end{lstlisting}
+\coqdockw{Definition} \coqdef{LambdaES Defs.open}{open}{\coqdocdefinition{open}}
+\coqdocvar{t} \coqdocvar{u} := \coqref{LambdaES Defs.open
+    rec}{\coqdocdefinition{open\_rec}} 0 \coqdocvariable{u}
+\coqdocvariable{t}.\coqdoceol
+\bigskip
 
 A primeira adentra o termo \texttt{t} recursivamente, procurando pelo índice
 \texttt{k} e substituindo pelo termo \texttt{u}. Ao encontrar uma abstração ou
@@ -148,29 +179,41 @@ Similarmente, a operação de fechamento foi definida como $ ^{\textbackslash x}
 \equiv \{0 \leftarrow t\}$. Esta operação é definida através da função
 \texttt{close}.
 
-\begin{lstlisting}[basicstyle=\small]
-Fixpoint close_rec  (k : nat) (x : var) (t : pterm) {struct t} 
-    : pterm := ...
+\bigskip
 
-Definition close t x := close_rec 0 x t.
-\end{lstlisting}
+\coqdockw{Fixpoint} \coqdef{LambdaES Defs.close
+    rec}{close\_rec}{\coqdocdefinition{close\_rec}}  (\coqdocvar{k} :
+\coqexternalref{nat}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Datatypes}{\coqdocinductive{nat}})
+(\coqdocvar{x} : \coqdocdefinition{var}) (\coqdocvar{t} : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}}) \{\coqdockw{struct} \coqdocvar{t}\} :
+\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} := ...\coqdoceol
 
-Podemos agora definir o predicado \texttt{term}, representando termos bem
+\coqdockw{Definition} \coqdef{LambdaES
+    Defs.close}{close}{\coqdocdefinition{close}} \coqdocvar{t} \coqdocvar{x} :=
+\coqref{LambdaES Defs.close rec}{\coqdocdefinition{close\_rec}} 0
+\coqdocvariable{x} \coqdocvariable{t}.\coqdoceol
+
+\bigskip
+
+\begin{definicao}\label{def_term}
+Sejam $t, t1, t2$ pré-termos; $L$ um conjunto finito de variáveis e $x$ uma variável.
+Definimos o predicado \texttt{term}, representando termos bem
 formados, com base nas seguintes regras de inferência.
 
 \begin{mathpar} 
     \inferrule*[Right=term\_var]{  }
-    {lc(x)}
+    {term(x)}
     \and
-    \inferrule*[Right=term\_app]{lc\ t1 \\ lc\ t2}
-    {lc(t1\ t2)}
-    \and
-    \inferrule*[Right=term\_abs]{\forall x \notin L,\ lc\ (t^{x})}
-    {lc(\lambda. t)}
+    \inferrule*[Right=term\_app]{term\ t1 \\ term\ t2}
+    {term(t1\ t2)}
     \\
-    \inferrule*[Right=term\_sub]{\forall x \notin L,\ lc\ (t^{x}) \\ lc\ u}
-    {lc(t[u])}
+    \inferrule*[Right=term\_abs]{\forall x \notin L,\ term\ (t^{x})}
+    {lc(\lambda. t)}
+    \and
+    \inferrule*[Right=term\_sub]{\forall x \notin L,\ term\ (t^{x}) \\ term\ u}
+    {term(t[u])}
 \end{mathpar}
+\end{definicao}
 
 O predicado \texttt{term} recebe um pré-termo, e indica que este elemento é bem
 formado, ou seja, não possui índices livres. Para cada tipo de pré-termo, temos
@@ -184,18 +227,18 @@ maneira equivalente ao predicado \texttt{term}. Este novo predicado é definido
 com base na definição recursiva \texttt{lc\_at}. A função \texttt{lc\_at}
 verifica se o termo \emph{t} está \textit{fechado} a um nível \emph{k}, ou seja,
 se não existe índice livre de valor maior ou igual a \emph{k}. Sua implementação
-é feita com base na definição da tabela \ref{table:lc_at}, adicionando apenas o
-caso a seguir, para substituições explícitas.
+é feita com base na Definição \ref{def_lc_at}, adicionando apenas o caso a
+seguir, para substituições explícitas.
 
-\begin{empheq}[box=\fbox]{align*}
-    lc\_at\ k\ (t1[t2])\ \ \ &\equiv\ (lc\_at\ (S k)\ t1)\ \&\ (lc\_at\ k\ t2) \\ 
-\end{empheq}
+\[  lc\_at\ k\ (t1[t2])\ \ \ \equiv\ (lc\_at\ (S k)\ t1)\ \&\ (lc\_at\ k\ t2) \]
 
-\begin{lstlisting}[basicstyle=\small]
-Fixpoint lc_at (k:nat) (t:pterm) {struct t} : Prop := ...
+\bigskip
+\coqdockw{Fixpoint} \coqdocvar{lc\_at} (\coqdocvar{k}:\coqdocvar{nat})
+(\coqdocvar{t}:\coqdocvar{pterm}) \{\coqdockw{struct} \coqdocvar{t}\} :
+\coqdockw{Prop} :=\coqdoceol
 
-Definition term' t := lc_at 0 t.
-\end{lstlisting}
+\coqdockw{Definition} \coqdocvar{term'} \coqdocvar{t} := \coqdocvar{lc\_at} 0 \coqdocvar{t}.\coqdoceol
+\bigskip
 
 Assim, essa equivalência também teve que ser formalizada, utilizando uma série
 de lemas auxiliares. 
@@ -203,13 +246,21 @@ de lemas auxiliares.
 Primeiramente, foram provados dois resultados de enfraquecimento para o
 \texttt{lc\_at}.
 
-\begin{gather}
- lc\_rec\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at\ k\ (open\_rec\ k\ x\
-    t))\ \rightarrow\ (lc\_at\ (S\ k)\ t) \nonumber \\
- lc\_at\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at\ (S\ k)\ t)\ \rightarrow\
-    (lc\_at\ k\ (open\_rec\ k\ x\ t)) \nonumber 
-\end{gather}
+\bigskip
+\coqnoindent \coqdockw{Lemma} \coqdocvar{lc\_rec\_open\_var\_rec} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}
+\coqdocvar{k}, \coqdocvar{lc\_at} \coqdocvar{k}
+(\coqdocvar{open\_rec} \coqdocvar{k} \coqdocvar{x} \coqdocvar{t})
+\ensuremath{\rightarrow} \coqdocvar{lc\_at} (\coqdocvar{S} \coqdocvar{k})
+\coqdocvar{t}.\coqdoceol
 
+\coqnoindent \coqdockw{Lemma} \coqdocvar{lc\_at\_open\_var\_rec} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}
+\coqdocvar{k}, \coqdocvar{lc\_at} (\coqdocvar{S}
+\coqdocvar{k}) \coqdocvar{t} \ensuremath{\rightarrow} \coqdocvar{lc\_at}
+\coqdocvar{k} (\coqdocvar{open\_rec} \coqdocvar{k} (\coqdocvar{pterm\_fvar}
+\coqdocvar{x}) \coqdocvar{t}).\coqdoceol
+\bigskip
 
 O primeiro lema garante que, se um termo \emph{t}, aberto com uma variável a um
 nível \emph{k}, é fechado a este mesmo nível \emph{k}, então o termo \emph{t}
@@ -222,24 +273,28 @@ O segundo é exatamente o contrário: Se um termo \emph{t} é fechado a um níve
 Já podemos agora provar a equivalência entre as duas definições de termos bem
 formados.
 
-\begin{gather}
- term\_eq\_term':\ \forall\ t,\ (term\ t)\ \iff\ (term'\ t) \nonumber 
-\end{gather}
+\bigskip
+\coqdockw{Lemma} \coqdocvar{term\_eq\_term'} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t}, \coqdocvar{term} \coqdocvar{t} \ensuremath{\leftrightarrow}
+\coqdocvar{term'} \coqdocvar{t}.\coqdoceol
+\bigskip
 
+\begin{proof}
 \begin{itemize}
-    \item[($\Rightarrow$)] Este caso é bem direto, fazendo uma indução no
+    \item[($\rightarrow$)] Este caso é bem direto, fazendo uma indução no
         predicado \texttt{term t}. As hipóteses de indução resolvem os casos
         diretamente, exceto para abstração e substituição. Nesses, a hipótese é
         dada para $t^x$, quando precisamos provar $lc\_at\ 1\ t$. Felizmente os
         lemas de enfraquecimento acima resolvem, bastando usar o lema
         lc\_rec\_open\_var\_rec.
-    \item[($\Leftarrow$)] O segundo caso não é tão imediato, pois fazemos uma
+    \item[($\leftarrow$)] O segundo caso não é tão imediato, pois fazemos uma
         indução no \emph{tamanho do termo}, para auxiliar na prova. A hipótese
         de indução se refere a termos com tamanho igual ao do termo sobre qual
         queremos provar a propriedade. Isto é útil pois o tamanho de um termo ao
         ser aberto não muda. Novamente, no caso da abstração e substituição,
         precisamos fazer um ajuste utilizando o lema lc\_at\_open\_var\_rec.
 \end{itemize}
+\end{proof}
 
 \subsection{Equivalência de termos}
 \label{sub:equival_ncia_de_termos}
@@ -261,11 +316,22 @@ Dizemos que ambas as representações são \emph{equivalentes}.
 
 Precisamos, então, formalizar essa definição no sistema.
 
-\begin{lstlisting}[basicstyle=\small]
-Inductive eqc : pterm -> pterm -> Prop := 
-  | eqc_def: forall t u v, term u -> term v -> 
-          eqc (t[u][v]) ((& t)[v][u]).
-\end{lstlisting}
+\bigskip
+\coqdocnoindent
+\coqdockw{Inductive} \coqdef{Equation C.eqc}{eqc}{\coqdocinductive{eqc}} :
+\coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm}
+\ensuremath{\rightarrow} \coqdockw{Prop} := \coqdoceol \coqdocindent{1.00em}
+\ensuremath{|} \coqdef{Equation C.eqc
+    def}{eqc\_def}{\coqdocconstructor{eqc\_def}}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v},
+\coqdocdefinition{lc\_at} 2 \coqdocvariable{t} \ensuremath{\rightarrow}
+\coqdocinductive{term} \coqdocvariable{u} \ensuremath{\rightarrow}
+\coqdocinductive{term} \coqdocvariable{v} \ensuremath{\rightarrow}
+\coqref{Equation C.eqc}{\coqdocinductive{eqc}}
+(\coqdocvariable{t}\coqdocnotation{[}\coqdocvariable{u}\coqdocnotation{][}\coqdocvariable{v}\coqdocnotation{]})
+(\coqdocnotation{(}\coqdocnotation{\&}
+\coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{v}\coqdocnotation{][}\coqdocvariable{u}\coqdocnotation{]}).\coqdoceol
+\bigskip
 
 As exigências que \emph{u} e \emph{v} sejam termos são puramente técnicas, pois
 queremos trabalhar apenas com termos sem índices livres no sistema. O único
@@ -277,12 +343,15 @@ Note que esta definição ainda possui muitas limitações. Por exemplo, se um t
 possui uma lista de substituições, só podemos trocar as duas últimas. Também não
 é possível realizar permutações em subtermos, ou várias permutações seguidas.
 Assim, precisamos criar \emph{fechos} em cima dessa definição, para ajustar às
-nossas necessidades. Nas regras a seguir, \emph{R} indica uma relação entre dois
-termos. 
+nossas necessidades. 
+
+\begin{definicao}[Fecho contextual]\label{def_fecho}
+    Sejam $t,t',u$ pré-termos; $x$ uma variável e $R$ uma relação entre
+    pré-termos. As regras a seguir definem o fecho contextual de R.
 
 \begin{mathpar} 
-    \inferrule*[Right=ES\_redex]{ (R\ t\ s) }
-    {(ES\_contextual\_closure\ R)\ t\ s}
+    \inferrule*[Right=ES\_redex]{ (R\ t\ t') }
+    {(ES\_contextual\_closure\ R)\ t\ t'}
     \\
     \inferrule*[Right=ES\_app\_left]{((ES\_contextual\_closure\ R)\ t\ t'),\
         (term\ u)}
@@ -305,16 +374,17 @@ termos.
     {((ES\_contextual\_closure\ R)\ (t[u])\ (t[u']))}
 \end{mathpar}
 
+\end{definicao}
 
-\begin{lstlisting}[basicstyle=\small]
-Definition eqc_ctx (t u: pterm) := ES_contextual_closure eqc t u.
-Notation "t =c u" := (eqc_ctx t u) (at level 66). 
-\end{lstlisting}
+\bigskip
+\coqdockw{Definition} \coqdef{Equation C.eqc ctx}{eqc\_ctx}{\coqdocdefinition{eqc\_ctx}} (\coqdocvar{t} \coqdocvar{u}: \coqdocinductive{pterm}) := \coqdocinductive{ES\_contextual\_closure} \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdockw{Notation} "t =c u" := (\coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\bigskip
 
 A definição \texttt{ES\_contextual\_closure} é um dos chamados \emph{fechos
     contextuais}. A ideia é que, se vale $t \rightarrow_R t'$, então, para
-qualquer termo construído a partir de \emph{t}, vale a redução pelo fecho contextual de
-R, para o mesmo termo, mas construído a partir de \emph{t'}. Como exemplo:
+qualquer termo construído a partir de $t$, vale a redução pelo fecho contextual de
+R, para o mesmo termo, mas construído a partir de $t'$. Como exemplo:
 
 \[(t \rightarrow_R t') \Rightarrow ((pterm\_app\ t\ u)
     \rightarrow_{ES\_Contextual\_Closure\ R} (pterm\_app\ t'\ u)) \]
@@ -326,17 +396,19 @@ construtor \texttt{transitive\_reduction}. Note que isto vale para
 apenas um passo também: $t \rightarrow_R t'$ implica $t \rightarrow_{R^+} t'$.
 Este é representado pelo construtor \texttt{one\_step\_reduction}.
 
-\begin{table}
+\begin{definicao}[Fecho transitivo]
+    Sejam $t, t', u$ pré-termos e $R$ uma relação entre pré-termos. As regras
+    abaixo definem o fecho transitivo de $R$.
+    
 \begin{mathpar} 
-    \inferrule*[Right=one\_step\_reduction]{ (R\ t\ s) }
-    {(trans\_closure\ R)\ t\ s}
+    \inferrule*[Right=one\_step\_reduction]{ (R\ t\ t') }
+    {(trans\_closure\ R)\ t\ t'}
     \\
     \inferrule*[Right=transitive\_reduction]{((trans\_closure\ R)\ t\ u),\
         ((trans\_closure\ R)\ u\ t')}
     {((trans\_closure\ R)\ (t\ t'))}
 \end{mathpar}
-    \caption{Fecho transitivo}
-\end{table}
+\end{definicao}
 
 O fecho \emph{transitivo-reflexivo} é uma extensão do transitivo, onde vale $t
 \rightarrow_{R^*} t$, sempre. A extensão é presentada por dois construtores:
@@ -344,7 +416,9 @@ O fecho \emph{transitivo-reflexivo} é uma extensão do transitivo, onde vale $t
 \texttt{star\_trans\_reduction}, que constrói \texttt{star\_closure R t u}, se
 vale \texttt{trans\_closure R t u}.
 
-\begin{table}
+\begin{definicao}[Fecho transitivo-reflexivo]
+    Sejam $t, t', u$ pré-termos e $R$ uma relação entre pré-termos. As regras
+    abaixo definem o fecho transitivo-reflexivo de $R$.
 \begin{mathpar} 
     \inferrule*[Right=reflexive\_reduction]{  }
     {(star\_closure\ R)\ t\ t}
@@ -352,17 +426,20 @@ vale \texttt{trans\_closure R t u}.
     \inferrule*[Right=star\_trans\_reduction]{((trans\_closure\ R)\ t\ u)}
     {((star_trans\_closure\ R)\ (t\ u))}
 \end{mathpar}
-    \caption{Fecho transitivo-reflexivo}
-\end{table}
+\end{definicao}
 
-\begin{lstlisting}[basicstyle=\small]
-Definition eqc_trans (t u: pterm) := (trans_closure eqc_ctx) t u.
-Notation "t =c+ u" := (eqc_trans t u) (at level 66). 
+\bigskip
+\coqnoindent\coqdockw{Definition} \coqdef{Equation C.eqc
+    trans}{eqc\_trans}{\coqdocdefinition{eqc\_trans}} (\coqdocvar{t}
+\coqdocvar{u}: \coqdocinductive{pterm}) := \coqdocinductive{trans\_closure}
+\coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvariable{t}
+\coqdocvariable{u}.\coqdoceol \coqdockw{Notation} "t =c+ u" := (\coqref{Equation
+    C.eqc trans}{\coqdocdefinition{eqc\_trans}} \coqdocvar{t} \coqdocvar{u})
+(\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
 
-Definition eqC (t : pterm) (u : pterm) := (star_closure eqc_ctx) t u.
-Notation "t =e u" := (eqC t u) (at level 66). 
-\end{lstlisting}
-
+\coqdockw{Definition} \coqdef{Equation C.eqC}{eqC}{\coqdocdefinition{eqC}} (\coqdocvar{t} : \coqdocinductive{pterm}) (\coqdocvar{u} : \coqdocinductive{pterm}) := \coqdocinductive{star\_closure} \coqref{Equation C.eqc ctx}{\coqdocdefinition{eqc\_ctx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdockw{Notation} "t =e u" := (\coqref{Equation C.eqC}{\coqdocdefinition{eqC}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\bigskip
 
 Assim, a relação de equivalência que é interessante ser estudada é a $=_e$, que
 permite vários passos de permutações, além de permutações no interior dos
@@ -374,13 +451,14 @@ Como exemplo, podemos querer mostrar a compatibilidade da igualdade com a
 função \texttt{lc\_at}. Isto é intuitivo, pois permutar duas substituições não
 irá criar índices livres. Porém, é preciso entrar em detalhes na prova formal. 
 
-\begin{lstlisting}[basicstyle=\small]
-Lemma lc_at_eqc : forall n t u, eqc t u  -> (lc_at n t <-> lc_at n u).
-Lemma lc_at_ES_ctx_eqc: forall n t u, (ES_contextual_closure eqc) t u  
-                            -> (lc_at n t <-> lc_at n u).
-Lemma lc_at_eqC : forall n t t', t =e t' -> 
-                            (lc_at n t <-> lc_at n t').
-\end{lstlisting}
+\bigskip
+\coqnoindent \coqdockw{Lemma} \coqdef{Equation C.lc at eqc}{lc\_at\_eqc}{\coqdoclemma{lc\_at\_eqc}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{u}, \coqref{Equation C.eqc}{\coqdocinductive{eqc}} \coqdocvariable{t} \coqdocvariable{u}  \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{u}).\coqdoceol
+
+\coqnoindent \coqdockw{Lemma} \coqdef{Equation C.lc at ES ctx eqc}{lc\_at\_ES\_ctx\_eqc}{\coqdoclemma{lc\_at\_ES\_ctx\_eqc}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{u}, (\coqdocinductive{ES\_contextual\_closure} \coqref{Equation C.eqc}{\coqdocinductive{eqc}}) \coqdocvariable{t} \coqdocvariable{u}  \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{u}).\coqdoceol
+
+\coqnoindent \coqdockw{Lemma} \coqdef{Equation C.lc at eqC}{lc\_at\_eqC}{\coqdoclemma{lc\_at\_eqC}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{n} \coqdocvar{t} \coqdocvar{t'}, \coqdocvariable{t} \coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e' x}{\coqdocnotation{e}} \coqdocvariable{t'} \ensuremath{\rightarrow} (\coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t} \coqexternalref{:type scope:x '<->' x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocdefinition{lc\_at} \coqdocvariable{n} \coqdocvariable{t'}).\coqdoceol
+
+\bigskip
 
 Observe que precisamos provar três resultados. Não basta mostrar que o predicado
 \texttt{eqc} é compatível com \texttt{lc\_at}, pois ainda usaremos seus fechos.
@@ -421,13 +499,27 @@ iniciar a formalização das reduções do sistema $\lambda ex$.
 As regras de redução listadas em  \ref{table:red_lambex} serão formalizadas nos
 tipos indutivos \texttt{sys\_x} e \texttt{rule\_b}.
 
-\begin{lstlisting}[basicstyle=\small]
-Inductive rule_b : pterm -> pterm -> Prop := ...
-Notation "t ->_B u" := (rule_b t u) (at level 66).
+\bigskip
+\coqdocnoindent \coqdockw{Inductive} \coqdocvar{rule\_b} : \coqdocinductive{pterm}
+\ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow}
+\coqdockw{Prop} := ...\coqdoceol
 
-Inductive sys_x : pterm -> pterm -> Prop := ...
-Notation "t ->_x u" := (sys_x t u) (at level 59, left associativity).
-\end{lstlisting}
+\coqdocnoindent
+\coqdockw{Notation} "t ->\_B u" :=
+(\coqref{Lambda Ex.rule b}{\coqdocinductive{rule\_b}} \coqdocvar{t}
+\coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocvar{sys\_x}
+: \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm}
+\ensuremath{\rightarrow} \coqdockw{Prop} := ...\coqdoceol
+
+\coqdocnoindent
+\coqdockw{Notation} "t ->\_x u" :=
+(\coqref{Lambda Ex.sys x}{\coqdocinductive{sys\_x}} \coqdocvar{t} \coqdocvar{u})
+(\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left}
+\coqdockw{associativity}).\coqdoceol
+\bigskip
 
 A relação $\rightarrow_x$ é definida como sendo exatamente o predicado
 \texttt{sys\_x}. Algumas exigências técnicas de \emph{term} e \emph{body} são
@@ -439,80 +531,145 @@ esta a regra que reduz uma aplicação a uma substituição explícita. Podemos,
 partir destes dois predicados, definir a regra de redução principal do sistema
 $\lambda ex$.
 
-\begin{lstlisting}[basicstyle=\small]
-Inductive sys_Bx: pterm -> pterm -> Prop :=
-| B_lx : forall t u, t ->_B u -> sys_Bx t u
-| sys_x_lx : forall t u, t ->_x u -> sys_Bx t u.
+\bigskip
+\coqdocnoindent \coqdockw{Inductive} \coqdocvar{sys\_Bx}: \coqdocinductive{pterm}
+\ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow}
+\coqdockw{Prop} := \coqdoceol
+\coqdocnoindent \ensuremath{|} \coqdocvar{B\_lx} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}
+\coqdocvar{u}, \coqdocvariable{t} \coqref{Lambda Ex.::x '-> B'
+    x}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqref{Lambda Ex.::x '-> B'
+    x}{\coqdocnotation{\_B}} \coqdocvariable{u} \ensuremath{\rightarrow}
+\coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t}
+\coqdocvariable{u}\coqdoceol \coqdocnoindent \ensuremath{|} \coqdef{sys\_x\_lx}
+: \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u},
+\coqdocvariable{t} \coqref{Lambda Ex.::x '-> x'
+    x}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqref{Lambda Ex.::x '-> x'
+    x}{\coqdocnotation{\_x}} \coqdocvariable{u} \ensuremath{\rightarrow}
+\coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t}
+\coqdocvariable{u}.\coqdoceol
 
-Notation "t ->_Bx u" := (sys_Bx t u).
+\smallskip
+\coqdocnoindent \coqdockw{Notation} "t ->\_Bx u" := (\coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
 
-red_ctx_mod_eqC = 
-fun (R : pterm -> pterm -> Prop) (t u : pterm) =>
-exist t' u', t =e t' /\ ES_contextual_closure R t' u' /\ u' =e u
-     : (pterm -> pterm -> Prop) -> pterm -> pterm -> Prop
+\smallskip
+\coqdocnoindent \coqdockw{Definition} \coqdef{Equation C.red ctx mod eqC}{red\_ctx\_mod\_eqC}{\coqdocdefinition{red\_ctx\_mod\_eqC}} (\coqdocvar{R}: \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdocinductive{pterm} \ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocinductive{pterm}) (\coqdocvar{u} : \coqdocinductive{pterm}) := \coqdoceol
 
-Definition lex t u :=  red_ctx_mod_eqC sys_Bx t u.
-Notation "t -->lex u" := (lex t u) (at level 66).
+\coqdocindent{5.50em}
+\coqexternalref{:type scope:'exists' x '..' x ','
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}}
+\coqdocvar{t'}\coqexternalref{:type scope:'exists' x '..' x ','
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}}
+\coqexternalref{:type scope:'exists' x '..' x ','
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}}
+\coqdocvar{u'}\coqexternalref{:type scope:'exists' x '..' x ','
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{,}}
+\coqexternalref{:type scope:x '/x5C'
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{t}
+\coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e'
+    x}{\coqdocnotation{e}} \coqdocvariable{t'}\coqexternalref{:type scope:x
+    '/x5C'
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)/\symbol{92}(}}\coqdocinductive{ES\_contextual\_closure}
+\coqdocvariable{R} \coqdocvariable{t'} \coqdocvariable{u'}\coqexternalref{:type
+    scope:x '/x5C'
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)/\symbol{92}(}}\coqdocvariable{u'}
+\coqref{Equation C.::x '=e' x}{\coqdocnotation{=}}\coqref{Equation C.::x '=e'
+    x}{\coqdocnotation{e}} \coqdocvariable{u}\coqexternalref{:type scope:x
+    '/x5C'
+    x}{http://coq.inria.fr/distrib/8.4pl4/stdlib/Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
 
-Definition lex_trs t u := trans_closure lex t u.
-Notation "t -->lex+ u" := (lex_trs t u) (at level 66).
+\medskip
+\coqdocnoindent \coqdockw{Definition} \coqdef{Lambda Ex.lex}{lex}{\coqdocdefinition{lex}} \coqdocvar{t} \coqdocvar{u} :=  \coqdocdefinition{red\_ctx\_mod\_eqC} \coqref{Lambda Ex.sys Bx}{\coqdocinductive{sys\_Bx}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
 
-Definition lex_str t u := star_closure lex t u.
-Notation "t -->lex* u" := (lex_str t u) (at level 66).
-\end{lstlisting}
+\coqdocnoindent \coqdockw{Notation} "t -->lex u" := (\coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+
+\smallskip
+
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.lex trs}{lex\_trs}{\coqdocdefinition{lex\_trs}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{trans\_closure} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} "t -->lex+ u" := (\coqref{Lambda Ex.lex trs}{\coqdocdefinition{lex\_trs}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{Lambda Ex.lex str}{lex\_str}{\coqdocdefinition{lex\_str}} \coqdocvar{t} \coqdocvar{u} := \coqdocinductive{star\_closure} \coqref{Lambda Ex.lex}{\coqdocdefinition{lex}} \coqdocvariable{t} \coqdocvariable{u}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} "t -->lex* u" := (\coqref{Lambda Ex.lex str}{\coqdocdefinition{lex\_str}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
+
+\bigskip
 
 O análogo da regra $\rightarrow_{\lambda ex}$ no sistema será a relação
-\texttt{''-->lex*"}, construída a partir do fecho transitivo-reflexivo,
+"\texttt{-->lex*}", construída a partir do fecho transitivo-reflexivo,
 contextual e equacional da relação $\rightarrow_{Bx}$.
 
-\vfill
 Para auxiliar nas provas, definimos alguns predicados que garantem que estamos
 trabalhando sempre com termos, e que representam algumas noções intuitivas das
 reduções.
 
-\begin{table}[h]
+\begin{definicao}[Regularidade]
+    Sejam $t, u$ pré-termos e $R$ uma relação entre pré-termos.
+    Dizemos que $R$ é regular se, sempre que vale $t\ R\ u$, então $t$ e $u$ são
+    termos bem formados. A noção de regularidade é formalizada pelo predicado
+    $red\_regular$, definido como base na regra de inferência abaixo.
+    
 \begin{mathpar} 
     \inferrule*{(red\_regular\ R),\ (R\ t\ u)}
     {term\ t\ \and term\ u}
 \end{mathpar}
-    \caption{Noção de regularidade}
-\end{table}
+\end{definicao}
 
 
-A propriedade de regularidade é interessante para facilitar em diversas provas,
+A propriedade de regularidade é interessante para facilitar diversas provas,
 já que desejamos evitar trabalhar com termos que possuem índices livres.
-Basicamente, se fizemos a redução \emph{R} entre dois pré-termos,
+Basicamente, se fizemos a redução $R$ entre dois pré-termos,
 ambos são termos bem formados.
 
+Algumas relações interessantes não são capazes de garantir a regularidade. Ainda
+assim, queremos continuar lidando com termos bem formados. Definimos então uma
+noção mais fraca de regularidade, que apenas preserva a boa formação de termos.
 
-\begin{table}[h]
+\begin{definicao}[Regularidade fraca]
+    Sejam $t, u$ pré-termos e $R$ uma relação entre pré-termos.
+    Dizemos que $R$ satisfaz a regularidade fraca se, sempre que vale $t\ R\ u$,
+    vale $(term\ t) \iff (term\ u)$. A noção de regularidade fraca é formalizada
+    pelo predicado $red\_regular'$, definido como base na regra de inferência
+    abaixo.
+    
 \begin{mathpar} 
-    \inferrule*{(red\_out\ R),\ (R\ t\ u)}
-    {R\ ([x \rightarrow u]t)\ ([x \rightarrow u]t')}
+    \inferrule*{(red\_regular'\ R),\ (R\ t\ u)}
+    {term\ t\ \iff term\ u}
 \end{mathpar}
-    \caption{Redução fora da meta-substituição}
-\end{table}
+\end{definicao}
+
+%\begin{table}[h]
+%\begin{mathpar} 
+    %\inferrule*{(red\_out\ R),\ (R\ t\ u)}
+    %{R\ ([x \rightarrow u]t)\ ([x \rightarrow u]t')}
+%\end{mathpar}
+    %\caption{Redução fora da meta-substituição}
+%\end{table}
 
 
-A propriedade \texttt{red\_out} garante que a redução pode ser feita em um
-termo afetado por uma meta-substituição, sendo $[x\ \mapsto\ u]$ a substituição que
-troca todas as ocorrências de \texttt{x} pelo termo \texttt{u}. Ela é útil pois
-esta meta-substituição pode ser vista como uma generalização da abertura de um
-termo.
+%A propriedade $red\_out$ garante que a redução pode ser feita em um
+%termo afetado por uma meta-substituição, sendo $[x\ \mapsto\ u]$ a substituição que
+%troca todas as ocorrências de $x$ pelo termo $u$. Ela é útil pois
+%esta meta-substituição pode ser vista como uma generalização da abertura de um
+%termo.
 
-\begin{table}[h]
+\begin{definicao}[Renomeamento]
+    Sejam $t, u$ pré-termos; $x,y$ variáveis e $R$ uma relação entre pré-termos.
+    Dizemos que a relação $R$ é compatível com renomeamento de variáveis, ou
+    seja, vale $red\_rename\ R$, se $R$ satisfaz a seguinte regra de inferência:    
+
 \begin{mathpar} 
     \inferrule*{(red\_rename\ R),\ (\forall x,\ x \notin fv(t) \rightarrow R\
         (t^x) \ (u^x))}
     {R\ (t^y)\ (u^y)}
 \end{mathpar}
-    \caption{Renomeamento em abertura com variável}
-\end{table}
+\end{definicao}
 
-A propriedade \emph{red\_out} pode ser comparada à $\alpha$-equivalência de termos no cálculo
-original. Basicamente, se um termo \textit{t} aberto com uma variável $x \notin
-fv(t)$ se reduz a um \textit{t'}, também aberto com \textit{x}, então este
-\textit{x} pode ser trocado por outra variável $y \notin fv(t)$, preservando a
+A propriedade \emph{red\_rename} pode ser comparada à $\alpha$-equivalência de termos no cálculo
+original. Basicamente, se um termo $t$ aberto com uma variável $x \notin
+fv(t)$ se reduz a um $t'$, também aberto com $x$, então este
+$x$ pode ser trocado por outra variável $y \notin fv(t)$, preservando a
 redução $\rightarrow_{lex}$.
 
 Estes resultados auxiliam muito em diversas provas. Em especial, os resultados
@@ -532,16 +689,16 @@ as hipóteses se referem ao sub-termo aberto com uma variável.
 Nesta seção, queremos dar uma visão geral da propriedade PSN e descrever a
 formalização da propriedade IE, foco deste trabalho. 
 
-A propriedade PSN é a que garante que, se um termo \emph{t} é fortemente
+A propriedade PSN é a que garante que, se um termo $t$ é fortemente
 normalizável no cálculo original, ou seja, toda cadeia de reduções a partir dele
 termina, então ele também é fortemente normalizável no sistema $\lambda ex$.
 
 A prova da PSN é feita primeiramente definindo uma estratégia de redução
 \emph{perpétua} para o sistema, definida da seguinte maneira: se um termo
-\emph{t} se reduz a um termo \emph{t'} por esta estratégia, e se \emph{t'} é
-fortemente normalizável, então \emph{t} também o é. Pela contrapositiva, vemos
-que se o termo \emph{t} não for fortemente normalizável, então a estratégia terá
-que fazer a redução para um termo \emph{t'} que também não é fortemente
+$t$ se reduz a um termo $t'$ por esta estratégia, e se $t'$ é
+fortemente normalizável, então $t$ também o é. Pela contrapositiva, vemos
+que se o termo $t$ não for fortemente normalizável, então a estratégia terá
+que fazer a redução para um termo $t'$ que também não é fortemente
 normalizável, e assim por diante, formando uma cadeia de redução infinita.
 
 Em particular, se um termo $t[x/u]$ é reduzido, por esta estratégia, para um
@@ -563,106 +720,102 @@ isto, adicionamos uma nova substituição na gramática.
     \tau[[x/u]]\ \]
 
 Note que na nova substituição, não podemos colocar qualquer qualquer termo no
-lugar de \textit{u}. Restringimos o termo \textit{u} a apenas termos da gramática
+lugar de $u$. Restringimos o termo $u$ a apenas termos da gramática
 original, ou seja, sem substituições marcadas. Além disso, é necessário que o
 termo seja fortementa normalizável.
 
 Na nossa gramática de pré-termos, este formalismo já está adicionado, sendo
 representado pelo construtor \texttt{pterm\_lsub}. Porém, assim como precisamos
 de um predicado para verificar se um termo comum está bem formado, vamos criar
-um outro predicado, chamado \texttt{lab\_term}. Este predicado terá a mesma
-funcionalidade, mas agora extendido para termos com substituições marcadas. 
+um outro predicado, chamado \texttt{lab\_term}. 
 
+
+\begin{definicao}[Termo marcado]
+    Este predicado é uma extensão do predicado $term$, visto na Definição
+    \ref{def_term}. Adicionamos apenas um caso para lidar com as substituições
+    marcadas, sendo todos os outros casos análogos ao anterior.
+        
 \begin{mathpar} 
-    \inferrule*[Right=lab\_term\_var]{  }
-    {lc(x)}
-    \\
-    \inferrule*[Right=lab\_term\_app]{lab\_term(t1) \\ lab\_term(t2)}
-    {lc(t1\ t2)}
-    \\
-    \inferrule*[Right=lab\_term\_abs]{\forall x \notin L,\ lab\_term(t^{x})}
-    {lc(\lambda. t)}
-    \\
-    \inferrule*[Right=lab\_term\_sub]{\forall x \notin L,\ lab\_term(t^{x}) \\
-        lab\_term(u)}
-    {lc(t[u])}
-    \\
     \inferrule*[Right=lab\_term\_sub']{\forall x \notin L,\ lab\_term(t^{x}) \\
         term(u) \\ (SN\ lex)\ u}
     {lc(t[[u]])}
 \end{mathpar}
+\end{definicao}
 
-Observe que no caso da substituição marcada, temos a exigência \texttt{(SN lex
-    t2)}, que indica que \texttt{t2} é fortemente normalizável.
+Observe que no caso da substituição marcada, temos a exigência $(SN\ lex\ u)$,
+que indica que $u$ é fortemente normalizável.
 
 Também devemos estender a noção equivalente de ser localmente fechado, para
 manter a equivalência definida no caso do sistema sem as substituições marcadas.
 Assim, definimos uma nova função \texttt{lc\_at'}, análoga à do caso não
-marcado.  Sua implementação é também feita com base na definição da tabela
-\ref{table:lc_at}, com apenas uma extensão para os casos das substituição
-marcadas e explícitas.
+marcado.  Sua implementação é também feita com base na Definição
+\ref{def_lc_at}, com apenas uma extensão para os casos das substituição marcadas
+e explícitas.
 
-\begin{table}[h]
-\begin{empheq}[box=\fbox]{align*}
-    lc\_at'\ k\ (t1[t2])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t1)\ \&\ (lc\_at'\ k\ t2) \\ 
-    lc\_at'\ k\ (t1[[t2]])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t1)\ \&\ (lc\_at'\ k\ t2)\
-    \&\ (SN\ lex\ t2) \\ 
+\begin{definicao}
+    A função $lc\_at'$ é definida como uma extensão de $lc\_at$, adicionando os
+    seguintes dois casos:
+
+\begin{empheq}{align*}
+    lc\_at'\ k\ (t[u])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t)\ \&\ (lc\_at'\ k\ u) \\ 
+    lc\_at'\ k\ (t[[u]])\ \ \ &\equiv\ (lc\_at'\ (S k)\ t)\ \&\ (lc\_at'\ k\ u)\
+    \&\ (SN\ lex\ u) \\ 
 \end{empheq}
-    \caption{Definição da função lc\_at'}
-    \label{table:lab_lc_at}
-\end{table}
+\end{definicao}
 
+\bigskip
 
-\begin{lstlisting}[basicstyle=\small]
-Fixpoint lc_at' (k:nat) (t:pterm) {struct t} : Prop := ...
+\coqdocnoindent \coqdockw{Fixpoint} \coqdocvar{lc\_at'}
+(\coqdocvar{k}:\coqdocvar{nat}) (\coqdocvar{t}:\coqdocvar{pterm})
+\{\coqdockw{struct} \coqdocvar{t}\} : \coqdockw{Prop} := ...\coqdoceol
 
-Definition term'' t := lc_at' 0 t.
-\end{lstlisting}
-
+\coqdocnoindent\coqdockw{Definition} \coqdocvar{term'{}'} \coqdocvar{t} := \coqdocvar{lc\_at'} 0 \coqdocvar{t}.\coqdoceol
+\bigskip
 
 Podemos seguir a prova da equivalência entre \texttt{lab\_term} e
 \texttt{lc\_at'} de maneira similar a prova do capítulo anterior, com a ajuda
 dos seguintes lemas auxiliares.
 
-\begin{gather}
- lc\_rec\_open\_var\_rec':\ \forall\ x\ t\ k,\ (lc\_at'\ k\ (open\_rec\ k\ x\
-    t))\ \rightarrow\ (lc\_at'\ (S\ k)\ t) \nonumber \\
- lc\_at\_open\_var\_rec:\ \forall\ x\ t\ k,\ (lc\_at'\ (S\ k)\ t)\ \rightarrow\
-    (lc\_at'\ k\ (open\_rec\ k\ x\ t)) \nonumber \\
- term\_impl\_lab\_term:\ \forall\ t,\ (term\ t)\ \rightarrow\ (lab\_term\ t)
- \nonumber \\
- term\_eq\_term':\ \forall\ t,\ (term\ t)\ \iff\ (term'\ t) \nonumber
-\end{gather}
+\bigskip \coqdockw{Lemma} \coqdocvar{lc\_rec\_open\_var\_rec'} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}
+\coqdocvar{k},\coqdoceol \coqdocindent{2.00em} \coqdocvar{lc\_at'} \coqdocvar{k}
+(\coqdocvar{open\_rec} \coqdocvar{k} \coqdocvar{x} \coqdocvar{t})
+\ensuremath{\rightarrow} \coqdocvar{lc\_at'} (\coqdocvar{S} \coqdocvar{k})
+\coqdocvar{t}.\coqdoceol
+
+\smallskip
+\coqdockw{Lemma} \coqdocvar{lc\_at\_open\_var\_rec'} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{t}
+\coqdocvar{k},\coqdoceol \coqdocindent{2.00em} \coqdocvar{lc\_at'}
+(\coqdocvar{S} \coqdocvar{k}) \coqdocvar{t} \ensuremath{\rightarrow}
+\coqdocvar{lc\_at'} \coqdocvar{k} (\coqdocvar{open\_rec} \coqdocvar{k}
+(\coqdocvar{pterm\_fvar} \coqdocvar{x}) \coqdocvar{t}).\coqdoceol
+
+\smallskip
+\coqdockw{Lemma} \coqdocvar{term\_impl\_lab\_term}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvar{term} \coqdocvar{t}
+\ensuremath{\rightarrow} \coqdocvar{lab\_term} \coqdocvar{t}.\coqdoceol
+
+\smallskip
+\coqdockw{Lemma} \coqdocvar{lab\_term\_eq\_term'{}'} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvar{lab\_term}
+\coqdocvar{t} \ensuremath{\leftrightarrow} \coqdocvar{term'{}'}
+\coqdocvar{t}.\coqdoceol 
+\bigskip
 
 Como no caso do sistema simples, queremos definir classes de equivalências
 de termos, para trabalhar módulo permutação de substituições.
 Para isso, precisamos definir novos fechos contextuais para os termos com
 substituições marcadas.
 
+\begin{definicao}[Fecho contextual para termos marcados]
+    O fecho contextual para termos marcados é definido como uma extensão do
+    fecho para termos comuns, visto na definição \ref{def_fecho}, com a ressalva
+    que os predicados de $term$ e $body$ são substituídos por seus análogos,
+    $lab\_term$ e $lab\_body$, respectivamente. Os casos que lidam com
+    substituições marcadas são definidos pelas regras de inferência a seguir.
+    
 \begin{mathpar} 
-    \inferrule*[Right=lab\_redex]{ (R\ t\ s) }
-    {(lab\_contextual\_closure\ R)\ t\ s}
-    \\
-    \inferrule*[Right=lab\_app\_left]{((lab\_contextual\_closure\ R)\ t\ t'),\
-        (lab\_term\ u)}
-    {((lab\_contextual\_closure\ R)\ (t\ u)\ (t'\ u))}
-    \\
-    \inferrule*[Right=lab\_app\_right]{((lab\_contextual\_closure\ R)\ t\ t'),\
-        (lab\_term\ u)}
-    {((lab\_contextual\_closure\ R)\ (u\ t)\ (u\ t'))}
-    \\
-    \inferrule*[Right=lab\_abs\_in]{(\forall\ x,\ x \notin L \rightarrow
-        ((lab\_contextual\_closure\ R)\ t^x\ t'^x))}
-    {((lab\_contextual\_closure\ R)\ (\lambda . t)\ (\lambda . t'))}
-    \\
-    \inferrule*[Right=lab\_subst\_left]{(\forall\ x,\ x \notin L \rightarrow
-        ((lab\_contextual\_closure\ R)\ t^x\ t'^x)),\ (lab\_term\ u)}
-    {((lab\_contextual\_closure\ R)\ (t[u])\ (t'[u]))}
-    \\
-    \inferrule*[Right=lab\_subst\_right]{((lab\_contextual\_closure\ R)\ u\ u'),\
-        (lab\_body\ t)}
-    {((lab\_contextual\_closure\ R)\ (t[u])\ (t[u']))}
-    \\
     \inferrule*[Right=lab\_subst'\_left]{(\forall\ x,\ x \notin L \rightarrow
         ((lab\_contextual\_closure\ R)\ t^x\ t'^x)),\ (term\ u),\ (SN\ lex\ u)}
     {((lab\_contextual\_closure\ R)\ (t[[u]])\ (t'[[u]]))}
@@ -671,39 +824,45 @@ substituições marcadas.
         (lab\_body\ t)}
     {((lab\_contextual\_closure\ R)\ (t[[u]])\ (t[[u']]))}
 \end{mathpar}
+\end{definicao}
 
-Em sua maioria, os construtores são análogos aos definidos no caso não marcado.
-Vale notar que, ao invés de se necessitar \texttt{term t} como hipótese, é
-necessário que o termo seja marcado, ou seja, que consigamos demonstrar
-\texttt{lab\_term t}.  Adicionamos também construtores pras substituições
-marcadas.  Para uma redução fora da substituição marcada, o processo é análogo
-ao da comum.  Para dentro desta, não podemos construir um fecho a partir de
-outro: é necessário que o termo \texttt{u} se reduza para \texttt{u'}
-diretamente.
+\bigskip
 
 São definidos também dois outros fechos análogos,
 \texttt{simpl\_lab\_contextual\_closure} e
 \texttt{ext\_lab\_contextual\_closure}. No primeiro, a diferença é que não é
-feita a exigência \texttt{(SN lex u)} no caso da redução à esquerda da
+feita a exigência $(SN\ lex\ u)$ no caso da redução à esquerda da
 substituição marcada. No segundo, queremos reduzir apenas fora de substituições
-marcadas. Assim, o fecho não possui este caso.
+marcadas. Assim, o fecho não possui um análogo ao caso
+\texttt{LAB\_SUBST'\_RIGHT}.
 
+\smallskip
 
 Podemos então definir a relação equacional para termos marcados.
 
-\begin{lstlisting}[basicstyle=\small]
-    
-Inductive lab_eqc  : pterm -> pterm -> Prop := 
-| lab_eqc_rx1 : forall t u v, 
-                  lab_term u -> term v -> 
-                  lab_eqc (t[u][[v]]) ((& t)[[v]][u]) 
-| lab_eqc_rx2 : forall t u v, 
-                  term u -> lab_term v -> 
-                  lab_eqc (t[[u]][v]) ((& t)[v][[u]]) 
-| lab_eqc_rx3 : forall t u v, 
-                  term u -> term v -> 
-                  lab_eqc (t[[u]][[v]]) ((& t)[[v]][[u]]).
-\end{lstlisting}
+\coqdocnoindent \coqdockw{Inductive} \coqdocvar{lab\_eqc}  : \coqdocvar{pterm}
+\ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow}
+\coqdockw{Prop} := \coqdoceol \coqdocnoindent 
+\coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx1} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdoceol \coqdocindent{2.00em}
+\coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{term}
+\coqdocvar{v} \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
+(\coqdocvar{t}[\coqdocvar{u}][[\coqdocvar{v}]]) ((\&
+\coqdocvar{t})[[\coqdocvar{v}]][\coqdocvar{u}]) \coqdoceol \coqdocnoindent
+\coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx2} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdoceol \coqdocindent{2.00em}
+\coqdocvar{term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{lab\_term}
+\coqdocvar{v} \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
+(\coqdocvar{t}[[\coqdocvar{u}]][\coqdocvar{v}]) ((\&
+\coqdocvar{t})[\coqdocvar{v}][[\coqdocvar{u}]]) \coqdoceol \coqdocnoindent
+\coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx3} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{u} \coqdocvar{v}, \coqdoceol \coqdocindent{2.00em}
+\coqdocvar{term} \coqdocvar{u} \ensuremath{\rightarrow} \coqdocvar{term}
+\coqdocvar{v} \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
+(\coqdocvar{t}[[\coqdocvar{u}]][[\coqdocvar{v}]]) ((\&
+\coqdocvar{t})[[\coqdocvar{v}]][[\coqdocvar{u}]]).\coqdoceol
+
+\bigskip
 
 Os construtores basicamente definem como permutar duas substituições, desde que
 uma delas seja marcada. Como requisito, é necessário garantir a propriedade
@@ -716,31 +875,57 @@ Para uso futuro, definimos um lema de simetria da relação. Sua prova é feita 
 análise de casos simples, apenas usando o lema \texttt{bswap\_idemp} para
 reduzir permutações de índices que não alteram a semântica do termo.
 
-\begin{lstlisting}[basicstyle=\small]
-Lemma lab_eqc_sym : forall t u, lab_eqc t u -> lab_eqc u t.
-\end{lstlisting}
+\bigskip
+\coqdockw{Lemma} \coqdocvar{lab\_eqc\_sym} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{u}, \coqdocvar{lab\_eqc} \coqdocvar{t} \coqdocvar{u}
+\ensuremath{\rightarrow} \coqdocvar{lab\_eqc} \coqdocvar{u}
+\coqdocvar{t}.\coqdoceol
+\bigskip
 
 A equação principal utilizada nos termos marcados será a relação 
 $=_{\underline{e}}$, formalizada como o fecho contextual e transitivo do
 predicado \texttt{lab\_eqc}.
 
-\begin{lstlisting}[basicstyle=\small]
-Definition lab_eqC (t: pterm) (u : pterm) :=  
-    trans_closure (simpl_lab_contextual_closure lab_eqc) t u . 
-Notation "t =~e u" := (lab_eqC t u) (at level 66).
-\end{lstlisting}
+\bigskip
+\coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_eqC} (\coqdocvar{t}: \coqdocvar{pterm})
+(\coqdocvar{u} : \coqdocvar{pterm}) :=  \coqdocvar{trans\_closure}
+(\coqdocvar{lab\_contextual\_closure} \coqdocvar{lab\_eqc}) \coqdocvar{t}
+\coqdocvar{u} .\coqdoceol \coqdocnoindent \coqdockw{Notation} "t =\~{}e u" :=
+(\coqdocvar{lab\_eqC} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at}
+\coqdockw{level} 66).\coqdoceol
+\bigskip
 
 
 Também é preciso definir um predicado análogo de regularidade para termos
 marcados.
 
-\begin{table}[h]
+\begin{definicao}[Regularidade para termos marcados]
+    Sejam $t, u$ pré-termos e $R$ uma relação entre pré-termos.
+    Dizemos que $R$ é regular se, sempre que vale $t\ R\ u$, então $t$ e $u$ são
+    termos marcados bem formados. A noção de regularidade para termos marcados é
+    formalizada pelo predicado $red\_lab\_regular$, definido como base na regra
+    de inferência abaixo.
+
 \begin{mathpar} 
     \inferrule*{(red\_lab\_regular\ R),\ (R\ t\ u)}
     {lab\_term\ t\ \and lab\_term\ u}
 \end{mathpar}
-    \caption{Noção de regularidade para termos marcados}
-\end{table}
+\end{definicao}
+
+\begin{definicao}[Regularidade fraca para termos marcados]
+    Sejam $t, u$ pré-termos e $R$ uma relação entre pré-termos.
+    Dizemos que $R$ satisfaz a regularidade fraca se, sempre que vale $t\ R\ u$,
+    vale $(lab\_term\ t) \iff (lab\_term\ u)$. A noção de regularidade fraca é
+    formalizada pelo predicado $red\_lab\_regular'$, definido como base na regra de
+    inferência abaixo.
+    
+\begin{mathpar} 
+    \inferrule*{(red\_lab\_regular'\ R),\ (R\ t\ u)}
+    {lab\_term\ t\ \iff lab\_term\ u}
+\end{mathpar}
+\end{definicao}
+
 
 Com todas as estruturas e propriedades para termos marcados bem definidos,
 podemos seguir com a prova da propriedade IE.
@@ -763,7 +948,7 @@ $\rightarrow_{\underline{x}}$.
     t[\![x/u]\!][\![y/v]\!]\ \ \        &\rightarrow_{Comp}\ t[\![y/v]\!][\![x/u[\![y/v]\!]]\!] & se\ y\ \in
     fv(u)  
 \end{empheq}
-    \caption{A redução $\rightarrow_{x}$ }
+    \caption{A redução $\rightarrow$$_{\underline{x}}$ }
     \label{table:red_label_x}
 
 \end{table}
@@ -831,31 +1016,54 @@ redução $\lambda \underline{ex}$ formalizada.
 Para a formalização das reduções $\lambda \underline{ex}^i$ e $\lambda
 \underline{ex}^e$, definimos os seguintes fechos e relações:
 
-\begin{lstlisting}[basicstyle=\small]
-Inductive lab_x_i: pterm -> pterm -> Prop :=
-| xi_from_bx_in_les: forall t1 t2 t2', 
-                       lab_term (t1 [[ t2 ]]) ->
-                       (sys_Bx t2 t2') ->
-                       lab_x_i (t1 [[ t2 ]]) (t1 [[ t2' ]])
-| xi_from_x : forall t t', 
-                lab_term t ->
-                lab_sys_x t t' -> 
-                lab_x_i t t'. 
 
-Definition lab_EE_ctx_red 
-(R: pterm -> pterm -> Prop) (t: pterm) (u : pterm) := 
-exists t' u', (t =EE t')/\(lab_contextual_closure R t' u')/\(u' =EE u).
+\bigskip
 
-Definition ext_lab_EE_ctx_red 
-(R: pterm -> pterm -> Prop) (t: pterm) (u : pterm) := 
-exists t' u', (t =EE t')/\(ext_lab_contextual_closure R t' u')/\(u' =EE u).
+\coqdocnoindent\coqdockw{Inductive} \coqdocvar{lab\_x\_i}: \coqdocvar{pterm}
+\ensuremath{\rightarrow} \coqdocvar{pterm} \ensuremath{\rightarrow}
+\coqdockw{Prop} :=\coqdoceol \coqdocnoindent \ensuremath{|}
+\coqdocvar{xi\_from\_bx\_in\_les}: \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t1} \coqdocvar{t2} \coqdocvar{t2'}, \coqdoceol \coqdocindent{11.50em}
+\coqdocvar{lab\_term} (\coqdocvar{t1} [[ \coqdocvar{t2} ]])
+\ensuremath{\rightarrow}\coqdoceol \coqdocindent{11.50em} (\coqdocvar{sys\_Bx}
+\coqdocvar{t2} \coqdocvar{t2'}) \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{11.50em} \coqdocvar{lab\_x\_i} (\coqdocvar{t1} [[ \coqdocvar{t2}
+]]) (\coqdocvar{t1} [[ \coqdocvar{t2'} ]])\coqdoceol \coqdocnoindent
+\ensuremath{|} \coqdocvar{xi\_from\_x} : \coqdockw{\ensuremath{\forall}}
+\coqdocvar{t} \coqdocvar{t'}, \coqdoceol \coqdocindent{8.00em}
+\coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow}\coqdoceol
+\coqdocindent{8.00em} \coqdocvar{lab\_sys\_x} \coqdocvar{t} \coqdocvar{t'}
+\ensuremath{\rightarrow} \coqdoceol \coqdocindent{8.00em} \coqdocvar{lab\_x\_i}
+\coqdocvar{t} \coqdocvar{t'}.\coqdoceol \coqdocemptyline \coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_EE\_ctx\_red} (\coqdocvar{R}:
+\coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm}
+\ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocvar{pterm})
+(\coqdocvar{u} : \coqdocvar{pterm}) := \coqdoceol \coqdocindent{4.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{t'} \coqdocvar{u'}, (\coqdocvar{t}
+=\coqdocvar{EE} \coqdocvar{t'})/\symbol{92}(\coqdocvar{lab\_contextual\_closure}
+\coqdocvar{R} \coqdocvar{t'} \coqdocvar{u'})/\symbol{92}(\coqdocvar{u'}
+=\coqdocvar{EE} \coqdocvar{u}).\coqdoceol \coqdocemptyline \coqdocnoindent
+\coqdockw{Definition} \coqdocvar{ext\_lab\_EE\_ctx\_red} (\coqdocvar{R}:
+\coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm}
+\ensuremath{\rightarrow} \coqdockw{Prop}) (\coqdocvar{t}: \coqdocvar{pterm})
+(\coqdocvar{u} : \coqdocvar{pterm}) := \coqdoceol \coqdocindent{2.00em}
+\coqdoctac{\ensuremath{\exists}} \coqdocvar{t'} \coqdocvar{u'}, (\coqdocvar{t}
+=\coqdocvar{EE}
+\coqdocvar{t'})/\symbol{92}(\coqdocvar{ext\_lab\_contextual\_closure}
+\coqdocvar{R} \coqdocvar{t'} \coqdocvar{u'})/\symbol{92}(\coqdocvar{u'}
+=\coqdocvar{EE} \coqdocvar{u}).\coqdoceol \coqdocemptyline \coqdocnoindent
+\coqdockw{Definition} \coqdocvar{lab\_x\_i\_eq} :=
+\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{lab\_x\_i}.\coqdoceol
+\coqdocemptyline \coqdocnoindent \coqdockw{Definition} \coqdocvar{lab\_x\_e\_eq}
+:= \coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{sys\_Bx}.\coqdoceol
+\coqdocemptyline \coqdocnoindent \coqdockw{Notation} "t -->[lx\_i] u" :=
+(\coqdocvar{lab\_x\_i\_eq} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at}
+\coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
+\coqdocnoindent \coqdockw{Notation} "t -->[lx\_e] u" :=
+(\coqdocvar{lab\_x\_e\_eq} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at}
+\coqdockw{level} 59, \coqdoctac{left} \coqdockw{associativity}).\coqdoceol
 
-Definition lab_x_i_eq := ext_lab_EE_ctx_red lab_x_i.
-Definition lab_x_e_eq := ext_lab_EE_ctx_red sys_Bx.
-
-Notation "t -->[lx_i] u" := (lab_x_i_eq t u) (at level 59, left associativity).
-Notation "t -->[lx_e] u" := (lab_x_e_eq t u) (at level 59, left associativity).
-\end{lstlisting}
+\bigskip
 
 A relação \texttt{lab\_x\_i} formaliza a relação $\rightarrow_{\underline{x}}$.
 O fecho \texttt{ext\_lab\_EE\_ctx\_red} realiza uma relação em qualquer ponto de
@@ -871,21 +1079,36 @@ Uma estratégia utilizada para facilitar as provas foi abstrair, em lemas
 auxiliares, vários problemas destas que se repetem. Podemos então tratar tais
 problemas com um contexto limpo, facilitando as provas por indução. 
 
-\begin{lstlisting}[basicstyle=\small]
-Lemma star_lab_closure_app_left: forall R t t' u, lab_term u -> 
-star_closure (simpl_lab_contextual_closure R) t t' -> 
-star_closure (simpl_lab_contextual_closure R) (pterm_app t u) (pterm_app t' u).
+\bigskip
+\coqdockw{Lemma} \coqdocvar{star\_lab\_closure\_app\_left}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'}
+\coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow} \\
+\coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure}
+\coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'} \ensuremath{\rightarrow}
+\coqdocvar{star\_closure} (\coqdocvar{simpl\_lab\_contextual\_closure}
+\coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})
+(\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u}).\coqdoceol
 
+\smallskip
 
-Lemma EE_clos_app_left: forall R t t' u, lab_term u -> 
-((lab_EE_ctx_red R) t t') -> 
-((lab_EE_ctx_red R) (pterm_app t u) (pterm_app t' u)).
+\coqdockw{Lemma} \coqdocvar{EE\_clos\_app\_left}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'}
+\coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow}
+((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t} \coqdocvar{t'})
+\ensuremath{\rightarrow} ((\coqdocvar{lab\_EE\_ctx\_red} \coqdocvar{R})
+(\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u}) (\coqdocvar{pterm\_app}
+\coqdocvar{t'} \coqdocvar{u})).\coqdoceol
 
+\smallskip
 
-Lemma EE_ext_clos_app_left: forall R t t' u, lab_term u -> 
-((ext_lab_EE_ctx_red R) t t') -> 
-((ext_lab_EE_ctx_red R) (pterm_app t u) (pterm_app t' u)).
-\end{lstlisting}
+\coqdockw{Lemma} \coqdocvar{EE\_ext\_clos\_app\_left}:
+\coqdockw{\ensuremath{\forall}} \coqdocvar{R} \coqdocvar{t} \coqdocvar{t'}
+\coqdocvar{u}, \coqdocvar{lab\_term} \coqdocvar{u} \ensuremath{\rightarrow}
+((\coqdocvar{ext\_lab\_EE\_ctx\_red} \coqdocvar{R}) \coqdocvar{t}
+\coqdocvar{t'}) \ensuremath{\rightarrow} ((\coqdocvar{ext\_lab\_EE\_ctx\_red}
+\coqdocvar{R}) (\coqdocvar{pterm\_app} \coqdocvar{t} \coqdocvar{u})
+(\coqdocvar{pterm\_app} \coqdocvar{t'} \coqdocvar{u})).\coqdoceol
+\bigskip
 
 Os lemas acima exemplificam uma das principais simplificações feita: para cada
 fecho, definimos um lema para se realizar a redução em um termo maior, a partir
@@ -950,7 +1173,8 @@ equivalência.
 -->[\coqdocvar{lx\_e}] \coqdocvar{t'}).\coqdoceol
 
 \begin{addmargin}[1em]{2em}
-\textbf{Prova:} Escolhemos, para cada redução possível feita pela relação
+\begin{proof}
+Escolhemos, para cada redução possível feita pela relação
 \texttt{-{}->[lex]}, a redução apropriada entre a interna e a externa.  Para
 isto, abrimos a definição da relação \texttt{-{}->[lex]} e fazemos indução no
 fecho contextual, ou seja, fazemos indução no predicado
@@ -966,6 +1190,8 @@ marcada, devemos obrigatoriamente realizar a redução interna. Em todos os outr
 casos, realizamos a prova tanto para a redução interna quanto para a externa.
 Nos casos em que lidamos com abstrações e substituições, são necessários os
 lemas de renomeamento mencionados na subseção \ref{sub:subst_marc}.
+\end{proof}
+
 \end{addmargin}
 
 \bigskip
@@ -978,7 +1204,8 @@ lemas de renomeamento mencionados na subseção \ref{sub:subst_marc}.
 -{}->[\coqdocvar{lex}] \coqdocvar{t'}.\coqdoceol
 
 \begin{addmargin}[1em]{2em}
-\textbf{Prova:} A prova deste lema é dividida em duas partes: quando a redução realizada é a
+\begin{proof}
+A prova deste lema é dividida em duas partes: quando a redução realizada é a
 interna, e quando é a externa. 
 
 No caso da interna, a indução é feita no fecho do predicado interno, ou seja, é
@@ -995,6 +1222,8 @@ de renomeamento.
 No caso da externa, o processo é exatamente o mesmo. A diferença é que no passo
 base, fazemos a análise de casos na redução \texttt{sys\_Bx} e, além disso, não
 temos que lidar com o caso da redução dentro de substituição marcada.
+\end{proof}
+
 \end{addmargin}
 
 \bigskip
