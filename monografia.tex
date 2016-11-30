@@ -9,7 +9,7 @@
 \documentclass[bacharelado]{unb-cic}
 %\documentclass[licenciatura]{unb-cic}
 
-
+\nonstopmode
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Pacotes importados
@@ -27,6 +27,7 @@
 \usepackage{mathpartir}
 \usepackage{listings}
 \usepackage{scrextend}
+\usepackage[all]{xy}
 \usepackage[color]{coqdoc}
 \usepackage[utf8]{inputenc}
 
@@ -64,22 +65,22 @@
 % Informações sobre a monografia
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Formalização das propriedades de normalização no sistema $\lambda$ex}%
+\title{Em direção à formalização das propriedades de normalização do sistema
+    $\lambda ex$}%
 
 \orientador{\prof \dr Flávio L. C. de Moura}{CIC/UnB}%
 \coordenador{\prof \dr Rodrigo Bonifácio de Almeida}{Universidade de Brasília}%
 \diamesano{09}{Dezembro}{2016}%
 
-\membrobanca{\prof \dr Flávio L. C. de Moura}{Universidade de Brasília}%
-\membrobanca{\prof \dr Mauricio Ayala-Ríncon}{Universidade de Brasília}%
-\membrobanca{\prof \dr Daniel Lima Ventura}{Universidade Federal de Goiás}%
+\membrobanca{\prof \dr Mauricio Ayala-Ríncon}{MAT/CIC/UnB}%
+\membrobanca{\prof \dr Daniel Lima Ventura}{INF/UFG}%
 
 \autor{Lucas de Moura}{Amaral}%
 
 \CDU{004.4}
 
-\palavraschave{lambda, formalização, trabalho de conclusão de curso}%
-\keywords{lambda, formalization, thesis}%
+\palavraschave{cálculo lambda, verificação formal, substituições explícitas, Coq}%
+\keywords{lambda calculus, formal verification, explicit substitutions, Coq}%
 
 
 
@@ -92,44 +93,57 @@
   \pretextual
 
   \begin{dedicatoria}
-  Dedico a....
+      Dedico este trabalho à memória do meu pai, Gesley, que sempre fez de tudo
+      para me dar uma boa educação e me incentivou a escolher o curso de Ciência
+      de Computação. Também à minha família, que sempre me ajuda em tudo que
+      preciso e não deixa de demonstrar interesse em minha vida: à minha
+      mãe, Esther; meu padastro, Márcio; e a meus irmãos Thiago, Davi e
+      Benjamin. Agradeço em especial à minha mãe, meu tio Donney e minha avó
+      Nicinha, por nunca deixar faltar nada para que eu pudesse me concentrar em
+      minha formação.
+
+      Dedico também aos meus amigos, tanto da escola quanto da faculdade. Em
+      especial, agradeço ao Calil, à Dani e à minha prima, Tephinha, por
+      aguentarem minhas reclamações e me tranquilizarem nos momentos de
+      ansiedade e cansaço.
   \end{dedicatoria}
 
   \begin{agradecimentos}
-  Agradeço a....
+      Agradeço ao Departamento de Ciência da Computação e meus professores pela
+      boa base técnica dada. Em especial, agradeço ao meu orientador, Flávio,
+      pela disponibilidade e paciência para me ajudar no trabalho.
   \end{agradecimentos}
 
   \begin{resumo}
-    O cálculo lambda é um sistema formal, capaz de expressar o processo
+    O cálculo $\lambda$ é um sistema formal, capaz de expressar o processo
     computacional.  Pela sua simplicidade e expressividade, este cálculo é usado
     como modelo teórico para o paradigma de programação funcional. Em consequência
     disto, uma grande quantidade de extensões do cálculo foi proposta, com o
-    objetivo de obter um sistema formal intermediário entre o cálculo lambda e suas
+    objetivo de obter um sistema formal intermediário entre o cálculo $\lambda$ e suas
     implementações.  O objeto de estudo deste trabalho é uma destas variantes,
     chamada $\lambda$ex, um cálculo com substituições explicitas proposto por Delia
     Kesner, em \cite{delia}.  Em resumo, o objetivo é continuar o trabalho de
     formalização deste cálculo, no assistente de prova Coq, iniciado em
-    \cite{initial}, a fim de enunciar suas definições e teoremas em uma linguagem
-    que permite que estes sejam verificados automaticamente por um algoritmo.  Em
-    especial, o foco é a prova formal da preservação da normalização forte dos
-    termos do cálculo.
-  \end{resumo}
+    \cite{initial}, e que tem por objetivo fornecer uma prova mecância e
+    construtiva da propriedade de formalização forte para o cálculo $\lambda
+    ex$.
+    \end{resumo}
 
   \selectlanguage{american}
   \begin{abstract}
-    Lambda calculus is a formal system, capable of expressing the computational
-    process.  Because of it's simplicity and expressiveness, this calculus is used
-    as a theorical model for the paradigm of functional programming. Consequently, a
-    great variety of extensions was proposed, with the objective of obtaining an
-    intermidiate formal system between the lambda calculus and its implementations.
-    The object of study of this work is one of these variants, called $\lambda$ex, a
-    calculus with explicit subsititutions, proposed by Delia Kesner, on
-    \cite{delia}.  In short, the goal is to continue the work in the formalization
-    of this calculus, in the Coq proof assistant, initiated in \cite{initial}, in
-    order to enunciate it's definitions and theorems on a language that allows these
-    to be automatically verified by an algorithm.  In particular, the focus is the
-    formal proof of the calculus' preservation of strong normalization of terms.
-  \end{abstract}
+    The $\lambda$-calculus is a formal system, capable of expressing the
+    computational process.  Because of it's simplicity and expressiveness, this
+    calculus is used as a theorical model for the paradigm of functional
+    programming. Consequently, a great variety of extensions was proposed, with
+    the objective of obtaining an intermidiate formal system between the
+    $\lambda$-calculus and its implementations.  The object of study of this
+    work is one of these variants, called $\lambda$ex, a calculus with explicit
+    subsititutions, proposed by Delia Kesner, on \cite{delia}.  In short, the
+    goal is to continue the work in the formalization of this calculus, in the
+    Coq proof assistant, initiated in \cite{initial}, with the goal of providing
+    a mechanical and constructive proof of the strong normalization property for
+    the $\lambda ex$ calculus.
+\end{abstract}
   \selectlanguage{brazil}
 
   \tableofcontents
