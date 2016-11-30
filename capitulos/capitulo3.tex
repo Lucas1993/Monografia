@@ -1,19 +1,26 @@
 \chapter{Conclusão}
 
-Cálculos de substituição explícita são importantes por servirem como um
+Cálculos de substituição explícita são de interesse prático por servirem como um
 framework formal para o estudo de propriedades de sistemas reais, como
-implementações de linguagens funcionais e assistentes de prova. Desta forma, uma
-formalização se torna interessante pois fornece uma maior garantia na
-confiabilidade destes sistemas.
+implementações de linguagens funcionais e assistentes de prova \cite{levy1999}.
+Desta forma, uma formalização se torna interessante pois fornece uma maior
+garantia na confiabilidade destes sistemas. Estes também são importantes no
+estudo de propriedades do próprio cálculo $\lambda$ \cite{ben_cbv, ben_beta},
+pois algumas destas se tornam mais fáceis de serem provadas em um sistema com
+substituições explícitas, bastando assim mostrar a preservação da propriedade
+entre os cálculos.
 
 Neste trabalho, foi continuada a formalização \footnote{ Esta formalização está
     disponível em \url{https://github.com/Lucas1993/LambdaEX_TCC}} do cálculo
-$\lambda ex$, iniciada em \cite{initial}. Definimos, dentro do sistema, todas as
-definições e propriedades relacionadas às substituições marcadas, e provamos
-suas características principais. Iniciamos, então, a prova da propriedade IE,
-realizando a prova formal da equivalência entre a redução do sistema estendida
-para substituições marcadas, $\lambda \underline{ex}$, e a união das reduções
-interna e externa, $\lambda \underline{ex}^i$ e $\lambda \underline{ex}^e$.
+$\lambda ex$, iniciada em \cite{initial}. Em um primeiro momento, foi dado
+enfoque na continuação da construção da teoria, em especial realizando provas de
+preservação de propriedades do cálculo pelas classes de equivalência. Após isto,
+definimos, dentro do sistema, todas as definições e propriedades relacionadas às
+substituições marcadas, e provamos suas características principais. Iniciamos,
+então, a prova da propriedade IE, realizando a prova formal da equivalência
+entre a redução do sistema estendida para substituições marcadas, $\lambda
+\underline{ex}$, e a união das reduções interna e externa, $\lambda
+\underline{ex}^i$ e $\lambda \underline{ex}^e$.
 
 Como trabalho futuro, queremos estudar propriedades de normalização do sistema,
 procurando uma definição mais intuitiva para o conceito de \textbf{normalização
