@@ -1,13 +1,31 @@
+[file]
+presentation.pdf
 [notes]
-### 4
-1. Especificar teorias e provar propriedades no computador. Vantagem: verificar correção 
-2. Falha humana, Teorema das quatro cores e do caso do Vladimir 
-3. Provas formais: menos erros; Dificuldades; Assistentes de prova auxiliam neste processo 
-### 4
-1. Especificar teorias e provar propriedades no computador. Vantagem: verificar correção 
-2. Falha humana, Teorema das quatro cores e do caso do Vladimir 
-3. Provas formais: menos erros; Dificuldades; Assistentes de prova auxiliam neste processo 
-### 4
-1. Especificar teorias e provar propriedades no computador. Vantagem: verificar correção 
-2. Falha humana, Teorema das quatro cores e do caso do Vladimir 
-3. Provas formais: menos erros; Dificuldades; Assistentes de prova auxiliam neste processo 
+### 5
+Sistema formal
+Interessante pelo foco em funções e gramatica simples
+### 8
+ Por que adicionar subst explic? 
+ Motivar: framework pra linguagens e assistentes, ajuda em provas sobre o calc lambda 
+ Pq este? Simples, permite composição de substituições e preserva PSN 
+### 9
+O que diferencia o lex? 
+Em geral limita-se interação de substituições para preservar o PSN
+Motivar com prova construtiva
+ Definir uma estratégia de redução
+Usar esta estratégia para definir indutivamente os termos fortemente normalizáveis do sistema $\lambda ex$
+Mostrar que os termos normalizáveis do cálculo $\lambda $ estão neste novo conjunto
+### 10
+Falar que o lex pode ser simulado pela estrategia
+Se a estratégia leva a um termo em forma normal, o original também era
+A perpetualidade é essencial para mostrar a PSN
+A propriedade IE é um caso particular, pois leva a subst na outra
+### 15
+Falar da preservação de propriedades pela equivalencia
+### 18
+ Estamos estendendo mais o sistema 
+### 21
+Prova simples no papel, mas extensa no assistente
+ -> Redução interna quando vier dentro de marcada! 
+ <- Análogo ao anterior, mas dividindo em duas. O caso base é feito com analise de casos na relação int e Bx 
+ <- Não precisamos lidar com o caso da substituição marcada! Vem do caso base da interna 

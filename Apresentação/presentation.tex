@@ -94,73 +94,6 @@ Lucas de M. Amaral
 
 \section{Introdução}
 
-\subsection{O assistente de provas Coq}
-
-\frame{\tableofcontents[currentsection,currentsubsection]}
-
-%-----------
-
-\begin{frame}
-\frametitle{Assistentes de prova}
-\begin{itemize}
-    \item O que são? \pause
-        \pnote{1. Especificar teorias e provar propriedades no computador.
-            Vantagem: verificar correção }
-    \item Por que usá-los?  \pause
-        \pnote{2. Falha humana, Teorema das
-           quatro cores e do caso do Vladimir }
-    \item Provas formais
-        \pnote{3. Provas formais: menos erros;
-                  Dificuldades;
-                 Assistentes de prova auxiliam neste processo }
-\end{itemize}
-\end{frame}
-
-%-----------
-
-\begin{frame}
-\frametitle{O Assistente de provas Coq}
-\begin{itemize}
-    \item Forte base teórica
-    \item Boa quantidade de bibliotecas
-\end{itemize}
-
-\pause
-
-\begin{block}{ Critério de de Bruijn }
-        O critério de de Bruijn afirma que a correção de um sistema deve ser
-        garantida por um verificador \emph{pequeno}. Em outras palavras, deve
-        haver um \emph{kernel} pelo qual todas as fórmulas passam. Assim, se
-        torna mais fácil estabelecer a confiabilidade do sistema, pois podemos
-        verificar o kernel separadamente.
-    
-\end{block} 
-\end{frame}
-
-%-----------
-
-\begin{frame}
-\frametitle{O Assistente de provas Coq}
-   \begin{block}{ Exemplo de uso }
-       
-    \coqdockw{Theorem} \coqdocvar{mult\_5\_is\_correct}:
-    \coqdockw{\ensuremath{\forall}} \coqdocvar{n} : \coqdocvar{nat},
-    (\coqdocvar{mult\_5} \coqdocvar{n}) = 5*\coqdocvar{n}.\coqdoceol \coqdocnoindent
-    \coqdockw{Proof}.\coqdoceol \coqdocindent{2.00em} \coqdoctac{intros}.\coqdoceol
-    \coqdocindent{2.00em} \coqdoctac{induction} \coqdocvar{n}.\coqdoceol
-    \coqdocindent{2.00em} \coqdoctac{simpl}. \coqdoctac{reflexivity}.\coqdoceol
-    \coqdocindent{2.00em} \coqdoctac{simpl} \coqdocvar{mult\_5}.\coqdoceol
-    \coqdocindent{2.00em} \coqdoctac{rewrite} \coqdocvar{mult\_comm}.\coqdoceol
-    \coqdocindent{2.00em} \coqdoctac{simpl}.\coqdoceol \coqdocindent{2.00em}
-    \coqdoctac{rewrite} \coqdocvar{IHn}.\coqdoceol \coqdocindent{2.00em}
-    \coqdoctac{rewrite} \coqdocvar{mult\_comm}.\coqdoceol \coqdocindent{2.00em}
-    \coqdoctac{reflexivity}.\coqdoceol \coqdocnoindent \coqdockw{Qed}.\coqdoceol
-
-   \end{block} 
-\end{frame}
-
-
-%===========
 
 \subsection{O cálculo $\lambda$}
 
@@ -188,112 +121,45 @@ Estudar de uma maneira formal os limites da computação, entender quais funçõ
 \item Gramática mínima 
 \end{itemize}
 
+\pnote{Sistema formal}
+\pnote{Interessante pelo foco em funções e gramatica simples}
+
 \begin{block}{Gramática}
 \[ \tau := x\ |\ \lambda y.\tau\ |\ \tau \tau \]
 \end{block}
-
-\begin{block}{Exemplo}
-    \[ (double(x) = 2*x) \leadsto (\lambda x.\ 2*x) \]
-    \[ (\lambda x.\ 2*x)\ 3 \]
-    \[ (\lambda n. \lambda f. (\lambda f. \lambda x.f (f\ x)) (n\ f))\ 
-        (\lambda f. \lambda x. f (f (f\ x))) \]
-\end{block}
-
-\end{frame}
-
-%-----------
-
-\begin{frame}
-\frametitle{Cálculo $\lambda$}
 
 \begin{itemize}
 \item Poucas regras de inferência
 \end{itemize}
 
-\begin{block}{Regras de inferência}
-\[ (\lambda x.t)\ u \rightarrow_{\beta} t\{x/u\} \]
-\end{block}
-
-\pause
-
-\begin{block}{Exemplo}
-\[ (\lambda y .(\lambda x.x\ y))\ u\ v \rightarrow_{\beta} (\lambda x.x\ y)\{y/u\}\ v = (\lambda x.x\ u)\ v \]
-\end{block}
-
-\end{frame}
-
-%-----------
-
-\begin{frame}
-\frametitle{Cálculo $\lambda$}
-
 \begin{block}{ $\alpha$-equivalência }
-    \[ f(x) = a*x;\ \ f(t) = a*t \]
-
     Dizemos que dois termos são $\alpha$-equivalentes se um pode ser obtido a
     partir do outro, através de renomeamento de variáveis ligadas.
 
     \[ \lambda x. x =_{\alpha} \lambda y. y \] 
-    \[ \lambda x. z \neq_{\alpha} \lambda x. k \] 
-    
 \end{block}
 
-\pause
-
-\begin{block}{Justificativa}
-    \[ ((\lambda x. y)\ z)\{y/x\} = ((\lambda x. x)\ z) \rightarrow_{\beta} z \] 
-    \[ ((\lambda x. y)\ z)\{y/x\} =_{\alpha} ((\lambda k. y)\ z)\{y/x\} = ((\lambda k. x)\ z) \rightarrow_{\beta} x \] 
-\end{block}
-    
-\end{frame}
-
-%-----------
-
-\begin{frame}
-\frametitle{Cálculo $\lambda$}
-
-\begin{block}{ Confluência }
-    Um sistema de reescrita, tomando como exemplo o cálculo $\lambda$, é dito
-    fracamente confluente se, para todo termo $t$, com $ t \rightarrow_\beta t' $
-    e $ t \rightarrow_\beta t'' $, então deve existir um termo $u$ tal que $t'
-    \rightarrow_\beta^* u$ e $t'' \rightarrow_\beta^* u$, onde
-    $\rightarrow_\beta^*$ representa o fecho transitivo-reflexivo da
-    $\beta$-redução.  
-
-    O sistema é dito fortemente confluente se, para todo termo
-    $t$ tal que $ t \rightarrow_\beta^* t' $ e $ t \rightarrow_\beta^* t'' $,
-    existe um termo $u$ tal que $t' \rightarrow_\beta^* u$ e $t''
-    \rightarrow_\beta^* u$. 
-
-\begin{displaymath}
-        \xymatrix{                 & t \ar[dl]_{\beta^*} \ar[dr]^{\beta^*} &    \\
-                  t' \ar[dr]_{\beta^*} &                & t'' \ar[dl]^{\beta^*} \\
-                                   &       u        &                   }
-\end{displaymath}
+\begin{block}{$\beta$-redução}
+\[ (\lambda x.t)\ u \rightarrow_{\beta} t\{x/u\} \]
 \end{block}
 
 \end{frame}
 
 %-----------
+
 
 \begin{frame}
 \frametitle{Cálculo $\lambda$}
 
 \begin{block}{ Normalização }
-    Um termo $t$ é dito estar em forma normal quando não existe $t'$ tal que $ t
-    \rightarrow t' $.  Um termo é dito \textbf{fracamente normalizável} quando
-    existe uma estratégia de redução que leva a uma forma normal. O termo é
-    \textbf{fortemente normalizável} se toda estratégia leva à forma normal.
-
-    \pause
-    \[ \omega := (\lambda x.\ x\ x) \]
-    \[ \Omega := \omega\ \omega \]
-    \[ \Omega = (\lambda x.\ x\ x)\ (\lambda x.\ x\ x) \rightarrow_{\beta} 
-        (x\ x)\{x/\omega\} = \omega\ \omega = \Omega \]
-    \pause
-    \[ (\lambda x.\ z)\ \Omega \rightarrow_{\beta} (\lambda x.\ z)\ \Omega \]
-    \pause
-    \[ (\lambda x.\ z)\ \Omega \rightarrow_{\beta} z \]
+\begin{itemize}
+    \item Um termo $t$ é dito estar em \textbf{forma normal} quando não existe
+        $t'$ tal que $ t \rightarrow_{\beta} t' $.
+    \item Um termo é dito \textbf{fracamente normalizável} quando
+    existe uma estratégia de redução que leva a uma forma normal.
+    \item O termo é \textbf{fortemente normalizável} se toda estratégia leva à
+        forma normal.
+\end{itemize}
 
 \end{block}
 
@@ -305,27 +171,18 @@ Estudar de uma maneira formal os limites da computação, entender quais funçõ
 
 \frame{\tableofcontents[currentsection, currentsubsection]}
 
-\begin{frame}
-\frametitle{Cálculos com substituições explícitas}
-\begin{itemize}
-    \item Formalizar a operação de substituição
-        \begin{itemize}
-            \item Termos da forma $t[x/u]$
-        \end{itemize}
-    \item Maior controle sobre a ordem de realização
-\end{itemize}
-\end{frame}
-
-%-----------
 
 \begin{frame}
 \frametitle{O sistema $\lambda ex$}
 \begin{block}{Sintaxe}
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
 \end{block}
+
+\pause
+
 \begin{table}[h]
 \begin{empheq}[box=\fbox]{align*}
-    (\lambda x.\ t)\ u\ \ \ &\rightarrow\ t[x/u] \\
+    (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u] \\
     x[x/u]\ \ \             &\rightarrow\ u \\
     y[x/u]\ \ \             &\rightarrow\ y,\ se\ x\ \neq\ y \\
     (t\ u)[x/v]\ \ \        &\rightarrow\ t[x/v]\ u[x/v] \\
@@ -333,6 +190,10 @@ Estudar de uma maneira formal os limites da computação, entender quais funçõ
     (\lambda y.\ u)[x/v]\ \ &\rightarrow\ (\lambda y.\ u[x/v])
 \end{empheq}
 \end{table}
+\pnote{ Por que adicionar subst explic? }
+\pnote{ Motivar: framework pra linguagens e assistentes, ajuda em provas sobre o
+    calc lambda }
+\pnote{ Pq este? Simples, permite composição de substituições e preserva PSN }
 \end{frame}
 
 %-----------
@@ -340,22 +201,33 @@ Estudar de uma maneira formal os limites da computação, entender quais funçõ
 \begin{frame}
 \frametitle{O sistema $\lambda ex$}
 
-Sejam $t, u, v$ termos e $x, y$ variáveis tais que $y \notin fv(u)$ e $x \notin
-fv(v)$. 
+\pnote{O que diferencia o lex?  }
 
-\begin{table}[h]
-\begin{displaymath}
-        \xymatrix{ & ((\lambda x.\ t)\ u)[y/v] \ar[dl]_{B} \ar@{->>}[dr]_x &     \\
-                  t[x/u][y/v] &               & (\lambda x.\ t[y/v])\ u \ar[d]_B \\
-                              &               &  t[y/v][x/u]                    }
-\end{displaymath}
-\end{table}
+\begin{block}{PSN}
+    Seja $\lambda$z uma extensão do cálculo $\lambda$. Dizemos que $\lambda z$
+    preserva a normalização forte se, para todo $\lambda$-termo fortemente
+    normalizável, seu correspondente em $\lambda$z também é fortemente
+    normalizável nesta extensão.
+\end{block}
+
+\pnote{Em geral limita-se interação de substituições para preservar o PSN}
+\pnote{Motivar com prova construtiva}
 
 \pause
 
 \begin{block}{Classes de equivalência}
 \[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
 \end{block}
+
+\begin{itemize}
+    \item Como deve ser demonstrada a PSN?
+\end{itemize}
+
+\pnote{ Definir uma estratégia de redução}
+\pnote{Usar esta estratégia para definir indutivamente os termos fortemente
+    normalizáveis do sistema $\lambda ex$}
+\pnote{Mostrar que os termos normalizáveis do cálculo $\lambda$ estão
+    neste novo conjunto}
     
 \end{frame}
 
@@ -363,69 +235,21 @@ fv(v)$.
 %-----------
 
 \begin{frame}
-    \frametitle{O sistema $\lambda ex$}
-    \begin{block}{PSN}
-        Seja $\lambda$z uma extensão do cálculo $\lambda$. Dizemos que $\lambda z$
-        preserva a normalização forte se, para todo $\lambda$-termo fortemente
-        normalizável, seu correspondente em $\lambda$z também é fortemente
-        normalizável nesta extensão.
-    \end{block}
-
-\end{frame}
-
-%-----------
-
-\begin{frame}
-
-    \begin{block}{ Estratégia de redução perpétua }
-        Uma estratégia perpétua fornece uma cadeia de reduções \emph{infinita} para
-        um termo, se uma existe. Caso não exista, fornece uma cadeia que termina em
-        um termo em forma normal.
-    \end{block}
-
-    \pause
+\frametitle{O sistema $\lambda ex$}
     
     \begin{block}{ Propriedade IE }
         Sejam $t,\ u$ termos. Seja $SN_{\lambda ex}$ o conjunto de termos fortemente
         normalizáveis do sistema $\lambda ex$. Se $u \in SN_{\lambda ex}$ e
         $t\{x/u\} \in SN_{\lambda ex}$, então $t[x/u] \in SN_{\lambda ex}$.
     \end{block}
+    \pnote{Falar que o lex pode ser simulado pela estrategia}
+    \pnote{Se a estratégia leva a um termo em forma normal, o original também
+    era}
+    \pnote{A perpetualidade é essencial para mostrar a PSN}
+    \pnote{A propriedade IE é um caso particular, pois leva a subst na outra} 
 
 \end{frame}
 
-%===========
-
-\section{Objetivos e motivação}
-\frame{\tableofcontents[currentsection]}
-
-\begin{frame}{Objetivos}
-\begin{itemize}
-\item Demonstrar a preservação das propriedades básicas do novo sistema pela
-    relação de equivalência
-\item Definir a noção de termos marcados e análogos para as propriedades
-    anteriores
-\item Iniciar a formalização da propriedade IE, dividindo a relação principal do
-    sistema em duas e demonstrando a equivalencia destas
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Motivação}
-\begin{itemize}
-\item Um dos primeiros cálculos com substituições explícitas que preserva a
-    maioria das propriedades esperadas do cálculo $\lambda$
-\item Importância para o estudo de linguagens de programação
-\item Assistentes de prova
-\item Auxilia em provas de propriedade do próprio cálculo $\lambda$
-\end{itemize}
-\end{frame}
-
-%\begin{frame}{Metodologia}
-%\begin{itemize}
-%\item Utilizar o assistente de provas \textit{Coq}
-%\item Provar as propriedades básicas de um sistema derivado do Cálculo Lambda
-%\item Tentar atacar os teoremas principais e observar os resultados auxiliares necessários
-%\end{itemize}
-%\end{frame}
 
 %===========
 
@@ -484,20 +308,15 @@ fv(v)$.
 
 \begin{frame}{Termos}
 
-\begin{block}{Exemplos}
-    \[ (\lambda \lambda\ 1\ 0)\ y\ x \] 
+\begin{block}{Exemplo}
+    \[ (\lambda (\lambda \ 0\ 1)) \] 
+\end{block}
     \pause
-    \[ (\lambda \lambda\ 2\ 0)\ y\ x \] 
+\begin{alertblock}{}
+    \[ (\lambda\ 2\ x)  \] 
     
-\end{block}
+\end{alertblock}
 
-\pause
-
-\begin{block}{Termo bem formado}
-    Dizemos que um pré-termo é um termo (bem formado) se toda ocorrência de
-    um índice pertence a um número correspondente de abstrações. Em outras
-    palavras, um termo não possui índices soltos.
-\end{block}
 
 \end{frame}
 
@@ -505,22 +324,94 @@ fv(v)$.
 
 \begin{frame}{Termos bem formados}
 
-\begin{block}{Função recursiva}
-\coqdockw{Fixpoint} \coqdocvar{lc\_at} (\coqdocvar{k}:\coqdocvar{nat})
-(\coqdocvar{t}:\coqdocvar{pterm}) \{\coqdockw{struct} \coqdocvar{t}\} :
-\coqdockw{Prop} := ...\coqdoceol
+\begin{columns}[T]
+\begin{column}{.48\textwidth}
+\small{
 
-\coqdockw{Definition} \coqdocvar{term'} \coqdocvar{t} := \coqdocvar{lc\_at} 0 \coqdocvar{t}.
-\end{block}
+\coqdocnoindent \coqdockw{Fixpoint} \coqdocvar{lc\_at}
+(\coqdocvar{k}:\coqdocvar{nat}) (\coqdocvar{t}:\coqdocvar{pterm})
+\{\coqdockw{struct} \coqdocvar{t}\} : \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{1.00em} \coqdockw{match} \coqdocvar{t} \coqdockw{with} \coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdocvar{pterm\_bvar} \coqdocvar{i}
+\ensuremath{\Rightarrow} \coqdocvar{i} $<$ \coqdocvar{k}\coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdocvar{pterm\_fvar} \coqdocvar{x}
+\ensuremath{\Rightarrow} \coqdocvar{True}\coqdoceol \coqdocindent{1.00em}
+\ensuremath{|} \coqdocvar{pterm\_app} \coqdocvar{t1} \coqdocvar{t2}
+\ensuremath{\Rightarrow} \coqdocvar{lc\_at} \coqdocvar{k} \coqdocvar{t1}
+\ensuremath{\land} \coqdocvar{lc\_at} \coqdocvar{k} \coqdocvar{t2}\coqdoceol
+\coqdocindent{1.00em} \ensuremath{|} \coqdocvar{pterm\_abs} \coqdocvar{t1}
+\ensuremath{\Rightarrow} \coqdocvar{lc\_at} (\coqdocvar{S} \coqdocvar{k})
+\coqdocvar{t1}\coqdoceol \coqdocindent{1.00em} \ensuremath{|}
+\coqdocvar{pterm\_sub} \coqdocvar{t1} \coqdocvar{t2} \ensuremath{\Rightarrow}
+(\coqdocvar{lc\_at} (\coqdocvar{S} \coqdocvar{k}) \coqdocvar{t1})
+\ensuremath{\land} \coqdocvar{lc\_at} \coqdocvar{k} \coqdocvar{t2}\coqdoceol
+\coqdocindent{1.00em} \coqdockw{end}.\coqdoceol
 
-\begin{block}{Predicado}
-\coqdocnoindent
-\coqdockw{Inductive} \coqdef{LambdaES Defs.term}{term}{\coqdocinductive{term}} :
-\coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
-\coqdockw{Prop} := ...\coqdoceol
-\end{block}
+\coqdocemptyline
+\coqdocnoindent\coqdockw{Definition} \coqdocvar{term'} \coqdocvar{t} := \coqdocvar{lc\_at} 0 \coqdocvar{t}.\coqdoceol
+
+}
+
+\end{column}
+
+\vrule
+\hspace{10pt}
+
+\begin{column}{.48\textwidth}
+\small{
+
+\coqdocnoindent \coqdockw{Inductive} \coqdef{LambdaES
+    Defs.term}{term}{\coqdocinductive{term}} : \coqref{LambdaES
+    Defs.pterm}{\coqdocinductive{pterm}} \ensuremath{\rightarrow}
+\coqdockw{Prop} :=\coqdoceol  \ensuremath{|}
+\coqdef{LambdaES Defs.term var}{term\_var}{\coqdocconstructor{term\_var}} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x},\coqdoceol 
+\ \ \coqref{LambdaES Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm
+    fvar}{\coqdocconstructor{pterm\_fvar}} \coqdocvariable{x})\coqdoceol
+ \ensuremath{|} \coqdef{LambdaES Defs.term
+    app}{term\_app}{\coqdocconstructor{term\_app}} :
+\coqdockw{\ensuremath{\forall}} \coqdocvar{t1} \coqdocvar{t2},\coqdoceol
+\ \ \coqref{LambdaES Defs.term}{\coqdocinductive{term}}
+\coqdocvariable{t1} \ensuremath{\rightarrow} \coqdoceol 
+\ \ \coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t2}
+\ensuremath{\rightarrow} \coqdoceol  \ \ \coqref{LambdaES
+    Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm
+    app}{\coqdocconstructor{pterm\_app}} \coqdocvariable{t1}
+\coqdocvariable{t2})\coqdoceol  \ensuremath{|}
+\coqdef{LambdaES Defs.term abs}{term\_abs}{\coqdocconstructor{term\_abs}} :
+\ \ \coqdockw{\ensuremath{\forall}} \coqdocvar{L} \coqdocvar{t1},\coqdoceol
+ (\coqdockw{\ensuremath{\forall}} \coqdocvar{x},
+\coqdocvariable{x} \coqdocnotation{\symbol{92}}\coqdocnotation{notin}
+\coqdocvariable{L} \ensuremath{\rightarrow} \coqref{LambdaES
+    Defs.term}{\coqdocinductive{term}} (\coqdocvariable{t1} \coqref{LambdaES
+    Defs.::x 'x5E' x}{\coqdocnotation{\^{}}} \coqdocvariable{x}))
+\ensuremath{\rightarrow}\coqdoceol \ \  \coqref{LambdaES
+    Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm
+    abs}{\coqdocconstructor{pterm\_abs}} \coqdocvariable{t1})\coqdoceol
+ \ensuremath{|} \coqdef{LambdaES Defs.term
+    sub}{term\_sub}{\coqdocconstructor{term\_sub}} :
+\ \ \coqdockw{\ensuremath{\forall}} \coqdocvar{L} \coqdocvar{t1}
+\coqdocvar{t2},\coqdoceol  (\coqdockw{\ensuremath{\forall}}
+\coqdocvar{x}, \coqdocvariable{x}
+\coqdocnotation{\symbol{92}}\coqdocnotation{notin} \coqdocvariable{L}
+\ensuremath{\rightarrow} \coqref{LambdaES Defs.term}{\coqdocinductive{term}}
+(\coqdocvariable{t1} \coqref{LambdaES Defs.::x 'x5E' x}{\coqdocnotation{\^{}}}
+\coqdocvariable{x})) \ensuremath{\rightarrow}\coqdoceol 
+\ \ \coqref{LambdaES Defs.term}{\coqdocinductive{term}} \coqdocvariable{t2}
+\ensuremath{\rightarrow} \coqdoceol \ \  \coqref{LambdaES
+    Defs.term}{\coqdocinductive{term}} (\coqref{LambdaES Defs.pterm
+    sub}{\coqdocconstructor{pterm\_sub}} \coqdocvariable{t1}
+\coqdocvariable{t2}).\coqdoceol
+
+}
+
+\end{column}
+
+\end{columns}
 
 \bigskip
+\bigskip
+\coqdocindent{4.00em}
 \coqdockw{Lemma} \coqdocvar{term\_eq\_term'} : \coqdockw{\ensuremath{\forall}}
 \coqdocvar{t}, \coqdocvar{term} \coqdocvar{t} \ensuremath{\leftrightarrow}
 \coqdocvar{term'} \coqdocvar{t}.\coqdoceol
@@ -565,16 +456,18 @@ fv(v)$.
 \coqdockw{level} 66).\coqdoceol
     \end{block}
 
-    \pause
+    \pnote{Falar da preservação de propriedades pela equivalencia}
 
-\begin{itemize}
-    \item Construtores de termos, abertura de termos, substituições e
-        renomeamento de variáveis devem funcionar de maneira análoga para dois
-        termos equivalentes.
-    \item Boa formação de termos e corpos de abstrações, conjunto de variáveis
-        livres e reduções dentro de fechos contextuais também devem ser
-        preservadas pela equivalência.
-\end{itemize}
+    %\pause
+
+%\begin{itemize}
+    %\item Construtores de termos, abertura de termos, substituições e
+        %renomeamento de variáveis devem funcionar de maneira análoga para dois
+        %termos equivalentes.
+    %\item Boa formação de termos e corpos de abstrações, conjunto de variáveis
+        %livres e reduções dentro de fechos contextuais também devem ser
+        %preservadas pela equivalência.
+%\end{itemize}
     
 \end{frame}
 
@@ -583,10 +476,27 @@ fv(v)$.
 \subsection{Equivalência das relações}
 \frame{\tableofcontents[currentsection, currentsubsection]}
 
+\begin{frame}
+\frametitle{O sistema $\lambda ex$}
+
+\begin{itemize}
+    \item Marcar algumas substituições seguras
+    \item Definir reduções que permitem uma manipulação maior de termos marcados
+    \item Demonstrar que a regra do sistema é simulada pelas novas reduções
+    \item Estudar a terminação destas reduções
+\end{itemize}
+    
+\end{frame}
+
+%-----------
+
 \begin{frame}{Cálculo com termos marcados}
-    \begin{block}{Gramática}
-    \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ |\
-        \tau[\![x/u]\!]\ \]
+    \begin{block}{Gramática de pré-termos}
+    \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
+    \end{block}
+    \begin{block}{Gramática de pré-termos marcados}
+    \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/u]\ |\
+        \tau[\![x/\tau]\!]\ \]
     \end{block}
 
 \begin{block}{Termos marcados}
@@ -600,49 +510,12 @@ fv(v)$.
     \coqref{LambdaES Defs.pterm}{\coqdocinductive{pterm}}.\coqdoceol 
 \end{block}
 
+\pnote{ Estamos estendendo mais o sistema }
+
 \end{frame}
 
 %-----------
 
-\begin{frame}{Cálculo com termos marcados}
-    \begin{block}{Equação para termos marcados}
-        
-    \coqdocnoindent \coqdockw{Inductive} \coqdocvar{lab\_eqc}  :
-    \coqdocvar{pterm} \ensuremath{\rightarrow} \coqdocvar{pterm}
-    \ensuremath{\rightarrow} \coqdockw{Prop} := \coqdoceol \coqdocnoindent
-    \coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx1} :
-    \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v},
-    \coqdoceol \coqdocindent{2.00em} \coqdocvar{lab\_term} \coqdocvar{u}
-    \ensuremath{\rightarrow} \coqdocvar{term} \coqdocvar{v}
-    \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
-    (\coqdocvar{t}[\coqdocvar{u}][[\coqdocvar{v}]]) ((\&
-    \coqdocvar{t})[[\coqdocvar{v}]][\coqdocvar{u}]) \coqdoceol \coqdocnoindent
-    \coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx2} :
-    \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v},
-    \coqdoceol \coqdocindent{2.00em} \coqdocvar{term} \coqdocvar{u}
-    \ensuremath{\rightarrow} \coqdocvar{lab\_term} \coqdocvar{v}
-    \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
-    (\coqdocvar{t}[[\coqdocvar{u}]][\coqdocvar{v}]) ((\&
-    \coqdocvar{t})[\coqdocvar{v}][[\coqdocvar{u}]]) \coqdoceol \coqdocnoindent
-    \coqdocindent{1.00em}\ensuremath{|} \coqdocvar{lab\_eqc\_rx3} :
-    \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{u} \coqdocvar{v},
-    \coqdoceol \coqdocindent{2.00em} \coqdocvar{term} \coqdocvar{u}
-    \ensuremath{\rightarrow} \coqdocvar{term} \coqdocvar{v}
-    \ensuremath{\rightarrow} \coqdocvar{lab\_eqc}
-    (\coqdocvar{t}[[\coqdocvar{u}]][[\coqdocvar{v}]]) ((\&
-    \coqdocvar{t})[[\coqdocvar{v}]][[\coqdocvar{u}]]).\coqdoceol
-
-    \bigskip
-    \coqdockw{Definition} \coqdocvar{lab\_eqC} (\coqdocvar{t}:
-    \coqdocvar{pterm}) (\coqdocvar{u} : \coqdocvar{pterm}) :=
-    \coqdocvar{trans\_closure} (\coqdocvar{lab\_contextual\_closure}
-    \coqdocvar{lab\_eqc}) \coqdocvar{t} \coqdocvar{u} .\coqdoceol
-    \coqdocnoindent \coqdockw{Notation} "t =\~{}e u" := (\coqdocvar{lab\_eqC}
-    \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
-    \end{block}
-\end{frame}
-
-%-----------
 
 \begin{frame}{Equivalência de reduções}
 
@@ -712,6 +585,13 @@ fv(v)$.
 
 \begin{frame}{Equivalência de relações}
     \begin{block}{Formalização}
+
+    \coqdocnoindent \coqdockw{Notation} ``t -{}-$>$[lex]\ u" :=
+    (\coqdocvar{lab\_EE\_ctx\_red}\ \coqdocvar{lab\_sys\_lx}\ \coqdocvar{t}
+    \coqdocvar{u}) .
+
+    \bigskip
+
     \coqdocnoindent \coqdockw{Notation} ``t -{}-$>$[lx\_i]\ u" :=
     (\coqdocvar{ext\_lab\_EE\_ctx\_red}\ \coqdocvar{lab\_x\_i}\ \coqdocvar{t}
     \coqdocvar{u}) .
@@ -732,16 +612,132 @@ fv(v)$.
     -{}-$>$[\coqdocvar{lx\_e}] \coqdocvar{t'})).\coqdoceol
 
     \end{block}
+
+    \pnote{Prova simples no papel, mas extensa no assistente}
+
+
+    \pnote{ -> Redução interna quando vier dentro de marcada! }
+    \pnote{ <- Análogo ao anterior, mas dividindo em duas. O caso base é feito
+        com analise de casos na relação int e Bx }
+    \pnote{ <- Não precisamos lidar com o caso da substituição marcada! Vem do
+        caso base da interna }
 \end{frame}
+
+%-----------
+
+\begin{frame}
+\frametitle{O sistema $\lambda ex$}
+    
+
+    \coqdockw{Theorem} \coqdocvar{lab\_ex\_eq\_i\_e}:
+    \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'},
+    \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t}
+    -{}-$>$[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\leftrightarrow} (\coqdocvar{t}
+    -{}-$>$[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+    -{}-$>$[\coqdocvar{lx\_e}] \coqdocvar{t'})).
+
+
+\begin{block}{Objetivo - Caso da abstração}
+\center{
+
+    \coqdocindent{1.2in}(\coqdocvar{pterm\_abs} \coqdocvar{t})
+    -{}-$>$[\coqdocvar{lx\_i}](\coqdocvar{pterm\_abs} \coqdocvar{t'})
+    \coqdoceol\ensuremath{\lor} (\coqdocvar{pterm\_abs} \coqdocvar{t})
+    -{}-$>$[\coqdocvar{lx\_e}](\coqdocvar{pterm\_abs} \coqdocvar{t'}).
+
+}
+\end{block}
+
+
+
+\begin{block}{Hipótese de indução - Caso da abstração}
+\center{
+
+    \coqdocindent{1.2in}\coqdockw{\ensuremath{\forall}} \coqdocvar{x} : \coqdocvar{VarSet.elt},
+    \coqdocvar{x} \coqdocvar{\textbackslash notin} \coqdocvar{L}
+    \ensuremath{\rightarrow} \coqdoceol  \coqdocvar{t} \^{} \coqdocvar{x}
+    -{}-$>$[\coqdocvar{lx\_i}]\coqdocvar{t'} \^{} \coqdocvar{x} \ensuremath{\lor}
+    \coqdocvar{t} \^{} \coqdocvar{x}-{}-$>$[\coqdocvar{lx\_e}]\coqdocvar{t'} \^{}
+    \coqdocvar{x}.
+}
+\end{block}
+
+\end{frame}
+
+%-----------
+
+
+\begin{frame}
+\frametitle{O sistema $\lambda ex$}
+    
+
+    \coqdockw{Theorem} \coqdocvar{lab\_ex\_eq\_i\_e}:
+    \coqdockw{\ensuremath{\forall}} \coqdocvar{t} \coqdocvar{t'},
+    \coqdocvar{lab\_term} \coqdocvar{t} \ensuremath{\rightarrow} (\coqdocvar{t}
+    -{}-$>$[\coqdocvar{lex}] \coqdocvar{t'} \ensuremath{\leftrightarrow} (\coqdocvar{t}
+    -{}-$>$[\coqdocvar{lx\_i}] \coqdocvar{t'} \ensuremath{\lor} \coqdocvar{t}
+    -{}-$>$[\coqdocvar{lx\_e}] \coqdocvar{t'})).
+
+
+\begin{block}{Objetivo - Caso da substituição marcada (interno)}
+\center{
+    \coqdocvar{lab\_sys\_lx} \coqdocvar{u} \coqdocvar{u'}.
+}
+\end{block}
+
+
+
+\begin{block}{Hipótese de indução - Caso da substituição marcada (interno)}
+\center{
+
+    \coqdocvar{t}[[\coqdocvar{u}]]
+    -{}-$>$[\coqdocvar{lx\_i}] \coqdocvar{t}[[\coqdocvar{u'}]] \ensuremath{\lor}
+    \coqdocvar{t}[[\coqdocvar{u}]]
+    -{}-$>$[\coqdocvar{lx\_e}] \coqdocvar{t}[[\coqdocvar{u'}]]
+}
+\end{block}
+
+\end{frame}
+
 
 %===========
 
+\section{Conclusão}
+\frame{\tableofcontents[currentsection]}
 
-\begin{frame}{Referências}
-\begin{enumerate}
-\item A theory of explicit substitutions with safe and full composition - Delia Kesner. Logical methods in computer science, 2009.
-\item Formalizing a Named Explicit Substitutions Calculus in Coq - Washington L. R. de C. Segundo, Flávio L. C. de Moura, Daniel L. Ventura. Conferences on Intelligent Computer Mathematics, 2014.
-\end{enumerate}
+\begin{frame}{Conclusão}
+
+\begin{itemize}
+    \item Continuamos a formalização do sistema $\lambda ex$ 
+    \item Demonstramos preservação de propriedades pela equação no sistema puro
+    \item Desenvolvemos mais a teoria no sistema com substituições marcadas
+    \item Iniciamos a prova da propriedade IE, provando equivalência das reduções
+    \item Como trabalho futuro, completar a prova da propriedade IE        
+        
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}
+    
+\begin{thebibliography}{1}
+
+\bibitem{initial}
+Washington de~Carvalho~Segundo, Fl{\'{a}}vio L.~C. de~Moura, and Daniel
+  Ventura.
+\newblock Formalizing a named explicit substitutions calculus in coq.
+\newblock In {\em Joint Proceedings of the MathUI, OpenMath and ThEdu Workshops
+  and Work in Progress track at {CICM} co-located with Conferences on
+  Intelligent Computer Mathematics {(CICM} 2014), Coimbra, Portugal, July 7-11,
+  2014.}, volume 1186, 2014.
+
+\bibitem{delia}
+D.~Kesner.
+\newblock {\em {A Theory of Explicit Substitutions with Safe and Full
+  Composition}}, volume~5, pages 1--29.
+\newblock 2009.
+
+\end{thebibliography}
 \end{frame}
 
 \end{document}

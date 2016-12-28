@@ -3,8 +3,6 @@
 \section{Visão geral}
 \label{sec:int_lex}
 
-%\subsection{Descrição do sistema}
-
 Como visto no capítulo anterior, várias extensões do cálculo $\lambda$ foram
 propostas com o objetivo de obter um sistema fiel às propriedades deste e onde a
 operação de substituição fosse um elemento primitivo da
@@ -12,21 +10,20 @@ linguagem.
 
 O sistema proposto em \cite{delia}, chamado $\lambda$ex, é o primeiro sistema
 que captura de maneira simples tal noção, enquanto ainda possui a propriedade
-\textbf{PSN}, ou seja, a preservação da normalização forte. Este sistema será
-repetido aqui, e um maior entendimento pode ser obtido na fonte original. São
-introduzidas várias mudanças, a começar pela gramática: 
+\textbf{PSN}, ou seja, a preservação da normalização forte. São introduzidas
+várias mudanças em relação ao cálculo $\lambda$, a começar pela gramática: 
 
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
 \
 
 A nova construção é chamada \textit{substituição explícita}, e é o que permite as
-manipulações sintáticas com substituições no cálculo. Precisamos então redefinir
-o conjunto de variáveis livres do novo cálculo.
+manipulações sintáticas com substituições no cálculo. Precisamos então estender
+a definição do conjunto de variáveis livres do novo cálculo.
 
 \begin{definicao}
+    Na definição abaixo, $t,u$ denotam termos e $x$ denota uma variável.
     Definimos o conjunto de variáveis livres de $t$, denotado por $fv(t)$,
-    indutivamente. Na definição abaixo, $t,u$ denotam termos e $x$ denota uma
-    variável.
+    indutivamente. 
 \begin{empheq}{align*}
     fv(x)\ & = \{x\} \\
     fv(t'\ u)\ & =\ fv(t')\ \cup\ fv(u) \\
@@ -41,7 +38,8 @@ o conjunto de variáveis livres do novo cálculo.
     x[x/u]\ \ \             &\rightarrow_{Var}\ u \\
     t[x/u]\ \ \             &\rightarrow_{Gc}\ t    & se\ \emph{x} \notin fv(t)\\
     (t\ u)[x/v]\ \ \        &\rightarrow_{App}\ t[x/v]\ u[x/v] \\
-    (\lambda y.\ u)[x/v]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[x/v])\\
+    (\lambda y.\ u)[x/v]\ \ &\rightarrow_{Lamb}\ (\lambda y.\ u[x/v]) & y \neq
+    x, y \notin fv(u)\\
     t[x/u][y/v]\ \ \        &\rightarrow_{Comp}\ t[y/v][x/u[y/v]] & se\ y\ \in
     fv(u) \\ 
     (\lambda x.\ t)\ u\ \ \ &\rightarrow_B\ t[x/u]
@@ -51,32 +49,35 @@ o conjunto de variáveis livres do novo cálculo.
 
 \end{table}
 
-Como consequência desta
-mudança, novas regras de redução são definidas, como mostrado na Tabela
-\ref{table:red_lambex}.  As 5 primeiras regras formam a relação $\rightarrow_x$,
-e o acréscimo da última forma a relação $\rightarrow_{Bx}$. 
+Como consequência desta mudança, novas regras de redução são definidas, como
+mostrado na Tabela \ref{table:red_lambex}.  As 5 primeiras regras formam a
+relação $\rightarrow_x$, e o acréscimo da última forma a relação
+$\rightarrow_{Bx}$. 
 
-Observe que, devido ao acréscimo das substituições explícitas, é possível
-definir termos que possuem uma sintaxe distinta, diferindo apenas na permutação
-de substituições independentes, e que constituirem o mesmo
-$\lambda$-termo no sistema original. Um exemplo simples pode ser visto a seguir.
+%Observe que, devido ao acréscimo das substituições explícitas, é possível
+%definir termos que possuem uma sintaxe distinta, diferindo apenas na permutação
+%de substituições independentes, e que constituirem o mesmo
+%$\lambda$-termo no sistema original. Um exemplo simples pode ser visto a seguir.
 
-\pagebreak
-Sejam $t, u, v$ termos e $x, y$ variáveis tais que $y \notin fv(u)$ e $x \notin
-fv(v)$. Então temos:
+%\pagebreak
+%Sejam $t, u, v$ termos e $x, y$ variáveis tais que $y \notin fv(u)$ e $x \notin
+%fv(v)$. Então temos:
 
-\begin{displaymath}
-        \xymatrix{ & ((\lambda x.\ t)\ u)[y/v] \ar[dl]_{B} \ar@{->>}[dr]_x &     \\
-                  t[x/u][y/v] &               & (\lambda x.\ t[y/v])\ u \ar[d]_B \\
-                              &               &  t[y/v][x/u]                    }
-\end{displaymath}
+%\begin{displaymath}
+        %\xymatrix{ & ((\lambda x.\ t)\ u)[y/v] \ar[dl]_{B} \ar@{->>}[dr]_x &     \\
+                  %t[x/u][y/v] &               & (\lambda x.\ t[y/v])\ u \ar[d]_B \\
+                              %&               &  t[y/v][x/u]                    }
+%\end{displaymath}
 
-Temos então dois termos sintaticamente distintos, $t[x/u][y/v]$ e $t[y/v][x/u]$,
-obtidos a partir do mesmo $\lambda$-termo. Perdemos, assim, a propriedade de
-confluência do cálculo.
+%Temos então dois termos sintaticamente distintos, $t[x/u][y/v]$ e $t[y/v][x/u]$,
+%obtidos a partir do mesmo $\lambda$-termo. Perdemos, assim, a propriedade de
+%confluência do cálculo.
 
-Para resolver este problema, é necessário tornar o novo sistema equacional,
-adicionando uma relação de equivalência:
+%Para resolver este problema, é necessário tornar o novo sistema equacional,
+%adicionando uma relação de equivalência:
+
+Como estratégia para se obter a propriedade PSN, é adicionado ao sistema uma
+relação de equivalência, que permite a permutação de substituições independentes:
 
 \[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
 
@@ -87,17 +88,18 @@ definição de $\alpha$-equivalência para lidar com substituições explícitas
 
 \begin{definicao}[$\alpha$-equivalência]
     Um termo $(\lambda x. t)$ é dito $\alpha$-equivalente a\ $(\lambda y. u)$ se
-    $ t\{x/y\} = u $.  Um termo $t[x/u]$ é dito $\alpha$-equivalente a\
-    $t'[y/u]$ se $ t\{x/y\} = t' $. Mais geralmente, dois termos são ditos
-    $\alpha$-equivalentes se um pode ser obtido a partir do outro através de
-    renomeamento de variáveis ligadas.
-    É fácil ver intuitivamente que esta definição é uma relação de equivalência:
-    para a reflexividade, basta fazer um renomeamento trivial. Para a
-    transitivadade, basta compor os renomeamentos.  Para a simetria, basta fazer
-    o renomeamento contrário, ou seja: $ u\{y/x\} = t $
+    $ t\{x/y\} = u $, com a ressalva que $y \notin fv(t)$ e $x \not in fv(u)$.
+    Um termo $t[x/u]$ é dito $\alpha$-equivalente a\ $t'[y/u]$ se $ t\{x/y\} =
+    t' $. Mais geralmente, dois termos são ditos $\alpha$-equivalentes se um
+    pode ser obtido a partir do outro através de renomeamento de variáveis
+    ligadas.
 
 \end{definicao}
 
+Novamente, esta definição é uma relação de equivalência: para a reflexividade,
+basta fazer um renomeamento trivial. Para a transitivadade, basta compor os
+renomeamentos.  Para a simetria, basta fazer o renomeamento contrário, ou seja:
+$ u\{y/x\} = t $
 
 
 As relações $\rightarrow_{ex}$ e $\rightarrow_{\lambda
@@ -126,11 +128,11 @@ demonstrar a propriedade \textbf{IE} do sistema.
     $t\{x/u\} \in SN_{\lambda ex}$, então $t[x/u] \in SN_{\lambda ex}$.
 \end{definicao}
 
-Esta pode ser entendida intuitivamente da seguinte maneira: Dados $t$, $u$ tais
-que $u$ e $t\{x/u\}$ são fortemente normalizáveis no sistema, então o
-correspondente utilizando substituições explícitas, $t[x/u]$ também será. Ou
-seja, a normalização da substituição implícita implica a normalização da
-explícita.
+Esta propriedade pode ser entendida intuitivamente da seguinte maneira: Dados
+$t$, $u$ tais que $u$ e $t\{x/u\}$ são fortemente normalizáveis no sistema,
+então o correspondente utilizando substituições explícitas, $t[x/u]$ também
+será. Ou seja, a normalização da substituição implícita implica a normalização
+da explícita.
 
 Para realizar a prova da propriedade \textbf{IE}, adicionamos um novo formalismo
 na gramática, \emph{marcando} algumas substituições explícitas que sabemos que
@@ -138,7 +140,7 @@ não introduzem problemas de normalização. Dividiremos, então, a regra princi
 deste sistema estendido, a relação $\lambda \underline{ex}$, em duas novas
 relações complementares: $\lambda \underline{ex}^i$ e $\lambda
 \underline{ex}^e$, chamadas reduções interna e externa, respectivamente. Estas
-reduções serão usadas para ter um melhor controle das reduções efetuadas dentro
+reduções serão usadas para termos um melhor controle das reduções efetuadas dentro
 de substituições marcadas.
 
 Com estes conceitos em mente, podemos definir de maneira mais clara a
@@ -172,13 +174,13 @@ original, por conta da possibilidade de existirem índices que não estão ligad
 a nenhuma abstração.
 
 Assim, torna-se novamente necessária uma gramática de \emph{pré-termos}, que
-consiste de todos as expressões possíveis de serem escritos em LNR. Esta
-gramática é análoga à gramática LNR apresentada em  \ref{sub:int_lnr}, porém
-agora adicionamos também o construtor de substituições explícitas.
+consiste de todas as expressões que podem escritas em LNR. Esta gramática é
+análoga à gramática LNR apresentada em  \ref{sub:int_lnr}, porém agora
+adicionamos também o construtor de substituições explícitas.
 
 \[ \tau := x\ |\ n\ |\ \lambda \tau\ |\ \tau \tau\ |\ \tau[\tau]\ \]
 
-Esta gramática é formalizada usando um tipo indutivo.
+Esta gramática é especificada usando um tipo indutivo.
 
 \bigskip
 \coqdocnoindent \coqdockw{Inductive} \coqdef{LambdaES
@@ -239,7 +241,7 @@ em LNR, torna-se necessário redefinir os predicados de boa formação de termos
 
 Como pré-requisito para a redefinição destes predicados, precisamos implementar
 as noções de abertura e fechamento de termos, como visto na subseção anterior.
-Relembrando, a operação de abertura foi definida como $t^{x} = \{0 \rightarrow
+Relembrando, a operação de abertura é definida como $t^{x} = \{0 \rightarrow
 x\}t$.
 
 Para implementar tal operação, precisaremos de duas funções, \texttt{open\_rec}
@@ -270,9 +272,9 @@ A primeira adentra o termo \texttt{t} recursivamente, procurando pelo índice
 substituição, o índice \texttt{k} é incrementado.  A segunda, que é a chamada da
 operação de fato, apenas chama \texttt{open\_rec} com $k = 0$.
 
-Similarmente, a operação de fechamento foi definida como $ ^{\textbackslash x}t
-\equiv \{0 \leftarrow t\}$. Esta operação é definida através da função
-\texttt{close}.
+Similarmente, a operação de fechamento é definida como $ ^{\textbackslash x}t
+\equiv \{0 \leftarrow t\}$. Esta operação é definida através das funções
+\texttt{close\_rec} e \texttt{close}.
 
 \bigskip
 
@@ -291,7 +293,7 @@ Similarmente, a operação de fechamento foi definida como $ ^{\textbackslash x}
 \bigskip
 
 \begin{definicao}\label{def_term}
-Sejam $t, u$ pré-termos; $L$ um conjunto finito e $x$ uma variável.
+Sejam $t, u$ pré-termos; $L$ um conjunto finito de variáveis e $x$ uma variável.
 Definimos o predicado $term$, que caracteriza termos bem formados, com base nas
 seguintes regras de inferência:
 
@@ -303,14 +305,14 @@ seguintes regras de inferência:
     {term(t\ u)}
     \\
     \inferrule*[Right=term\_abs]{\forall x \notin L,\ term\ (t^{x})}
-    {lc(\lambda t)}
+    {term(\lambda t)}
     \and
     \inferrule*[Right=term\_sub]{\forall x \notin L,\ term\ (t^{x}) \\ term\ u}
     {term(t[u])}
 \end{mathpar}
 \end{definicao}
 
-O predicado $term$ é o análogo do predicado $lc$ (Definição \ref{def_lc})
+O predicado $term$ é o análogo do predicado $lc$, na definição \ref{def_lc},
 neste sistema. Ele recebe um pré-termo e indica que este elemento é bem
 formado, ou seja, não possui índices livres. Para cada construtor de pré-termo,
 temos um construtor diferente do predicado. Observe que não existe regra de
@@ -331,16 +333,16 @@ substituições explícitas.
 \bigskip
 \coqdockw{Fixpoint} \coqdocvar{lc\_at} (\coqdocvar{k}:\coqdocvar{nat})
 (\coqdocvar{t}:\coqdocvar{pterm}) \{\coqdockw{struct} \coqdocvar{t}\} :
-\coqdockw{Prop} :=\coqdoceol
+\coqdockw{Prop} := ...\coqdoceol
 
 \coqdockw{Definition} \coqdocvar{term'} \coqdocvar{t} := \coqdocvar{lc\_at} 0 \coqdocvar{t}.\coqdoceol
 \bigskip
 
-Assim, essa equivalência também teve que ser formalizada, utilizando uma série
-de lemas auxiliares. 
+Assim, essa equivalência entre os predicados \emph{term} e \emph{term'} também
+teve que ser formalizada, utilizando uma série de lemas auxiliares. 
 
-Primeiramente, foram provados dois resultados de enfraquecimento para o
-\texttt{lc\_at}.
+Primeiramente, foram provados dois resultados para o predicado \texttt{lc\_at}.
+Análogos ao Lema \ref{lema_lc_open}.
 
 \bigskip
 \coqnoindent \coqdockw{Lemma} \coqdocvar{lc\_rec\_open\_var\_rec} :
@@ -366,7 +368,7 @@ sem a abertura é fechado a nível \emph{k + 1}.
 \coqdocvar{x}) \coqdocvar{t}).\coqdoceol
 \bigskip
 
-O segundo é exatamente o contrário: Se um termo \emph{t} é fechado a um nível
+O segundo é recíproco: Se um termo \emph{t} é fechado a um nível
 \emph{k + 1}, então este mesmo termo, aberto com uma variável a nível \emph{k},
 é fechado a nível \emph{k}.
 
@@ -421,18 +423,22 @@ tamanho do termo.
 \subsection{Equivalência de termos}
 \label{sub:equival_ncia_de_termos}
 
-Como dito anteriormente, o acréscimo de substituições explícitas pode nos levar
-à perda de confluência do cálculo, como no exemplo abaixo, já mostrado:
+Existem várias maneiras de se obter a preservação da normalização forte em um
+cálculo com substituições explícitas \cite{delia}. No caso do sistema $\lambda
+ex$, a estratégia é adicionar uma relação de equivalência entre os termos.
 
-\begin{displaymath}
-        \xymatrix{ & ((\lambda x.\ t)\ u)[y/v] \ar[dl]_{B} \ar@{->>}[dr]_x &     \\
-                  t[x/u][y/v] &               & (\lambda x.\ t[y/v])\ u \ar[d]_B \\
-                              &               &  t[y/v][x/u]                    }
-\end{displaymath}
+%Como dito anteriormente, o acréscimo de substituições explícitas pode nos levar
+%à perda de confluência do cálculo, como no exemplo abaixo, já mostrado:
 
-Uma solução para este problema é tornar o novo sistema \emph{equacional}, ou
-seja, tornar os termos $t[x/u][y/v]$ e $t[y/v][x/u]$ equivalentes, segundo
-alguma relação.
+%\begin{displaymath}
+        %\xymatrix{ & ((\lambda x.\ t)\ u)[y/v] \ar[dl]_{B} \ar@{->>}[dr]_x &     \\
+                  %t[x/u][y/v] &               & (\lambda x.\ t[y/v])\ u \ar[d]_B \\
+                              %&               &  t[y/v][x/u]                    }
+%\end{displaymath}
+
+%Uma solução para este problema é tornar o novo sistema \emph{equacional}, ou
+%seja, tornar os termos $t[x/u][y/v]$ e $t[y/v][x/u]$ equivalentes, segundo
+%alguma relação.
 
 Para isto, observemos o lema da substituição, no cálculo $\lambda$:
 
@@ -447,9 +453,11 @@ Para resolver este problema, adicionamos no sistema uma regra de
 
 \[ t[x/u][y/v] =_C t[y/v][x/u] \ \ \ \ \ se\ y \notin fv(u)\ \&\ x \notin fv(v)\] 
 
-Dizemos que ambas as representações são \emph{equivalentes}.
+Dizemos que ambas as representações são \emph{equivalentes}.  Precisamos, então,
+formalizar essa definição no sistema.
 
-Precisamos, então, formalizar essa definição no sistema.
+Na formalização abaixo, a ocorrência do operador $\&$ troca todas as ocorrências
+de índices zero e um, para que eles continuem se referindo à mesma substituição.
 
 \bigskip
 \coqdocnoindent
@@ -468,8 +476,6 @@ Precisamos, então, formalizar essa definição no sistema.
 \coqdocvariable{t}\coqdocnotation{)[}\coqdocvariable{v}\coqdocnotation{][}\coqdocvariable{u}\coqdocnotation{]}).\coqdoceol
 \bigskip
 
-%As exigências que \emph{u} e \emph{v} sejam termos são puramente técnicas, pois
-%queremos trabalhar apenas com termos sem índices livres no sistema. 
 
 Veja que exigimos que \emph{u} e \emph{v} sejam termos, e que deva valer
 \texttt{lc\_at 2 t}. Isto é necessário para que eqc seja equivalente à equação
@@ -478,10 +484,6 @@ para que as substituições sejam independentes. Aqui as exigências \emph{term 
 e \emph{term v} cumprem esse papel, mas são, também, mais fortes: queremos
 trabalhar apenas com termos sem índices livres. Este fato também justifica a
 exigência de que \texttt{lc\_at 2 t}.
-
-O único outro detalhe que muda na formalização é ocorrência do operador $\&$,
-que troca todas as ocorrências de índices zero e um, para que eles continuem se
-referindo à mesma substituição.
 
 Note que esta definição ainda possui muitas limitações. Por exemplo, se um termo
 possui uma lista de substituições, só podemos trocar as duas últimas. Também não
@@ -528,7 +530,7 @@ nossas necessidades.
 A definição \texttt{ES\_contextual\_closure} é um dos chamados \emph{fechos
     contextuais}. A ideia é que, se vale $t \rightarrow_R t'$, então, para
 qualquer termo construído a partir de $t$, vale a redução pelo fecho contextual de
-R, para o mesmo termo, mas construído a partir de $t'$. Como exemplo:
+R, para um termo análogo, mas construído a partir de $t'$. Como exemplo:
 
 \[(t \rightarrow_R t') \Rightarrow ((pterm\_app\ t\ u)
     \rightarrow_{ES\_Contextual\_Closure\ R} (pterm\_app\ t'\ u)) \]
@@ -588,11 +590,11 @@ transitivo-reflexivo da relação \texttt{eqc\_ctx}
 \coqdockw{Notation} "t =e u" := (\coqref{Equation C.eqC}{\coqdocdefinition{eqC}} \coqdocvar{t} \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol
 \bigskip
 
-Assim, a relação de equivalência que é interessante ser estudada é a \texttt{=e}, que
-permite vários passos de permutações, além de permutações no interior dos
-termos. Uma importante diferença de provas usando equivalências no papel e numa
-formalização é que resultados que são intuitivos e admitidos num ambiente
-informal devem ser provados minuciosamente.
+Assim, a relação de equivalência que correspondente à relação $=_C$ é a
+\texttt{=e}, que permite vários passos de permutações, além de permutações no
+interior dos termos. Uma importante diferença de provas usando equivalências no
+papel e numa formalização é que resultados que são intuitivos e admitidos num
+ambiente informal devem ser provados minuciosamente.
 
 Como exemplo, podemos querer mostrar a compatibilidade da igualdade com a
 função \texttt{lc\_at}. Isto é intuitivo, pois permutar duas substituições não
@@ -675,7 +677,7 @@ Os principais resultados que foram provados nesta parte incluem:
     \item Preservação da estrutura de termos pela equivalência. Construtores de
         termos, abertura de termos, substituições e renomeamento de variáveis
         devem funcionar de maneira análoga para dois termos equivalentes.
-    \item Boa formação de termos e corpos de abstrações, conjunto de variáveis
+    \item Boa formação de corpos de abstrações, conjunto de variáveis
         livres e reduções dentro de fechos contextuais também devem ser
         preservadas pela equivalência.
 \end{itemize}
@@ -920,7 +922,7 @@ noção mais fraca de regularidade, que apenas preserva a boa formação de term
 
 Basicamente, se um termo $t$ aberto com uma variável $x \notin fv(t)$ se reduz a
 um $t'$, também aberto com $x$, então este $x$ pode ser trocado por outra
-variável $y \notin fv(t)$, preservando a redução $\rightarrow_{lex}$.
+variável $y \notin fv(t)$, preservando a redução $\rightarrow_{R}$.
 
 Estes resultados auxiliam muito em diversas provas. Em especial, os resultados
 envolvendo abertura de termos e índices livres são necessários para provas em
@@ -941,7 +943,7 @@ formalização da propriedade IE, foco deste trabalho.
 
 A propriedade PSN é a que garante que, se um termo $t$ é fortemente
 normalizável no cálculo original, ou seja, toda cadeia de reduções a partir dele
-termina, então ele também é fortemente normalizável no sistema $\lambda ex$.
+é finita, então ele também é fortemente normalizável no sistema $\lambda ex$.
 
 A prova da PSN é feita primeiramente definindo uma estratégia de redução
 \emph{perpétua} para o sistema.
@@ -976,7 +978,8 @@ normalização da substituição \emph{implícita} implica na normalização da
 substituição \emph{explícita}. Esta é a chamada propriedade \textbf{IE}.
 
 Para a prova da propriedade \textbf{IE}, é adicionado mais uma estrutura no
-sistema, chamada de \emph{substituição marcada}.
+sistema, chamada de \emph{substituição marcada}. Esta é a estratégia apresentada
+em \cite{delia}, e seguiremos a mesma linha nesta formalização.
 
 \subsection{Substituições marcadas}
 \label{sub:subst_marc}
@@ -1039,7 +1042,7 @@ formado, vamos criar um outro predicado, chamado \texttt{lab\_term}.
 \begin{mathpar} 
     \inferrule*[Right=lab\_term\_sub']{\forall x \notin L,\ lab\_term(t^{x}) \\
         term(u) \\ (SN\ lex)\ u}
-    {lc(t[\![u]\!])}
+    {lab\_term(t[\![u]\!])}
 \end{mathpar}
 \end{definicao}
 
@@ -1178,21 +1181,7 @@ Os construtores basicamente definem como permutar duas substituições, desde qu
 uma delas seja marcada. Como requisito, é necessário garantir a propriedade
 \texttt{lab\_term} ou \texttt{term}, dependendo da substituição. A ideia é
 permitir que as substituições marcadas sejam permutadas ``para dentro''\  do termo,
-passando por uma substituição comum ou marcada. A substituição normal não pode
-atravessar a marcada.
-
-%Para uso futuro, definimos um lema de simetria da relação. Sua prova é feita por
-%análise de casos simples, apenas usando o lema \texttt{bswap\_idemp} para
-%reduzir permutações de índices que não alteram a semântica do termo.
-
-%\bigskip
-%\coqdockw{Lemma} \coqdocvar{bswap\_idemp} : \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, (\& (\& \coqdocvar{t})) = \coqdocvar{t}.\coqdoceol
-
-%\coqdockw{Lemma} \coqdocvar{lab\_eqc\_sym} : \coqdockw{\ensuremath{\forall}}
-%\coqdocvar{t} \coqdocvar{u}, \coqdocvar{lab\_eqc} \coqdocvar{t} \coqdocvar{u}
-%\ensuremath{\rightarrow} \coqdocvar{lab\_eqc} \coqdocvar{u}
-%\coqdocvar{t}.\coqdoceol
-%\bigskip
+passando por uma substituição comum ou marcada. 
 
 A equação principal utilizada nos termos marcados será a relação 
 $=_{\underline{e}}$, formalizada como o fecho contextual e transitivo do
@@ -1216,7 +1205,7 @@ marcados.
     Sejam $t, u$ pré-termos e $R$ uma relação binária entre pré-termos.
     Dizemos que $R$ é regular se, sempre que vale $R\ t\ u$, então $t$ e $u$ são
     termos marcados bem formados. A noção de regularidade para termos marcados é
-    formalizada pelo predicado $red\_lab\_regular$, definido como base na regra
+    formalizada pelo predicado $red\_lab\_regular$, definido com base na regra
     de inferência abaixo.
 
 \begin{mathpar} 
@@ -1229,7 +1218,7 @@ marcados.
     Sejam $t, u$ pré-termos e $R$ uma relação binária entre pré-termos.
     Dizemos que $R$ satisfaz a regularidade fraca se, sempre que vale $R\ t\ u$,
     vale $(lab\_term\ t) \iff (lab\_term\ u)$. A noção de regularidade fraca é
-    formalizada pelo predicado $red\_lab\_regular'$, definido como base na regra de
+    formalizada pelo predicado $red\_lab\_regular'$, definido com base na regra de
     inferência abaixo.
     
 \begin{mathpar} 
@@ -1249,7 +1238,8 @@ podemos seguir com a prova da propriedade IE.
 Queremos utilizar esse sistema estendido com as substituições marcadas para
 estudar o sistema original. Para isto, precisamos estender a regra de redução do
 sistema para lidar com as novas substituições. Definimos então a redução
-$\rightarrow_{\underline{x}}$, como na tabela \ref{table:red_label_x}.
+$\rightarrow_{\underline{x}}$, como em \cite{delia}, na tabela
+\ref{table:red_label_x}.
 
 \begin{table}[h]
 \begin{empheq}[box=\fbox]{align*}
@@ -1356,9 +1346,9 @@ como união de ambas as equações anteriores, $=_e e =_{\underline{e}}$:
 \coqdocvar{u}) (\coqdoctac{at} \coqdockw{level} 66).\coqdoceol \coqdocemptyline
 
 
-Como primeiro passo para a formalização deste teorema, devemos definir análogos
-para as reduções $\lambda \underline{ex}$, $\lambda \underline{ex}^i$, $\lambda
-\underline{ex}^e$.
+Como primeiro passo para a formalização deste teorema, devemos definir
+predicados análogos às reduções $\lambda \underline{ex}$, $\lambda
+\underline{ex}^i$, $\lambda \underline{ex}^e$.
 
 Iniciamos, então, definindo a relação $\rightarrow_{\underline{x}}$, dada pela
 tabela \ref{table:red_label_x}, como o tipo \texttt{lab\_sys\_x}:
@@ -1430,7 +1420,7 @@ Para isto, começamos com a formalização da relação $\rightarrow_{Bx \cup
 
 \bigskip
 
-Assim, o análogo do sistema da relação $\lambda \underline{ex}$ será
+Assim, a especificação da relação $\lambda \underline{ex}$ será
 "\texttt{-{}->[lex]}", dado por:
 
 \bigskip
@@ -1621,7 +1611,7 @@ foram necessários:
 
 Novamente, esses lemas evitam que precisemos adentrar na definição das
 equações, reduzindo o tamanho das provas principais, e são facilmente provados
-observando a transitividade da relação de equivalência.
+observando a transitividade da relação de equivalência \texttt{=EE}.
 
 \bigskip
 

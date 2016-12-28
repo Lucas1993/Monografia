@@ -22,7 +22,7 @@ foram apresentadas falsas provas diversas vezes. Este teorema foi provado em
 Mas, então, o que exatamente significa uma prova? Uma prova normalmente é
 definida como o processo de se estabelecer a validade de alguma afirmação. Na
 matemática, as provas costumam exigir uma clareza e rigor mais extremo, de modo
-a se tornar indiscutível quando analizada com cuidado. Porém, matemáticos são
+a se tornar indiscutível quando analisada com cuidado. Porém, matemáticos são
 humanos e, infelizmente, cometem erros. Com isto em mente, foi definida uma
 noção ainda mais forte de prova, chamada \emph{prova formal}.
 
@@ -44,7 +44,7 @@ isto gera outra dúvida: Por que confiar nos assistentes de prova?
         teoria forte no qual são baseados. Em geral, existe um sistema
         matemático independente de implementação que pode ser estudado e
         verificado anteriormente.
-    \item[Checagem do assitente:] O assistente em si é, também, um programa. Assim,
+    \item[Checagem do assistente:] O assistente em si é, também, um programa. Assim,
         podemos analizar seus algoritmos, demonstrar que só é possível provar
         teoremas derivados no sistema lógico interno e testar seu funcionamento
         como um programa normal.
@@ -145,8 +145,8 @@ Predicados também podem ser feitos como definições diretas, como:
 \ensuremath{\times} \coqdocvar{z} = \coqdocvar{x}.\coqdoceol
 \bigskip
 
-Assim, podemos utilizar estes predicados como propriedades de algum objeto,
-provando algo como \emph{even(2)} ou \emph{sqr(4)}.
+Assim, podemos utilizar estes predicados na identificação de  propriedades de
+algum objeto, provando algo como \emph{even(2)} ou \emph{sqr(4)}.
 
 \emph{Type} é a categoria de estruturas matemáticas e estruturas de dados.
 Alguns exemplos de tipos são:
@@ -201,10 +201,10 @@ pode ser visto abaixo.
 \coqdockw{end}.\coqdoceol \coqdocemptyline
 \bigskip
 
-A função é chamada \texttt{mult\_5} e recebe um natural. Ela realiza uma
+A função é chamada \emph{mult\_5} e recebe um natural. Ela realiza uma
 análise de casos no argumento, observando seus construtores. Caso o número seja
-zero, a função retorna zero. Se for o sucessor de algum natural \texttt{k}, ela
-soma 5 ao resultado de \texttt{mult\_5 k}. O sistema consegue deduzir a
+zero, a função retorna zero. Se for o sucessor de algum natural \emph{k}, ela
+soma 5 ao resultado de \emph{mult\_5 k}. O sistema consegue deduzir a
 terminação desta função, pois a chamada recursiva é realizada em um subtermo do
 argumento inicial.
 
@@ -228,7 +228,7 @@ o funcionamento da nossa função com a multiplicação padrão do Coq.
 \bigskip
 
 No exemplo acima, \texttt{mult\_5\_is\_correct} é o nome do teorema, e
-\emph{Proof/Qed} delimita a prova.  A ferramenta disponibliza uma maneira de
+\texttt{Proof/Qed} delimita a prova.  A ferramenta disponibiliza uma maneira de
 visualizar os estados da prova durante o processo. Introduzimos um natural
 arbitrário para começar a prova, com o comando \texttt{intros n}. Após isto,
 realizamos uma prova por indução com o comando \texttt{induction n}, que divide
@@ -300,7 +300,7 @@ teoria envolvidas, veja \cite{pierce}.
 \subsection{Visão geral}
 
 Um dos grandes desafios do início do século XX era obter uma definição 
-precisa para a noção intuitiva do processo computacional. Diversos modelos foram
+precisa para a noção intuitiva do funções computáveis. Diversos modelos foram
 propostos para resolver este problema. Entre eles está o cálculo $\lambda$,
 proposto por Alonzo Church \cite{lambda_first}, em 1936. Inicialmente, o cálculo
 fazia parte de um sistema maior, proposto para servir como uma base
@@ -310,14 +310,14 @@ objetivo inicial, separou a parte utilizável do sistema e formou o que hoje
 conhecemos como cálculo $\lambda$.
 
 O grande diferencial deste cálculo está em sua expressividade, com poder
-computacional equivalente ao da Máquina de Turing, e sua simplicidade,
+computacional equivalente ao das máquinas de Turing, e sua simplicidade,
 demonstrada por sua gramática concisa e poucas regras. A ideia central deste
-consiste em simular a criação e aplicação de funções. Diferentemente da noção
-usual no trabalho matemático, as funções neste sistema são chamadas "anônimas",
-pois são definidas tendo em vista somente seus argumentos e o resultado. Como
-exemplo, uma função simples como: "$double(x) = 2*x$" \ é definida anonimamente como
-"$\lambda x.\ 2*x$". É utilizada também uma notação especial para a aplicação de
-funções, denotada como "$ (\lambda x.\ 2*x)$  $3$".
+consiste em simular a criação e aplicação de funções. As funções neste sistema
+são chamadas "anônimas", pois são definidas tendo em vista somente seus
+argumentos e o resultado. Como exemplo, uma função simples como: "$double(x) =
+2*x$" \ é definida anonimamente como "$\lambda x.\ 2*x$". É utilizada também uma
+notação especial para a aplicação de funções, denotada como "$ (\lambda x.\
+2*x)$  $3$".
 
 É importante notar que os exemplos acima não são representados exatamente desta
 maneira. Como dito anteriormente, o sistema possui uma gramática simples, e
@@ -329,11 +329,11 @@ sucintamente como:
 
 Onde $\tau$ representa um termo, e $x$ representa uma variável. Assim, um termo
 do cálculo pode ser, respectivamente, uma variável, uma abstração de um termo
-$\tau$ por uma variável $x$, e uma aplicação de dois termos.  
+$\tau$ por uma variável $x$, ou uma aplicação de dois termos.  
 
 \begin{definicao}[Variável Livre]
-    Dizemos que uma variável $x$ é livre em um termo $\tau$ se não está contida
-    em nenhuma abstração cujo argumento é $x$. 
+    Dizemos que uma ocorrência de uma variável $x$ é livre em um termo $\tau$ se
+    esta não está contida em nenhuma abstração cujo argumento é $x$.  
 \end{definicao}
 
 Como exemplo, a variável $x$ é livre em $(\lambda y.\ y)\ x$, enquanto a
@@ -342,8 +342,8 @@ variável $y$ não é.  O conjunto de variáveis livres de \emph{t} é denotado 
 
 \begin{definicao}
     Definimos o conjunto de variáveis livres de $t$, denotado por $fv(t)$,
-    indutivamente. Na definição abaixo, $t,u$ denotam termos e $x$ denota uma
-    variável.
+    indutivamente. Na definição abaixo, $t$ e $u$ denotam termos, enquanto $x$
+    denota uma variável.
 \begin{empheq}{align*}
     fv(x)\ & = \{x\} \\
     fv(t\ u)\ & = fv(t)\ \cup\ fv(u) \\
@@ -358,9 +358,9 @@ $\beta$-redução, definida como:
 
 \[ (\lambda x.t)\ u \rightarrow_{\beta} t\{x/u\} \]
 
-Note que $t\{x/u\}$ é uma \textit{meta-operação}, definida pela substituição das
-ocorrências da variável $x$ no termo $t$ pelo termo $u$. Esta operação será
-definida formalmente em breve.
+onde $t\{x/u\}$ denota uma \textit{meta-operação} de substituição, definida como
+a substituição das ocorrências livres da variável $x$ no termo $t$ pelo termo $u$. Esta
+operação será definida formalmente em breve.
 
 Para facilitar o entendimento, vejamos alguns exemplos de $\lambda$-termos:
 
@@ -387,16 +387,18 @@ estudadas. Entre elas, é importante ressaltar as noções de \textit{forma
 
 \begin{definicao}[Forma normal]\label{def_normal}
     Um termo $t$ é dito estar em forma normal quando não existe $t'$ tal que $ t
-    \rightarrow t' $.  Um termo é dito \textbf{fracamente normalizável} quando
+    \rightarrow_{\beta} t' $.  Um termo é dito \textbf{fracamente normalizável} quando
     existe uma estratégia de redução que leva a uma forma normal. O termo é
     \textbf{fortemente normalizável} se toda estratégia leva à forma normal.
 \end{definicao}
 
-É possível demonstrar que nem todo termo possui uma forma normal. Como exemplo,
-observe que $ (\lambda x.x\ x)\ (\lambda x.x\ x) \rightarrow_\beta (\lambda x.x\
-x)\ (\lambda x.x\ x) $. A noção de normalização é especialmente importante, pois
-indica se um termo pode ou não terminar quando for avaliado, o que é de grande
-interesse no estudo de propriedades computacionais.
+Nem todo termo possui uma forma normal. Como exemplo, observe que $ (\lambda
+x.x\ x)\ (\lambda x.x\ x) \rightarrow_\beta (\lambda x.x\ x)\ (\lambda x.x\ x)
+$. A noção de normalização é especialmente importante, pois indica se um termo
+pode ou não terminar quando for avaliado, o que é de grande interesse no estudo
+de propriedades computacionais. Isto porque a normalização está intimamente
+relacionada à noção de terminação de programas. Um termo fortemente normalizável
+é correspondente a um algoritmo, ou seja, sempre termina.
 
 \begin{definicao}[Confluência]
     Um sistema de reescrita, tomando como exemplo o cálculo $\lambda$, é dito
@@ -410,20 +412,10 @@ interesse no estudo de propriedades computacionais.
     \rightarrow_\beta^* u$. 
 \end{definicao}
 
-\begin{definicao}[$\beta$-equivalência]
-    A relação de $\beta$-equivalência $\equiv_{\beta}$ é definida como a menor
-    relação de equivalência que contém a relação $\rightarrow_{\beta}$. Em
-    outras palavras, dizemos que dois termos $t$ e $t'$ são $\beta$-equivalentes
-    se vale $t \rightarrow_{\beta}^* t'$ ou $t' \rightarrow_{\beta}^* t$.
-    Podemos ver que esta definição é de fato uma equivalência, pois é transitiva
-    e reflexiva, pela definição de $\rightarrow_{\beta}^*$, e simétrica, pela
-    definição aqui dada.
-\end{definicao}
-
 A propriedade de confluência pode ser entendida, essencialmente, como uma
-garantia que a ordem que as reduções são feitas dentro de um termo não afetam o
-resultado final do processo. Ou seja, a confluência garante o determinismo do
-processo computacional.
+garantia que a ordem que as reduções são feitas não afetam a forma normal do
+termo. Ou seja, a confluência garante o determinismo do processo computacional
+em termos fortemente normalizáveis.
 
 
 Outro ponto importante a ser mencionado é a noção de $\alpha$-equivalência de
@@ -431,18 +423,19 @@ termos.
 
 \begin{definicao}[$\alpha$-equivalência]
     Um termo $(\lambda x. t)$ é dito $\alpha$-equivalente a\ $(\lambda y. u)$ se
-    $ t\{x/y\} = u $. Mais geralmente, dois termos são ditos
-    $\alpha$-equivalentes se um pode ser obtido a partir do outro através de
-    renomeamento de variáveis ligadas. É fácil ver intuitivamente que esta
-    definição é uma relação de equivalência: para a reflexividade, basta fazer
-    um renomeamento trivial. Para a transitivadade, basta compor os
-    renomeamentos.  Para a simetria, basta fazer o renomeamento contrário, ou
-    seja: $ u\{y/x\} = t $.
+    $ t\{x/y\} = u $, com a ressalva de que $y \notin fv(t)$ e $x \notin fv(u)$.
+    Mais geralmente, dois termos são ditos $\alpha$-equivalentes se um pode ser
+    obtido a partir do outro através de renomeamento de variáveis ligadas. 
 \end{definicao}
+
+É fácil ver intuitivamente que esta definição é uma relação de equivalência:
+para a reflexividade, basta fazer um renomeamento trivial. Para a
+transitivadade, basta compor os renomeamentos.  Para a simetria, basta fazer o
+renomeamento contrário, ou seja: $ u\{y/x\} = t $.
 
 Esta noção captura a ideia de que a escolha do nome das
 variáveis ligadas não importa em geral, sendo o real objeto de interesse a
-estrutura do termo. Esta definição é útil para evitar certos problemas, como por
+estrutura do termo. Esta noção é útil para evitar certos problemas, como por
 exemplo o de \textit{captura de variáveis livres}. No exemplo:
 
 \[ (\lambda x.\ y)\{y/x\},\ x\ \neq\ y \]
@@ -456,12 +449,12 @@ função que é sempre avaliada para a variável $x$, o que não é o caso.
 
 Veja que a variável $x$ na substituição não é a mesma da que está ligada na
 abstração. Isto pode causar vários problemas inesperados, como, por exemplo, a
-perda da normalização do termo.  Como exemplo, considere o termo $((\lambda x.\
-y\ y)\ (\lambda x.\ y\ y))$. É fácil ver que este termo deveria avaliar para
-$(y\ y)$. Se queremos substituir $y$ por $x$, deveríamos obter o termo $(x\ x)$.
-Porém, aplicando a substituição no termo original, temos $((\lambda x.\ y\ y)\
-(\lambda x.\ y\ y))\{y/x\}$, que é avaliado para $((\lambda x.\ x\ x)\ (\lambda
-x.\ x\ x))$, que não possui forma normal!
+perda da propriedade de normalização do termo.  Como exemplo, considere o termo
+$((\lambda x.\ y\ y)\ (\lambda x.\ y\ y))$. É fácil ver que este termo deveria
+avaliar para $(y\ y)$. Se queremos substituir $y$ por $x$, deveríamos obter o
+termo $(x\ x)$.  Porém, aplicando a substituição no termo original, temos
+$((\lambda x.\ y\ y)\ (\lambda x.\ y\ y))\{y/x\}$, que é avaliado para
+$((\lambda x.\ x\ x)\ (\lambda x.\ x\ x))$, que não possui forma normal!
 
 Para evitar este problema, podemos renomear a variável ligada $x$, antes da
 substituição, por uma variável nova, de maneira a obter um termo
@@ -484,7 +477,8 @@ maneira:
 
 \begin{definicao}\label{classic_subst}
     Sejam $t, u$ termos e $x$ uma variável. A substituição de $x$ por $u$ em
-    $t$ é definida indutivamente na estrutura de $t$ como:
+    $t$ é definida indutivamente na estrutura de $t$ como abaixo, trabalhando
+    módulo $\alpha$-equivalência:
 \smallskip
 \begin{empheq}{align*}
     \ y\{x/u\}\ \ \ \  & =\ u,\ se\ (x = y);\ y,\ c.c \\
@@ -496,7 +490,6 @@ maneira:
 
 Note que, no caso da abstração, se $y \in fv(u)$, devemos realizar a
 $\alpha$-equivalência para preservar a semântica do termo.
-
 
 \subsection{Representação de $\lambda$-termos}
 \label{sub:int_lnr}
@@ -552,7 +545,7 @@ Bruijn.
         \item $m\{n/u\} = \begin{cases}
                              m - 1 & \text{se } m > n \\
                              u     & \text{se } m = n \\
-                             m     & \text{se } m \leq n
+                             m     & \text{se } m < n
                           \end{cases}$
     \end{itemize}
 \end{definicao}
@@ -613,14 +606,14 @@ Dizemos que uma expressão é um pré-termo se pertence ao conjunto $\Lambda_{ln
 gerado pela gramática acima. Observe que, como os índices representam as
 variáveis ligadas, não é interessante a ocorrência de índices soltos, ou seja,
 sem uma abstração correspondente. Por conta disto, pré-termos que possuírem
-índices soltos não possuirão correspondentes na representação padrão do cálculo
-$\lambda$. Definimos então a noção de termos, que serão as expressões sem
-índices livres, foco de interesse no trabalho.
+índices soltos não terão termos correspondentes na representação padrão do
+cálculo $\lambda$. Definimos então a noção de termos, que serão as expressões
+sem índices livres, foco de interesse no trabalho.
 
 \begin{definicao}[Termos]
     Dizemos que um pré-termo é um termo (bem formado) se toda ocorrência de um
-    índice pertence a um número correspondente de abstrações. Em outras palavras,
-    um termo não possui índices soltos.
+    índice pertence a pelo menos um número correspondente de abstrações. Em
+    outras palavras, um termo não possui índices soltos.
 \end{definicao}
 
 A meta-substituição deve ser adaptada para levar em conta os índices, como no
@@ -656,24 +649,25 @@ Coq.  Entraremos agora em alguns detalhes do uso desta notação, descritos em
 \cite{chargueraud}, já que ela tem um interesse especial neste trabalho.
 
 Na notação usual, quando queremos estudar o corpo de uma abstração $(\lambda x.
-t')$, podemos trabalhar diretamente com o termo $t'$. Porém, nesta nova
-representação, a abstração tem a forma $(\lambda\ t')$, e é necessário que seja
-fornecida uma variável $x$, já que $t'$ não é um termo, em geral. Esta operação
-é chamada \emph{abrir o termo} $t'$ com $x$ e será representada por $t'^{x}$. Mais
-precisamente, a abertura do termo $(\lambda\ t')$ cria uma cópia de $t'$ onde todas
-as ocorrências do índice ligado à abstração mais externa são trocados pela
-variável $x$. Como exemplo, abrir a abstração $(\lambda (0\ y))$ com $x$ nos dá
+t')$, podemos trabalhar com o termo $t'$. Porém, nesta nova representação, a
+abstração tem a forma $(\lambda\ t')$, e é necessário que seja fornecida uma
+variável $x$, já que $t'$ não é um termo, em geral. Esta operação é chamada
+\emph{abrir o termo} $t'$ \emph{com} $x$ e será representada por $t'^{x}$. Mais
+precisamente, a abertura do termo $(\lambda\ t')$ cria uma cópia de $t'$ onde
+todas as ocorrências do índice ligado à abstração mais externa são trocados pela
+variável $x$. Como exemplo, abrir a abstração $(\lambda (1\ y))$ com $x$ nos dá
 o termo $(x\ y)$. A operação de abrir o termo deve ajustar o índice a ser mudado
 à medida que entra no termo. Assim, podemos usar a já definida operação de
 substituição, diretamente com a variável $x$, para realizar a abertura. Temos,
-então, $t'^{x} = t'\{0 \rightarrow x\}$.
+então, $t'^{x} = t'\{1 \rightarrow x\}$.
 
 Similarmente, podemos abstrair todas as ocorrências de uma variável $x$ no termo
-$t'$, construindo então o termo $(\lambda x. t')$. Com a nova notação, é
-necessário definir uma operação que substitui todas as ocorrências de $x$ pelo
-índice 0, antes de adicionar a abstração. Esse processo é chamado \emph{fechar o
-    termo}, representado por $ ^{\textbackslash x}t'$. Assim, para construir a
-abstração de maneira equivalente, fazemos $(\lambda ^{\textbackslash x}t')$. 
+$t'$, construindo então o termo correspondente a $(\lambda x. t')$. Com a nova
+notação, é necessário definir uma operação que substitui todas as ocorrências de
+$x$ pelo índice 0, antes de adicionar a abstração. Esse processo é chamado
+\emph{fechar o termo}, representado por $ ^{\textbackslash x}t'$. Assim, para
+construir a abstração de maneira equivalente, fazemos $(\lambda ^{\textbackslash
+    x}t')$. 
 
 \begin{definicao}
     Sejam $t$ um termo, $x$ uma variável e $k$ um índice.
@@ -705,7 +699,7 @@ variável. Desta maneira, se o termo for de fato fechado, nunca encontraremos um
 checando, para cada um deles, se o seu valor é menor ou igual ao número de
 abstrações que o contêm.
 
-A primeira opção dá lugar a uma definição natural de um predicado, denotado por
+A primeira opção induz uma definição natural de um predicado, denotado por
 $lc\ t$ indicando que o termo é localmente fechado. Com apenas três regras
 de inferência, podemos facilmente fazer uma análise mais formal da propriedade
 de ser localmente fechado, sendo bastante útil em provas.
@@ -713,7 +707,7 @@ de ser localmente fechado, sendo bastante útil em provas.
 \begin{definicao}[Localmente fechado]\label{def_lc}
     Sejam $t, t1, t2$ termos, $x$ uma variável e $L$ um conjunto finito de
     variáveis. Dizemos que um termo é localmente fechado se não possui índices
-    livres. Formalmente, isto é definido através do predicado $lc$, definido
+    livres. Formalmente, isto é feito através do predicado $lc$, definido
     pelas regras de inferência abaixo.
 
 \begin{mathpar} 
@@ -734,11 +728,7 @@ sendo o conjunto de variáveis já usadas e, assim, sempre ter uma escolha nova 
 $x$.
 
 A segunda abordagem tem um caráter mais naturalmente computacional, dando lugar
-a uma função recursiva para conferir se um termo é localmente fechado. Tal
-função vai navegando pelo termo, entrando em seus subtermos, guardando um
-contador. Quando entrar em uma abstração, a função incrementa tal contador. Ao
-encontrar um índice, basta conferir se ele é menor que o contador. Assim, a
-função pode ser definida como a seguir.
+a uma função recursiva para conferir se um termo é localmente fechado:
 
 \begin{definicao}\label{def_lc_at}
     O predicado binário $lc\_at$ que recebe um índice $k$ e um pré-termo $t$
@@ -754,10 +744,14 @@ função pode ser definida como a seguir.
 
 \medskip
 
+Esta função vai navegando pelo termo, entrando em seus subtermos, guardando um
+contador. Quando entrar em uma abstração, a função incrementa tal contador. Ao
+encontrar um índice, basta conferir se ele é menor que o contador. 
+
 Dizemos que o termo $t$ é localmente fechado se a função $lc\_at\ 0\ 
 t$ retorna \textbf{True}.  Não é difícil provar a equivalência de ambas as
 definições, ou seja, que vale $lc\ t\ \iff\ (lc\_at\ 0\ t\ =\ \textbf{True})$.
-Para isto, precisaremos do seguinte lema, que é bem intuitivo:
+Para isto, precisaremos do seguinte lema:
 
 \begin{lema}\label{lema_lc_open}
     Sejam \ $t$ um pré-termo e $x$ uma variável. Então vale 
@@ -766,7 +760,7 @@ Para isto, precisaremos do seguinte lema, que é bem intuitivo:
 \end{lema}
 
 \begin{teorema} \label{teo:lc_lc_at}
-    Seja $t$ um pré-termo. Vale ($lc\ t$) se, e somente se $(lc\_at\
+    Seja $t$ um pré-termo. Vale ($lc\ t$) \iff $(lc\_at\
     0\ t\ =\ \textbf{True})$.
 \end{teorema}
 
@@ -783,19 +777,19 @@ Para isto, precisaremos do seguinte lema, que é bem intuitivo:
         de maneira simples, escolhendo o conjunto L referenciado no construtor
         de $lc$ como sendo exatamente o conjunto de variáveis livres de $t$.
         Temos então, como hipótese, que vale $lc\_at\ 1\ t'$, onde $t'$ é o
-        corpo da abstração, e queremos provar $(lc\ t'^x)$, para algum $x \notin
-        fv(t')$. Basta então usar novamente o Lema \ref{lema_lc_open} para
-        concluir a prova.
+        corpo da abstração, e queremos provar $(lc\ t'^x)$, para qualquer $x
+        \notin fv(t')$. Basta então usar novamente o Lema \ref{lema_lc_open}
+        para concluir a prova.
 \end{itemize}
 \end{proof}
 
-Estas definições serão extremamente importantes ao decorrer do trabalho e podem
-ser citadas com frequência. Em especial, a definição de localmente fechado,
-correspondente à noção de termo bem formado, é essencial, pois são estes os
-termos que possuem correspondentes no cálculo $\lambda$.
+Estas definições serão extremamente importantes no decorrer do trabalho e podem
+ser citadas com frequência. Em especial, a definição de pré-termo localmente
+fechado, correspondente à noção de termo bem formado, é essencial, pois são
+estes as expressões que possuem termos correspondentes no cálculo $\lambda$.
 
 Vale a pena ressaltar duas outras equivalências, referentes às noções de
-abertura e fechamento de termos. Temos:
+abertura e fechamento de termos. 
 
 \begin{lema}
     Seja $t$ um termo e $x$ uma variável. Então $^{\setminus x}(t^{x})\ =\ t,\ se\ x\
@@ -823,23 +817,23 @@ Sabemos que a ordem em que as reduções são feitas não altera a forma normal 
 termo, mas isto não significa que não existem vantagens em se adotar certas
 estratégias na normalização. 
 
-Na implementação de linguagens de programação, a substituição muitas vezes é
-"atrasada", de modo a evitar computações desnecessárias. Para aproximar o modelo
-teórico de seu correspondente prático, podemos tentar fracionar a operação de
-substituição em partes mais simples, de maneira a permitir uma manipulação simbólica
-mais precisa. \cite{levy1999}
+Na implementação de linguagens de programação funcionais, a substituição muitas
+vezes é "atrasada", de modo a evitar computações desnecessárias. Para aproximar
+o modelo teórico de seu correspondente prático, podemos fracionar a operação de
+substituição em partes mais simples, de maneira a permitir uma manipulação
+simbólica mais precisa. \cite{levy1999}
 
 Além disto, separar a operação de substituição em partes mais simples pode auxiliar
 no estudo de propriedades do próprio cálculo $\lambda$. Uma estratégia comum
 \cite{ben_cbv, ben_beta} no estudo de propriedades do cálculo, referentes às
 substituições, é analisar o problema em uma versão estendida do cálculo
 $\lambda$, que possui um formalismo sintático representando as substituições,
-permitindo um controle mais preciso. Demonstrada a propriedade no novo
+permitindo um controle mais preciso destas. Demonstrada a propriedade no novo
 sistema estendido, basta mostrar que ela é preservada entre os cálculos.
 
 Por este motivo, existem várias tentativas de se formalizar a noção de
 substituição, dando então espaço para o formalismo conhecido como
-\textit{substituição explícita}. A princípio, podemos tentar estender a
+\textit{substituição explícita}. A princípio, podemos estender a
 gramática de termos da seguinte maneira:
 
 \[ \tau := x\ |\ \lambda x.\tau\ |\ \tau \tau\ |\ \tau[x/\tau]\ \]
@@ -872,13 +866,13 @@ da preservação da normalização forte (\textbf{PSN}). \cite{mellies, Gu99}
 \begin{definicao}[PSN]
     Seja $\lambda$z uma extensão do cálculo $\lambda$. Dizemos que $\lambda z$
     preserva a normalização forte se, para todo $\lambda$-termo fortemente
-    normalizável (Definição \ref{def_normal}), seu correspondente em
-    $\lambda$z também é fortemente normalizável nesta extensão.
+    normalizável, seu correspondente em $\lambda$z também é fortemente
+    normalizável nesta extensão.
 \end{definicao}
 
 Este tipo de problema é especialmente comum em cálculos com substituições
 explícitas que possuem a propriedade de composição de substituições.
-Essencialmente, dado um termo $t[x/u][y/v]$, podemos compor as duas
+Essencialmente, dado um termo $t[x/u][y/v]$, podemos comutar as duas
 substituições, de maneira a reduzir a segunda substituição antes da primeira.
 Como resultado, teríamos o termo $t[y/v][x/u[y/v]]$. 
 
@@ -888,19 +882,18 @@ reduções dentro de substituições explícitas, definições de classes de
 equivalências, entre outros. Para uma visão geral do histórico de cálculos de
 substituições explícitas, veja \cite{delia}.
 
-%A seguir, veremos um sistema que propõe uma maneira de se compor tais
-%substituições sem perder a propriedade \textbf{PSN}. Este sistema será o foco
-%deste trabalho, e utilizaremos o assistente de provas Coq para formalizar certas
-%propriedades essenciais deste.
-
 A seguir, veremos um sistema que propõe uma maneira de se compor tais
 substituições sem perder a propriedade \textbf{PSN}, o chamado $\lambda ex$. O
 foco deste trabalho será iniciar a formalização da propriedade \textbf{IE},
-chave para a prova da propriedade \textbf{PSN} deste sistema.  Para isto,
-\emph{marcaremos} algumas substituições explícitas e iremos definir duas outras
-reduções, de modo a controlar melhor as interações de termos com substituições
-explícitas. Por fim, mostraremos a equivalência destas novas reduções com a
-regra principal do sistema $\lambda ex$.
+chave para a prova da propriedade \textbf{PSN} deste sistema, necessário para
+completar o trabalho iniciado em \cite{initial}.  Para isto, vamos
+seguir a estratégia apresentada em \cite{delia}: \emph{marcaremos} algumas
+substituições explícitas e iremos definir duas outras reduções, $\rightarrow_{\lambda
+\underline{ex}^i}$ e $\rightarrow_{\lambda \underline{ex}^e}$, de modo a controlar melhor as
+interações de termos com substituições explícitas. Por fim, mostraremos a
+equivalência destas novas reduções com a regra principal do sistema $\lambda
+ex$.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
